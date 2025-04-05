@@ -1,0 +1,19 @@
+{
+  "name": "multimonos/menu-manager-wp",
+  "description": "impex menu manager wordpress plugin",
+  "type": "wordpress-plugin",
+  "minimum-stability": "stable",
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "MenuManager\\": "lib/MenuManager"
+    }
+  },
+  "require": {
+    "league/csv": "^9.22"
+  }
+}
