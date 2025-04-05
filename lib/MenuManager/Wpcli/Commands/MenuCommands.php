@@ -3,7 +3,7 @@
 namespace MenuManager\Wpcli\Commands;
 
 
-use MenuManager\Database\PostType\Menu;
+use MenuManager\Database\PostType\MenuPost;
 use WP_CLI;
 
 class MenuCommands {
@@ -23,7 +23,12 @@ class MenuCommands {
      * ## OPTIONS
      *
      * <id>
-     *  : The id of the post ot get.
+     *  : The id or slug of the menu ot get.
+     *
+     * ## EXAMPLES
+     *
+     *      wp mm menus get 42
+     *      wp mm menus get foobar
      *
      * @when after_wp_load
      */
@@ -33,7 +38,7 @@ class MenuCommands {
         if ( is_numeric( $id ) ) {
             WP_CLI::runcommand( "post get {$id} --format=table" );
         } else {
-            $post = Menu::find( $id );
+            $post = MenuPost::find( $id );
             WP_CLI::runcommand( "post get {$post->ID} --format=table" );
         }
     }

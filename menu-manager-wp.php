@@ -3,7 +3,7 @@
  * Plugin Name: Menu Manager
  */
 
-use MenuManager\Database\PostType\Menu;
+use MenuManager\Database\PostType\MenuPost;
 use MenuManager\Plugin\Activate;
 use MenuManager\Plugin\Deactivate;
 use MenuManager\Wpcli\Commands\ImportCommands;
@@ -30,7 +30,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 }
 
 function menu_manager_plugin() {
-    Menu::init();
+    MenuPost::init();
 }
 
 menu_manager_plugin();

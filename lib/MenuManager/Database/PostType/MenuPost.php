@@ -3,7 +3,7 @@
 namespace MenuManager\Database\PostType;
 
 
-class Menu extends Post {
+class MenuPost extends Post {
 
     const POST_TYPE = 'menus';
 

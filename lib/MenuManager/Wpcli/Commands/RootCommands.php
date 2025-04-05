@@ -3,7 +3,7 @@
 namespace MenuManager\Wpcli\Commands;
 
 use League\Csv\Writer;
-use MenuManager\Database\PostType\Menu;
+use MenuManager\Database\PostType\MenuPost;
 use WP_CLI;
 
 class RootCommands {
@@ -29,7 +29,7 @@ class RootCommands {
         // menu
         $menu_id = $args[0];
 
-        $menu = Menu::find( $menu_id );
+        $menu = MenuPost::find( $menu_id );
 
 
         if ( ! $menu instanceof \WP_Post ) {
