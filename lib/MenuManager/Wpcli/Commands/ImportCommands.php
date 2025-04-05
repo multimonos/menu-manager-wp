@@ -72,7 +72,7 @@ class ImportCommands {
             WP_CLI::error( "Job not found " . $id );
         }
 
-        WP_CLI::success( "Validating job " . $job['id'] . ' ...' );
+        WP_CLI::success( "Validating job " . $job->id . ' ...' );
 
         // guard : job status
         $action = new ImportValidateAction();
@@ -112,7 +112,7 @@ class ImportCommands {
             WP_CLI::error( "Job not found " . $id );
         }
 
-        WP_CLI::success( "Starting job " . $job['id'] . ' ...' );
+        WP_CLI::success( "Starting job " . $job->id . ' ...' );
 
         // run job
         $action = new ImportExecuteAction();

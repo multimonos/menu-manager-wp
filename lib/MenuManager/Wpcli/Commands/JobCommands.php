@@ -23,10 +23,10 @@ class JobCommands {
     public function list( $args, $assoc_args ) {
 
         $data = array_map( fn( $x ) => [
-            'id'         => $x['id'],
-            'type'       => $x['type'],
-            'status'     => $x['status'],
-            'created_at' => $x['created_at'],
+            'id'         => $x->id,
+            'type'       => $x->type,
+            'status'     => $x->status,
+            'created_at' => $x->created_at,
         ], Job::all() );
 
         CliOutput::table(
@@ -43,7 +43,7 @@ class JobCommands {
      * ## OPTIONS
      *
      * <id>
-     *  : The id of the job ot get.
+     * : The id of the job ot get.
      *
      * @when after_wp_load
      */
@@ -58,6 +58,6 @@ class JobCommands {
         }
 
         // ok
-        print_r( 'Job: ' . json_encode( $job, JSON_PRETTY_PRINT ) );
+        print_r( $job );
     }
 }
