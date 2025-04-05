@@ -4,6 +4,7 @@ namespace MenuManager\Plugin;
 
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Job;
+use MenuManager\Database\Model\Menu;
 
 class Deactivate {
     public static function run() {
@@ -22,6 +23,7 @@ class Deactivate {
         $wpdb->query( 'SET foreign_key_checks=0;' );
         $wpdb->query( Job::dropTableSql() );
         $wpdb->query( Impex::dropTableSql() );
+        $wpdb->query( Menu::dropTableSql() );
         $wpdb->query( 'SET foreign_key_checks=1;' );
     }
 }

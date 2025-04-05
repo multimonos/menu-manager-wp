@@ -4,6 +4,7 @@ namespace MenuManager\Plugin;
 
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Job;
+use MenuManager\Database\Model\Menu;
 
 class Activate {
 
@@ -23,5 +24,6 @@ class Activate {
 
         dbDelta( Job::createTableSql() );
         dbDelta( Impex::createTableSql() );
+        dbDelta( Menu::createTableSql() );
     }
 }

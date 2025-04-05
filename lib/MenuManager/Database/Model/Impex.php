@@ -13,8 +13,8 @@ class Impex extends Model {
 //        custom_value VARCHAR(1000),
 
         return 'CREATE TABLE ' . self::tablename() . ' (
-        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        job_id INT UNSIGNED,
+        id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        job_id BIGINT UNSIGNED NOT NULL,
         action VARCHAR(32),
         menu VARCHAR(32),
         page VARCHAR(32),
