@@ -28,10 +28,10 @@ class RootCommands {
 
         // menu
         $menu_id = $args[0];
-        print_r( $menu_id );
+
         $menu = Menu::find( $menu_id );
 
-        print_r( $menu );
+
         if ( ! $menu instanceof \WP_Post ) {
             WP_CLI::error( "Menu not found" );
             return;

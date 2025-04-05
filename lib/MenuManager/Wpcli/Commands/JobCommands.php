@@ -35,4 +35,27 @@ class JobCommands {
             $data,
         );
     }
+
+
+    /**
+     * Get details about a job.
+     *
+     * ## OPTIONS
+     *
+     * <id>
+     *  : The id of the job ot get.
+     *
+     * @when after_wp_load
+     */
+    public function get( $args, $assoc_args ) {
+        $id = $args[0];
+
+        $job = Job::find( $id );
+
+        if ( $job === null ) {
+            WP_CLI::error( "Job not found id=" . $id );
+        } else {
+            print_r( 'Job: ' . json_encode( $job, JSON_PRETTY_PRINT ) );
+        }
+    }
 }

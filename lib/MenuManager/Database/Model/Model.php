@@ -19,6 +19,12 @@ class Model {
         return 'SELECT 1;';
     }
 
+    public static function find( $id ): ?array {
+        // retuns null if not found
+        global $wpdb;
+        return $wpdb->get_row( 'SELECT * FROM ' . static::tablename() . ' WHERE id=' . $id . ';', ARRAY_A );
+    }
+
     public static function all(): array {
         global $wpdb;
 
