@@ -9,7 +9,7 @@ use MenuManager\Database\Model\Job;
 use SimplePie\Exception;
 
 class ImportLoadAction {
-    public static function bool( mixed $v ): int {
+    public static function fmt_bool( mixed $v ): int {
         return in_array( $v, ['yes', 'true', true, 'Y'] ) ? 1 : 0;
     }
 
@@ -69,11 +69,11 @@ class ImportLoadAction {
                     'title'          => $record['title'],
                     'prices'         => $record['prices'],
                     'image_ids'      => $record['image_ids'],
-                    'is_new'         => self::bool( $record['is_new'] ),
-                    'is_glutensmart' => self::bool( $record['is_glutensmart'] ),
-                    'is_organic'     => self::bool( $record['is_organic'] ),
-                    'is_vegan'       => self::bool( $record['is_vegan'] ),
-                    'is_vegetarian'  => self::bool( $record['is_vegetarian'] ),
+                    'is_new'         => self::fmt_bool( $record['is_new'] ),
+                    'is_glutensmart' => self::fmt_bool( $record['is_glutensmart'] ),
+                    'is_organic'     => self::fmt_bool( $record['is_organic'] ),
+                    'is_vegan'       => self::fmt_bool( $record['is_vegan'] ),
+                    'is_vegetarian'  => self::fmt_bool( $record['is_vegetarian'] ),
                     'description'    => $record['description'],
                 ] );
 

@@ -20,8 +20,8 @@ class Model {
     }
 
     public static function find( $id ): ?array {
-        // returns null if not found
         global $wpdb;
+        // null if not found
         return $wpdb->get_row( 'SELECT * FROM ' . static::tablename() . ' WHERE id=' . $id . ';', ARRAY_A );
     }
 

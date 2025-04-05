@@ -2,6 +2,7 @@
 
 namespace MenuManager\Wpcli\Commands;
 
+use MenuManager\Actions\ImportExecuteAction;
 use MenuManager\Actions\ImportLoadAction;
 use MenuManager\Actions\ImportValidateAction;
 use MenuManager\Database\Model\Job;
@@ -71,15 +72,51 @@ class ImportCommands {
             WP_CLI::error( "Job not found " . $id );
         }
 
+        WP_CLI::success( "Validating job " . $job['id'] . ' ...' );
+
         // guard : job status
-        if ( ! Job::canValidate( $job ) ) {
-            WP_CLI::error( "Invalid job status '" . $job['status'] . "'" );
+        $action = new ImportValidateAction();
+        $rs = $action->run( $job );
+
+        // guard : err
+        if ( ! $rs->ok() ) {
+            WP_CLI::error( $rs->getMessage() );
         }
 
-        // validate
-        WP_CLI::success( "Validating job " . $job['id'] . ' ...' );
-        $action = new ImportValidateAction();
-        $rs = $action->run( $job['id'] );
+        WP_CLI::success( $rs->getMessage() );
+    }
+
+
+    /**
+     * Run an import job.
+     *
+     * ## OPTIONS
+     *
+     * <job_id>
+     * : The impex job to run.
+     *
+     * ## EXAMPLES
+     *
+     *      wp mm import apply 42
+     *
+     * @when after_wp_load
+     */
+    public function run( $args, $assoc_args ) {
+        // job get
+        $id = $args[0];
+
+        $job = Job::find( $id );
+
+        // guard : job exists
+        if ( $job === null ) {
+            WP_CLI::error( "Job not found " . $id );
+        }
+
+        WP_CLI::success( "Starting job " . $job['id'] . ' ...' );
+
+        // run job
+        $action = new ImportExecuteAction();
+        $rs = $action->run( $job );
 
         // guard : err
         if ( ! $rs->ok() ) {
