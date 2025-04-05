@@ -24,12 +24,15 @@ test-import:
 	clear \
 	&& wp plugin deactivate menu-manager-wp \
 	&& sleep 1 \
+	&& wp db check | grep "mm_" \
 	&& wp plugin activate menu-manager-wp \
-	&& wp mm menu list \
+	&& wp mm menus list \
 	&& wp db query 'select count(*) from wp_mm_impex;' \
 	&& echo "$(cat ../menu-scraper/data/merged_crowfoot.csv |wc -l) lines" \
-	&& XDEBUG_SESSION=PHPSTORM wp mm import load ../menu-scraper/data/merged_victoria.csv \
-	&& wp db query 'select count(*) from wp_mm_impex;'
+	&& XDEBUG_SESSION=PHPSTORM wp mm import load ../menu-scraper/data/merged_crowfoot.csv \
+	&& wp db query 'select count(*) from wp_mm_impex;' \
+	&& wp db check | grep "mm_" \
+	&& wp mm jobs list
 
 export:
 	wp mm export crowfoot

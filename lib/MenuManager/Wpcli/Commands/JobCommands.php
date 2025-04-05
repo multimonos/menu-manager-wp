@@ -52,10 +52,12 @@ class JobCommands {
 
         $job = Job::find( $id );
 
+        // failed
         if ( $job === null ) {
             WP_CLI::error( "Job not found id=" . $id );
-        } else {
-            print_r( 'Job: ' . json_encode( $job, JSON_PRETTY_PRINT ) );
         }
+
+        // ok
+        print_r( 'Job: ' . json_encode( $job, JSON_PRETTY_PRINT ) );
     }
 }
