@@ -3,6 +3,7 @@
 namespace MenuManager\Wpcli\Commands;
 
 
+use MenuManager\Database\db;
 use MenuManager\Database\Model\Job;
 use MenuManager\Wpcli\CliOutput;
 use WP_CLI;
@@ -21,13 +22,15 @@ class JobCommands {
      * @when after_wp_load
      */
     public function list( $args, $assoc_args ) {
+        db::load();
 
-        $data = array_map( fn( $x ) => [
-            'id'         => $x->id,
-            'type'       => $x->type,
-            'status'     => $x->status,
-            'created_at' => $x->created_at,
-        ], Job::all() );
+        $data = Job::all()->transform( function ( $x ) {
+            return ['id'         => $x->id,
+                    'type'       => $x->type,
+                    'status'     => $x->status,
+                    'created_at' => $x->created_at,
+            ];
+        } )->toArray();
 
         CliOutput::table(
             [5, 10, 10, 20],
@@ -48,6 +51,8 @@ class JobCommands {
      * @when after_wp_load
      */
     public function get( $args, $assoc_args ) {
+        db::load();
+
         $id = $args[0];
 
         $job = Job::find( $id );
@@ -58,6 +63,6 @@ class JobCommands {
         }
 
         // ok
-        print_r( $job );
+        print_r( $job->toArray() );
     }
 }

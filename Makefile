@@ -20,19 +20,29 @@ activate:
 deactivate:
 	wp plugin deactivate menu-manager-wp
 
-test-import:
+test:
 	clear \
 	&& wp plugin deactivate menu-manager-wp \
 	&& sleep 1 \
-	&& wp db check | grep "mm_" \
 	&& wp plugin activate menu-manager-wp \
-	&& wp mm menus list \
+	&& wp db check | grep "mm_" \
 	&& wp db query 'select count(*) from wp_mm_impex;' \
 	&& echo "$(cat ../menu-scraper/data/merged_crowfoot.csv |wc -l) lines" \
 	&& XDEBUG_SESSION=PHPSTORM wp mm import load ../menu-scraper/data/merged_crowfoot.csv \
 	&& wp db query 'select count(*) from wp_mm_impex;' \
 	&& wp db check | grep "mm_" \
-	&& wp mm jobs list
+	&& wp mm menus list \
+	&& wp mm menus get crowfoot \
+	&& wp mm jobs list \
+	&& wp mm jobs get 1
+
+test-import:
+	clear \
+	&& wp plugin deactivate menu-manager-wp \
+	&& sleep 1 \
+	&& wp plugin activate menu-manager-wp \
+	&& wp db query 'select count(*) from wp_mm_impex;' \
+	&& XDEBUG_SESSION=PHPSTORM wp mm import load ../menu-scraper/data/merged_crowfoot.csv
 
 export:
 	wp mm export crowfoot

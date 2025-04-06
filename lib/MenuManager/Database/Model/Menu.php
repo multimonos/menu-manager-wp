@@ -2,20 +2,39 @@
 
 namespace MenuManager\Database\Model;
 
-class Menu extends Model {
+use Illuminate\Database\Schema\Blueprint;
+use MenuManager\Database\db;
+
+class Menu extends \Illuminate\Database\Eloquent\Model {
     const TABLE = 'mm_menus';
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = 'updated_at';
 
-    public static function createTableSql(): string {
-        global $wpdb;
+    protected $table = 'mm_menus';
+    protected $fillable = [
+        'menu_post_id',
+        'page',
+    ];
 
-        return 'CREATE TABLE ' . self::tablename() . ' (
-        id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        menu_post_id BIGINT UNSIGNED NOT NULL,
-        page VARCHAR(32),
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        KEY idx_menu_post_id(menu_post_id),
-        CONSTRAINT fk_menu_post_id FOREIGN KEY (menu_post_id) REFERENCES wp_posts (ID) ON DELETE CASCADE
-        ) ' . $wpdb->get_charset_collate() . ';';
+    public static function createTable() {
+        error_log( self::TABLE );
+
+        if ( ! db::load()::schema()->hasTable( self::TABLE ) ) {
+            error_log( self::TABLE . ' not found' );
+        } else {
+            db::load()::schema()->dropIfExists( self::TABLE );
+            error_log( self::TABLE . ' dropped' );
+        }
+
+        db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
+            $table->bigIncrements( 'id' );
+            $table->bigInteger( 'menu_post_id' )->unsigned();
+            $table->foreign( 'menu_post_id' )->references( 'ID' )->on( 'posts' )->onDelete( 'restrict' );
+            $table->string( 'page', 32 );
+            $table->dateTime( 'created_at' )->useCurrent();
+            $table->dateTime( 'updated_at' )->useCurrent();
+        } );
+
+        error_log( self::TABLE . ' created' );
     }
-
 }

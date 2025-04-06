@@ -2,39 +2,43 @@
 
 namespace MenuManager\Database\Model;
 
-class Job extends Model {
+use Illuminate\Database\Schema\Blueprint;
+use MenuManager\Database\db;
 
+class Job extends \Illuminate\Database\Eloquent\Model {
+
+
+    // Eloquent
     const TABLE = 'mm_jobs';
+
     const STATUS_CREATED = 'created';
     const STATUS_VALIDATED = 'validated';
     const STATUS_RUNNING = 'running';
     const STATUS_DONE = 'done';
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = 'updated_at';
 
-    protected static array $fields = [
-        'id'         => 'int',
-        'status'     => 'string',
-        'type'       => 'string',
-        'created_at' => 'string',
-    ];
+    protected $table = 'mm_jobs';
+    protected $fillable = ['type', 'status'];
 
-    public static function createTableSql(): string {
-        global $wpdb;
+    public static function createTable() {
+        error_log( self::TABLE );
 
-        return 'CREATE TABLE ' . self::tablename() . " (
-        id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        type ENUM('import','export'),
-        status ENUM('created','validated','running','done') NOT NULL DEFAULT 'created',
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        ) " . $wpdb->get_charset_collate() . ';';
-    }
+        if ( ! db::load()::schema()->hasTable( self::TABLE ) ) {
+            error_log( self::TABLE . ' not found' );
+        } else {
+            db::load()::schema()->dropIfExists( self::TABLE );
+            error_log( self::TABLE . ' dropped' );
+        }
 
-
-    public static function createImport() {
-        global $wpdb;
-
-        return $wpdb->insert( self::tablename(), [
-            'type'   => 'import',
-            'status' => self::STATUS_CREATED,
-        ] );
+        db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
+            $table->bigIncrements( 'id' );
+            $table->enum( 'type', ['import', 'export'] );
+            $table->enum( 'status', ['created', 'validated', 'running', 'done'] )->default( 'created' );
+            $table->dateTime( 'created_at' )->useCurrent();
+            $table->dateTime( 'updated_at' )->useCurrent();
+            $table->index( ['type', 'status'] );
+        } );
+        error_log( self::TABLE . ' created' );
     }
 }

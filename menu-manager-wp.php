@@ -17,17 +17,19 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-
-register_activation_hook( __FILE__, [Activate::class, 'run'] );
-register_deactivation_hook( __FILE__, [Deactivate::class, 'run'] );
-
+// wp cli'
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
+    // db::load();
     $command_namespace = 'mm';
     WP_CLI::add_command( $command_namespace, RootCommands::class );
     WP_CLI::add_command( $command_namespace . ' import', ImportCommands::class );
     WP_CLI::add_command( $command_namespace . ' jobs', JobCommands::class );
     WP_CLI::add_command( $command_namespace . ' menus', MenuCommands::class );
 }
+
+// plugin
+register_activation_hook( __FILE__, [Activate::class, 'run'] );
+register_deactivation_hook( __FILE__, [Deactivate::class, 'run'] );
 
 function menu_manager_plugin() {
     MenuPost::init();
