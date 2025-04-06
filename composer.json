@@ -14,6 +14,7 @@
     }
   },
   "require": {
-    "league/csv": "^9.22"
+    "league/csv": "^9.22",
+    "illuminate/database": "^9.0"
   }
 }

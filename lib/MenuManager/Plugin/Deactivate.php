@@ -2,6 +2,7 @@
 
 namespace MenuManager\Plugin;
 
+use MenuManager\Database\db;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Job;
 use MenuManager\Database\Model\Menu;
@@ -20,10 +21,10 @@ class Deactivate {
     public function cleanDatabase() {
         global $wpdb;
 
-        $wpdb->query( 'SET foreign_key_checks=0;' );
-        $wpdb->query( Job::dropTableSql() );
-        $wpdb->query( Impex::dropTableSql() );
-        $wpdb->query( Menu::dropTableSql() );
-        $wpdb->query( 'SET foreign_key_checks=1;' );
+        db::load()->getConnection()->statement( 'SET foreign_key_checks=0;' );
+        db::load()::schema()->dropIfExists( Job::TABLE );
+        db::load()::schema()->dropIfExists( Menu::TABLE );
+        db::load()::schema()->dropIfExists( Impex::TABLE );
+        db::load()->getConnection()->statement( 'SET foreign_key_checks=1;' );
     }
 }

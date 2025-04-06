@@ -22,8 +22,8 @@ class Activate {
     public function create_database() {
         global $wpdb;
 
-        dbDelta( Job::createTableSql() );
-        dbDelta( Impex::createTableSql() );
-        dbDelta( Menu::createTableSql() );
+        Job::createTable();
+        Impex::createTable();
+        Menu::createTable();
     }
 }

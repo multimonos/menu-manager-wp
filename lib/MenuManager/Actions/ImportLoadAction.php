@@ -3,19 +3,20 @@
 namespace MenuManager\Actions;
 
 use League\Csv\Reader;
-use MenuManager\Database\DB;
+use MenuManager\Database\db;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Job;
-use SimplePie\Exception;
 
 class ImportLoadAction {
-    public static function fmt_bool( mixed $v ): int {
-        return in_array( $v, ['yes', 'true', true, 'Y'] ) ? 1 : 0;
+    public static function to_bool( mixed $v ): bool {
+        return in_array( $v, ['yes', 'true', true, 'Y'] ) ? true : false;
     }
 
     public function run( string $path ) {
 
-        DB::startTransaction();
+        $conn = db::load()->getConnection();
+
+        $conn->beginTransaction();
 
         try {
             // database
@@ -29,22 +30,19 @@ class ImportLoadAction {
             $reader->setHeaderOffset( 0 );
             $headers = $reader->getHeader();
 
+            if ( ! in_array( 'action', $headers ) ) {
+                throw new \Exception( "Header row is missing" );
+            }
+
             // csv : debug
             print_r( [
                 'headers' => $headers,
                 'import'  => $import_id,
             ] );
 
-            // job create
-            $rs0 = Job::createImport();
+            // job
+            $job = Job::create( ['type' => 'import', 'status' => 'created'] );
 
-            // guard : job create err
-            if ( $rs0 === false ) {
-                throw new Exception( $wpdb->last_error );
-            }
-
-            // job create ok
-            $job_id = $wpdb->insert_id;
 
             // impex : load rows
             $records = $reader->getRecords();
@@ -57,40 +55,34 @@ class ImportLoadAction {
                 }
 
                 // impex insert
-                $rs = $wpdb->insert( Impex::tablename(), [
-                    'job_id'         => $job_id,
+                Impex::create( [
+                    'job_id'         => $job->id,
                     'action'         => $record['action'],
+                    'batch_id'       => $record['batch_id'],
+                    'description'    => $record['description'],
+                    'image_ids'      => $record['image_ids'],
+                    'is_glutensmart' => self::to_bool( $record['is_glutensmart'] ),
+                    'is_new'         => self::to_bool( $record['is_new'] ),
+                    'is_organic'     => self::to_bool( $record['is_organic'] ),
+                    'is_vegan'       => self::to_bool( $record['is_vegan'] ),
+                    'is_vegetarian'  => self::to_bool( $record['is_vegetarian'] ),
+                    'item_id'        => (int)$record['item_id'],
                     'menu'           => $record['menu'], // id or slug
                     'page'           => $record['page'],
-                    'batch_id'       => $record['batch_id'],
-                    'type'           => $record['type'],
-                    'item_id'        => $record['item_id'],
-                    'batch_id'       => $record['batch_id'],
-                    'title'          => $record['title'],
                     'prices'         => $record['prices'],
-                    'image_ids'      => $record['image_ids'],
-                    'is_new'         => self::fmt_bool( $record['is_new'] ),
-                    'is_glutensmart' => self::fmt_bool( $record['is_glutensmart'] ),
-                    'is_organic'     => self::fmt_bool( $record['is_organic'] ),
-                    'is_vegan'       => self::fmt_bool( $record['is_vegan'] ),
-                    'is_vegetarian'  => self::fmt_bool( $record['is_vegetarian'] ),
-                    'description'    => $record['description'],
+                    'title'          => $record['title'],
+                    'type'           => $record['type'],
                 ] );
-
-                // guard : impex insert
-                if ( $rs === false ) {
-                    throw new Exception( $wpdb->last_error );
-                }
             }
 
             print_r( ['record' => $record] );
 
-            DB::commit();
+            $conn->commit();
 
             return ActionResult::success( "Imported: {$path}" );
 
         } catch (Exception $e) {
-            DB::rollback();
+            $conn->rollBack();
             return ActionResult::failure( "Import failed: " . $e->getMessage() );
         }
     }

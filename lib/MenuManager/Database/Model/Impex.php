@@ -2,39 +2,70 @@
 
 namespace MenuManager\Database\Model;
 
-class Impex extends Model {
+use Illuminate\Database\Schema\Blueprint;
+use MenuManager\Database\db;
+
+class Impex extends \Illuminate\Database\Eloquent\Model {
 
     const TABLE = 'mm_impex';
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = 'updated_at';
 
-    public static function createTableSql(): string {
-        global $wpdb;
+    protected $table = 'mm_impex';
+    protected $fillable = [
+        'job_id',
+        'action',
+        'batch_id',
+        'description',
+        'image_ids',
+        'is_glutensmart',
+        'is_new',
+        'is_organic',
+        'is_vegan',
+        'is_vegetarian',
+        'item_id',
+        'menu',
+        'page',
+        'prices',
+        'title',
+        'type',
+    ];
 
-//        custom_name VARCHAR(32),
-//        custom_value VARCHAR(1000),
+    public static function createTable() {
+        error_log( self::TABLE );
 
-        return 'CREATE TABLE ' . self::tablename() . ' (
-        id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        job_id BIGINT UNSIGNED NOT NULL,
-        action VARCHAR(32),
-        menu VARCHAR(32),
-        page VARCHAR(32),
-        batch_id VARCHAR(32),
-        type VARCHAR(32),
-        item_id MEDIUMINT UNSIGNED, 
-        title VARCHAR(255),
-        prices VARCHAR(100),
-        image_ids VARCHAR(100),
-        is_new BOOLEAN NOT NULL DEFAULT 0,
-        is_glutensmart BOOLEAN NOT NULL DEFAULT 0,
-        is_organic BOOLEAN NOT NULL DEFAULT 0,
-        is_vegan BOOLEAN NOT NULL DEFAULT 0,
-        is_vegetarian BOOLEAN NOT NULL DEFAULT 0,
-        description VARCHAR(1000),
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        KEY idx_item_id (item_id),
-        KEY idx_batch_id (batch_id),
-        CONSTRAINT fk_job_id FOREIGN KEY (job_id) REFERENCES ' . Job::tablename() . '(id) ON DELETE CASCADE
-        ) ' . $wpdb->get_charset_collate() . ';';
+        if ( ! db::load()::schema()->hasTable( self::TABLE ) ) {
+            error_log( self::TABLE . ' not found' );
+        } else {
+            db::load()::schema()->dropIfExists( self::TABLE );
+            error_log( self::TABLE . ' dropped' );
+        }
+
+
+        db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
+            $table->bigIncrements( 'id' );
+            $table->bigInteger( 'job_id' )->unsigned();
+            $table->foreign( 'job_id' )->references( 'id' )->on( Job::TABLE )->onDelete( 'cascade' );
+            $table->string( 'action', 32 );
+            $table->string( 'menu', 32 );
+            $table->string( 'page', 32 );
+            $table->string( 'batch_id', 32 )->nullable();
+            $table->string( 'type', 32 );
+            $table->bigInteger( 'item_id' )->nullable();
+            $table->string( 'title' )->nullable();
+            $table->string( 'prices', 64 )->nullable();
+            $table->string( 'image_ids', 64 )->nullable();
+            $table->string( 'tags' )->nullable();
+            $table->boolean( 'is_glutensmart' )->default( false );
+            $table->boolean( 'is_new' )->default( false );
+            $table->boolean( 'is_organic' )->default( false );
+            $table->boolean( 'is_vegan' )->default( false );
+            $table->boolean( 'is_vegetarian' )->default( false );
+            $table->text( 'description' )->nullable();
+            $table->dateTime( 'created_at' )->useCurrent();
+            $table->dateTime( 'updated_at' )->useCurrent();
+        } );
+
+        error_log( self::TABLE . ' created' );
     }
-
 }
