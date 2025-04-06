@@ -5,7 +5,6 @@ namespace MenuManager\Wpcli\Commands;
 use MenuManager\Actions\ImportExecuteAction;
 use MenuManager\Actions\ImportLoadAction;
 use MenuManager\Actions\ImportValidateAction;
-use MenuManager\Database\Model\Job;
 use MenuManager\Import\ImportValidator;
 use WP_CLI;
 
@@ -62,21 +61,13 @@ class ImportCommands {
      * @when after_wp_load
      */
     public function validate( $args, $assoc_args ) {
+
         // job get
-        $id = $args[0];
-
-        $job = Job::find( $id );
-
-        // guard : job exists
-        if ( $job === null ) {
-            WP_CLI::error( "Job not found " . $id );
-        }
-
-        WP_CLI::success( "Validating job " . $job->id . ' ...' );
+        $job_id = $args[0];
 
         // guard : job status
         $action = new ImportValidateAction();
-        $rs = $action->run( $job );
+        $rs = $action->run( $job_id );
 
         // guard : err
         if ( ! $rs->ok() ) {
@@ -102,21 +93,11 @@ class ImportCommands {
      * @when after_wp_load
      */
     public function run( $args, $assoc_args ) {
-        // job get
-        $id = $args[0];
-
-        $job = Job::find( $id );
-
-        // guard : job exists
-        if ( $job === null ) {
-            WP_CLI::error( "Job not found " . $id );
-        }
-
-        WP_CLI::success( "Starting job " . $job->id . ' ...' );
+        $job_id = $args[0];
 
         // run job
         $action = new ImportExecuteAction();
-        $rs = $action->run( $job );
+        $rs = $action->run( $job_id );
 
         // guard : err
         if ( ! $rs->ok() ) {
