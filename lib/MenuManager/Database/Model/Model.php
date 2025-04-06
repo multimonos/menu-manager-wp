@@ -2,11 +2,55 @@
 
 namespace MenuManager\Database\Model;
 
-use stdClass;
-
 class Model {
 
     const TABLE = 'unknown';
+
+    protected array $data = [];
+
+    public function __construct( array $data = [] ) {
+        foreach ( $data as $field => $value ) {
+            $this->__set( $field, $value );
+        }
+    }
+
+    public function __get( string $field ) {
+        if ( ! static::isField( $field ) ) {
+            throw new \Exception( "Unknown field '{$field}' on " . static::class );
+        }
+        return $this->castOut( $field, $this->data[$field] ) ?? null;
+    }
+
+    public function __set( string $field, $value ) {
+        if ( ! static::isField( $field ) ) {
+            throw new \Exception( "Unknown field '{$field}' on " . static::class );
+        }
+        $this->data[$field] = $this->castIn( $field, $value );
+    }
+
+    protected function castIn( string $field, $value ) {
+        $type = static::$fields[$field] ?? null;
+
+        return match ($type) {
+            'int' => (int)$value,
+            'string' => (string)$value,
+            'bool' => (bool)$value,
+            'float' => (float)$value,
+            default => $value
+        };
+    }
+
+    protected function castOut( string $field, $value ) {
+        return $value;
+    }
+
+    protected function toArray() {
+        return $this->data;
+    }
+
+    public static function isField( $field ): bool {
+        return isset( static::$fields[$field] );
+    }
 
     public static function tablename(): string {
         global $wpdb;
@@ -21,34 +65,35 @@ class Model {
         return 'SELECT 1;';
     }
 
-//    public static function create( array $data = [] ): static {
-//        $model = new static();
-//        foreach ( $data as $k => $v ) {
-//            if ( property_exists( $mode, $k ) ) {
-//                $mode->$k = $v;
-//            }
-//        }
-//        return $model;
-//    }
+    public static function create( array $data = [] ): static {
+        return new static( $data );
+    }
 
-    public static function find( $id ): ?stdClass {
+    public static function find( $id ): ?static {
         global $wpdb;
+
         // null if not found
-        return $wpdb->get_row( 'SELECT * FROM ' . static::tablename() . ' WHERE id=' . $id . ';', OBJECT );
+        $row = $wpdb->get_row( 'SELECT * FROM ' . static::tablename() . ' WHERE id=' . $id . ';', ARRAY_A );
+
+        if ( is_array( $row ) ) {
+            return static::create( $row );
+        }
+
+        return null;
     }
 
     /**
-     * @return stdClass[]
+     * @return static[]
      */
     public static function all(): array {
         global $wpdb;
 
-        $rs = $wpdb->get_results( 'SELECT * FROM ' . static::tablename() . ';', OBJECT );
+        $rs = $wpdb->get_results( 'SELECT * FROM ' . static::tablename() . ';', ARRAY_A );
 
         if ( ! $rs ) {
             return [];
         }
 
-        return $rs;
+        return array_map( fn( $arr ) => static::create( $arr ), $rs );
     }
 }

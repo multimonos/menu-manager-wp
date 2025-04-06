@@ -3,14 +3,13 @@
 namespace MenuManager\Actions;
 
 use MenuManager\Database\Model\Job;
-use stdClass;
 
 class ImportValidateAction {
-    public function canValidate( stdClass $job ): bool {
+    public function canValidate( Job $job ): bool {
         return $job->status === Job::STATUS_CREATED;
     }
 
-    public function run( stdClass $job ): ActionResult {
+    public function run( Job $job ): ActionResult {
 
         // guard : job status
         if ( ! $this->canValidate( $job ) ) {

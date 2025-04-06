@@ -5,11 +5,17 @@ namespace MenuManager\Database\Model;
 class Job extends Model {
 
     const TABLE = 'mm_jobs';
-
     const STATUS_CREATED = 'created';
     const STATUS_VALIDATED = 'validated';
     const STATUS_RUNNING = 'running';
     const STATUS_DONE = 'done';
+
+    protected static array $fields = [
+        'id'         => 'int',
+        'status'     => 'string',
+        'type'       => 'string',
+        'created_at' => 'string',
+    ];
 
     public static function createTableSql(): string {
         global $wpdb;
