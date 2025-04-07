@@ -45,7 +45,7 @@ class MenuCommands {
 
 
     /**
-     * Get details about a menu.
+     * Render a menu to stdout.
      *
      * ## OPTIONS
      *
@@ -54,12 +54,11 @@ class MenuCommands {
      *
      * ## EXAMPLES
      *
-     *      wp mm menus get 42
-     *      wp mm menus get foobar
+     *      wp mm menus view foobar
      *
      * @when after_wp_load
      */
-    public function preview( $args, $assoc_args ) {
+    public function view( $args, $assoc_args ) {
         $id = $args[0];
 
         $menu = MenuPost::find( $id );
@@ -68,7 +67,7 @@ class MenuCommands {
         print_r( $pages->count() );
 
         $pages->each( function ( $page ) {
-            echo "\n-- {$page->page}";
+            echo "\nPa {$page->slug}";
 
             $page->menuCategories()->each( function ( $category ) {
                 $indent = str_repeat( '  ', $category->level );

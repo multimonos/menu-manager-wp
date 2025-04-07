@@ -13,7 +13,7 @@ class MenuPage extends \Illuminate\Database\Eloquent\Model {
 
     protected $fillable = [
         'menu_post_id',
-        'page',
+        'slug',
     ];
 
     public static function createTable() {
@@ -30,11 +30,11 @@ class MenuPage extends \Illuminate\Database\Eloquent\Model {
             $table->bigIncrements( 'id' );
             $table->bigInteger( 'menu_post_id' )->unsigned();
             $table->foreign( 'menu_post_id' )->references( 'ID' )->on( 'posts' )->onDelete( 'restrict' );
-            $table->string( 'page', 32 );
+            $table->string( 'slug', 32 );
             $table->dateTime( 'created_at' )->useCurrent();
             $table->dateTime( 'updated_at' )->useCurrent();
 
-            $table->unique( ['menu_post_id', 'page'] );
+            $table->unique( ['menu_post_id', 'slug'] );
         } );
     }
 

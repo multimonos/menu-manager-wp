@@ -82,7 +82,7 @@ class ImportExecuteAction {
 
                 $page = new MenuPage( [
                     'menu_post_id' => $menu->ID,
-                    'page'         => $page_slug,
+                    'slug'         => $page_slug,
                 ] );
 
                 $page->save();

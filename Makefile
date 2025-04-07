@@ -37,18 +37,11 @@ test:
 	&& wp mm import validate 1
 # && wp mm import run 1
 
-test-import:
-	clear \
-	&& wp plugin deactivate menu-manager-wp \
-	&& sleep 1 \
-	&& wp plugin activate menu-manager-wp \
-	&& wp db query 'select count(*) from wp_mm_impex;' \
-	&& XDEBUG_SESSION=PHPSTORM wp mm import load ../menu-scraper/data/merged_crowfoot.csv
-
 test-run:
 	clear \
   	&& wp db query "SET foreign_key_checks=0; truncate wp_mm_menu_item; truncate wp_mm_menu_category; truncate wp_mm_menu_page; delete from wp_posts where post_name ='victoria'; SET foreign_key_checks=1;" \
-	&& XDEBUG_SESSION=PHPSTORM wp mm import run 1
+	&& XDEBUG_SESSION=PHPSTORM wp mm import run 1 \
+	&& wp mm menus view victoria
 
 export:
 	wp mm export crowfoot

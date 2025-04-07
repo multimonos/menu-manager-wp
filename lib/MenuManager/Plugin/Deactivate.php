@@ -24,8 +24,8 @@ class Deactivate {
         global $wpdb;
 
         db::load()->getConnection()->statement( 'SET foreign_key_checks=0;' );
-        db::load()::schema()->dropIfExists( Job::TABLE );
         db::load()::schema()->dropIfExists( Impex::TABLE );
+        db::load()::schema()->dropIfExists( Job::TABLE );
         db::load()::schema()->dropIfExists( MenuItem::TABLE );
         db::load()::schema()->dropIfExists( MenuCategory::TABLE );
         db::load()::schema()->dropIfExists( MenuPage::TABLE );
