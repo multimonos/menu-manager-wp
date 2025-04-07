@@ -68,4 +68,54 @@ class Impex extends \Illuminate\Database\Eloquent\Model {
 
         error_log( self::TABLE . ' created' );
     }
+
+    public function job() {
+        return $this->belongsTo( Job::class, 'job_id' );
+    }
+
+    public function isGroup(): bool {
+        $types = [
+            'option-group',
+            'addon-group',
+        ];
+        return in_array( $this->type, $types );
+    }
+
+    public function isCategory(): bool {
+        return str_contains( (string)$this->type, 'category' );
+    }
+
+    public function isMenuItem(): bool {
+        return in_array( $this->type, [
+            'item',
+            'option',
+            'addon',
+            'wine',
+        ] );
+    }
+
+    public static function extractCategoryLevel( Impex $item ): int {
+        return (int)preg_replace( '/\D*/', '', $item->type );
+    }
+
+    public static function menuCategoryOf( Impex $item ): MenuCategory {
+        return new MenuCategory( [
+            'title'       => $item->title,
+            'type'        => $item->type,
+            'level'       => self::extractCategoryLevel( $item ),
+            'prices'      => $item->prices,
+            'description' => $item->description,
+        ] );
+    }
+
+
+    public static function menuItemOf( Impex $item ): MenuItem {
+        return new MenuItem( [
+            'title'       => $item->title,
+            'type'        => $item->type,
+            'prices'      => $item->prices,
+            'description' => $item->description,
+            'image_ids'   => $item->image_ids,
+        ] );
+    }
 }

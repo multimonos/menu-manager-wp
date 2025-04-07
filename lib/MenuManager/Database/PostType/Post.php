@@ -17,7 +17,9 @@ class Post {
         // by id
         if ( is_numeric( $id_or_slug ) ) {
             $post = get_post( (int)$id_or_slug );
-            return ($post && $post->post_type === static::POST_TYPE) ? $post : null;
+            return ($post && $post->post_type === static::POST_TYPE)
+                ? $post
+                : null;
         }
 
         // by slug
@@ -37,5 +39,20 @@ class Post {
         $posts = get_posts( $args );
 
         return is_array( $posts ) ? $posts : [];
+    }
+
+    public static function save( array $data ): mixed {
+        $ndata = array_merge( $data, [
+            'post_type'   => static::POST_TYPE,
+            'post_status' => 'publish',
+        ] );
+
+        $id = wp_insert_post( $ndata );
+
+        if ( $id ) {
+            return self::find( $id );
+        }
+
+        return $id;
     }
 }

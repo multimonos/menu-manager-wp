@@ -27,14 +27,15 @@ test:
 	&& wp plugin activate menu-manager-wp \
 	&& wp db check | grep "mm_" \
 	&& wp db query 'select count(*) from wp_mm_impex;' \
-	&& echo "$(cat ../menu-scraper/data/merged_crowfoot.csv |wc -l) lines" \
-	&& XDEBUG_SESSION=PHPSTORM wp mm import load ../menu-scraper/data/merged_crowfoot.csv \
+	&& XDEBUG_SESSION=PHPSTORM wp mm import load ./data/valid_create.csv \
 	&& wp db query 'select count(*) from wp_mm_impex;' \
 	&& wp db check | grep "mm_" \
 	&& wp mm menus list \
 	&& wp mm menus get crowfoot \
 	&& wp mm jobs list \
-	&& wp mm jobs get 1
+	&& wp mm jobs get 1 \
+	&& wp mm import validate 1
+# && wp mm import run 1
 
 test-import:
 	clear \
@@ -43,6 +44,11 @@ test-import:
 	&& wp plugin activate menu-manager-wp \
 	&& wp db query 'select count(*) from wp_mm_impex;' \
 	&& XDEBUG_SESSION=PHPSTORM wp mm import load ../menu-scraper/data/merged_crowfoot.csv
+
+test-run:
+	clear \
+  	&& wp db query "SET foreign_key_checks=0; truncate wp_mm_menu_item; truncate wp_mm_menu_category; truncate wp_mm_menu_page; delete from wp_posts where post_name ='victoria'; SET foreign_key_checks=1;" \
+	&& XDEBUG_SESSION=PHPSTORM wp mm import run 1
 
 export:
 	wp mm export crowfoot

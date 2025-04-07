@@ -5,15 +5,20 @@ namespace MenuManager\Database\Model;
 use Illuminate\Database\Schema\Blueprint;
 use MenuManager\Database\db;
 
-class Menu extends \Illuminate\Database\Eloquent\Model {
-    const TABLE = 'mm_menus';
+class MenuItem extends \Illuminate\Database\Eloquent\Model {
+    const TABLE = 'mm_menu_item';
+    protected $table = 'mm_menu_item';
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-    protected $table = 'mm_menus';
     protected $fillable = [
-        'menu_post_id',
-        'page',
+        'menu_id',
+        'type',
+        'title',
+        'image_ids',
+        'prices',
+        'description',
     ];
 
     public static function createTable() {
@@ -28,13 +33,19 @@ class Menu extends \Illuminate\Database\Eloquent\Model {
 
         db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
-            $table->bigInteger( 'menu_post_id' )->unsigned();
-            $table->foreign( 'menu_post_id' )->references( 'ID' )->on( 'posts' )->onDelete( 'restrict' );
-            $table->string( 'page', 32 );
+            $table->bigInteger( 'menu_category_id' )->unsigned();
+            $table->foreign( 'menu_category_id' )->references( 'id' )->on( MenuCategory::TABLE )->onDelete( 'cascade' );
+            $table->string( 'type', 32 );
+            $table->string( 'title' );
+            $table->text( 'description' )->nullable();
+            $table->string( 'prices' )->nullable();
+            $table->string( 'image_ids' )->nullable();
             $table->dateTime( 'created_at' )->useCurrent();
             $table->dateTime( 'updated_at' )->useCurrent();
         } );
+    }
 
-        error_log( self::TABLE . ' created' );
+    public function menuCategory() {
+        return $this->belongsTo( MenuCategory::class, 'menu_category_id' );
     }
 }

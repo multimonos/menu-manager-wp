@@ -4,12 +4,14 @@ namespace MenuManager\Actions;
 
 class ActionResult {
 
-    private $success = true;
-    private $message = "";
+    private bool $success = true;
+    private string $message = "";
+    private mixed $data = null;
 
     public function __construct( bool $success, string $message, mixed $data = null ) {
         $this->success = $success;
         $this->message = $message;
+        $this->data = $data;
     }
 
     public function ok(): bool {
@@ -22,6 +24,10 @@ class ActionResult {
 
     public function getMessage(): string {
         return $this->message;
+    }
+
+    public function getData(): mixed {
+        return $this->data;
     }
 
     public static function success( string $message = "Ok", mixed $data = null ) {

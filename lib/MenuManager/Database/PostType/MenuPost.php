@@ -3,6 +3,10 @@
 namespace MenuManager\Database\PostType;
 
 
+use Illuminate\Database\Eloquent\Builder;
+use MenuManager\Database\db;
+use MenuManager\Database\Model\MenuPage;
+
 class MenuPost extends Post {
 
     const POST_TYPE = 'menus';
@@ -24,8 +28,13 @@ class MenuPost extends Post {
                 'supports'        => ['title', 'editor'],
                 'capability_type' => 'post',
                 'menu_icon'       => 'dashicons-carrot',
-
             ] );
         } );
+    }
+
+    public static function menuPages( \WP_Post $menu ): Builder {
+        db::load();
+        $pages = MenuPage::where( 'menu_post_id', $menu->ID );
+        return $pages;
     }
 }

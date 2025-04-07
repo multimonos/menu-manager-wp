@@ -5,21 +5,16 @@ namespace MenuManager\Database\Model;
 use Illuminate\Database\Schema\Blueprint;
 use MenuManager\Database\db;
 
-class Job extends \Illuminate\Database\Eloquent\Model {
-
-
-    // Eloquent
-    const TABLE = 'mm_jobs';
-
-    const STATUS_CREATED = 'created';
-    const STATUS_VALIDATED = 'validated';
-    const STATUS_RUNNING = 'running';
-    const STATUS_DONE = 'done';
+class MenuPage extends \Illuminate\Database\Eloquent\Model {
+    const TABLE = 'mm_menu_page';
+    protected $table = 'mm_menu_page';
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-    protected $table = 'mm_jobs';
-    protected $fillable = ['type', 'status'];
+    protected $fillable = [
+        'menu_post_id',
+        'page',
+    ];
 
     public static function createTable() {
         error_log( self::TABLE );
@@ -33,16 +28,18 @@ class Job extends \Illuminate\Database\Eloquent\Model {
 
         db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
-            $table->enum( 'type', ['import', 'export'] );
-            $table->enum( 'status', ['created', 'validated', 'running', 'done'] )->default( 'created' );
+            $table->bigInteger( 'menu_post_id' )->unsigned();
+            $table->foreign( 'menu_post_id' )->references( 'ID' )->on( 'posts' )->onDelete( 'restrict' );
+            $table->string( 'page', 32 );
             $table->dateTime( 'created_at' )->useCurrent();
             $table->dateTime( 'updated_at' )->useCurrent();
-            $table->index( ['type', 'status'] );
+
+            $table->unique( ['menu_post_id', 'page'] );
         } );
-        error_log( self::TABLE . ' created' );
     }
 
-    public function impexes() {
-        return $this->hasMany( Impex::class, 'job_id' );
+
+    public function menuCategories() {
+        return $this->hasMany( MenuCategory::class, 'menu_page_id' );
     }
 }

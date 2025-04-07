@@ -71,10 +71,10 @@ class ImportCommands {
 
         // guard : err
         if ( ! $rs->ok() ) {
-            WP_CLI::error( $rs->getMessage() );
+            WP_CLI::error( $rs->getMessage() . "\n" . print_r( $rs->getData(), true ) );
         }
 
-        WP_CLI::success( $rs->getMessage() );
+        WP_CLI::success( $rs->getMessage() . "\n" . print_r( $rs->getData(), true ) );
     }
 
 
@@ -95,11 +95,18 @@ class ImportCommands {
     public function run( $args, $assoc_args ) {
         $job_id = $args[0];
 
-        // run job
-        $action = new ImportExecuteAction();
-        $rs = $action->run( $job_id );
+        // validate
+        $validate = new ImportValidateAction();
+        $rs = $validate->run( $job_id );
 
-        // guard : err
+        if ( ! $rs->ok() ) {
+            WP_CLI::error( $rs->getMessage() . "\n" . print_r( $rs->getData(), true ) );
+        }
+
+        // run
+        $import = new ImportExecuteAction();
+        $rs = $import->run( $job_id );
+
         if ( ! $rs->ok() ) {
             WP_CLI::error( $rs->getMessage() );
         }

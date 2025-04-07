@@ -4,7 +4,9 @@ namespace MenuManager\Plugin;
 
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Job;
-use MenuManager\Database\Model\Menu;
+use MenuManager\Database\Model\MenuCategory;
+use MenuManager\Database\Model\MenuItem;
+use MenuManager\Database\Model\MenuPage;
 
 class Activate {
 
@@ -24,6 +26,8 @@ class Activate {
 
         Job::createTable();
         Impex::createTable();
-        Menu::createTable();
+        MenuPage::createTable();
+        MenuCategory::createTable();
+        MenuItem::createTable();
     }
 }
