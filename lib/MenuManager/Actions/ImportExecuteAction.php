@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Job;
-use MenuManager\Database\Model\MenuPage;
+use MenuManager\Database\Model\MenuNode;
 use MenuManager\Database\PostType\MenuPost;
 
 class ImportExecuteAction {
@@ -60,68 +60,149 @@ class ImportExecuteAction {
     }
 
     protected function create( $menu_id, Collection $items ): bool {
+//        db::load();
+        db::load()->getConnection()->transaction( function () use ( $menu_id, $items ) {
 
-        $menu = MenuPost::save( ['post_title' => $menu_id, 'post_name' => $menu_id] );
+            // MENU
+            $menu = MenuPost::save( ['post_title' => $menu_id, 'post_name' => $menu_id] );
 
-        print_r( $menu );
-        if ( ! $menu instanceof \WP_Post ) {
-            echo "\nNOPE";
-            print_r( $menu );
-            return false;
-        }
-        db::load()->getConnection()->transaction( function () use ( $menu, $items ) {
+            if ( ! $menu instanceof \WP_Post ) {
+                return false;
+            }
 
-            echo "\nCREATE: {$menu->ID}";
-            echo "\n- items: " . $items->count();
+            // ROOT
+            $root = MenuNode::create( [
+                'menu_id' => $menu->ID,
+                'title'   => 'menu.' . $menu->post_name,
+                'type'    => 'root',
+
+            ] );
+            $root->saveAsRoot();
+            $root->refresh();
+            $root->fixTree();
+
+            // PAGE
             $pages = $items->groupBy( 'page' );
-            echo "\n- pages: " . $pages->count();
 
+            $pages->each( function ( $page_items, $page_slug ) use ( $menu, $root ) {
 
-            $pages->each( function ( $page_items, $page_slug ) use ( $menu ) {
-                echo "\n- {$page_slug}";
-
-                $page = new MenuPage( [
-                    'menu_post_id' => $menu->ID,
-                    'slug'         => $page_slug,
+                // page
+                $page = new MenuNode( [
+                    'menu_id'   => $menu->ID,
+                    'parent_id' => $root->id,
+                    'type'      => 'page',
+                    'title'     => ucwords( strtolower( $page_slug ) ),
                 ] );
 
                 $page->save();
+                $page->refresh();
+                $root->fixTree();
 
-                print_r( $page->toArray() );
+                // keep a local parent store
+                $parents = [
+                    0 => $page,
+                ];
 
-                $currentLevel = 0;
-                $currentCategory = null;
-                foreach ( $page_items as $row ) {
+                // ITEMS
+                $page_items->each( function ( $item ) use ( $menu, $root, $page, &$parents ) {
 
-                    if ( $row->isCategory() ) {
-                        $category = Impex::menuCategoryOf( $row );
-                        $category->menuPage()->associate( $page );
-                        $category->save();
-                        $currentLevel = $category->level;
-                        $currentCategory = $category;
+                    // CATEGORY
+                    if ( $item->isCategory() ) {
+                        $node = Impex::menuNodeOf( $menu, $item );
 
-                        echo "\n> {$category->level}  {$category->title} {$category->type}";
+                        // get parent for this level
+                        $parent = $parents[$node->level] ?? null;
 
-                    } elseif ( $row->isGroup() ) {
-                        $category = Impex::menuCategoryOf( $row );
-                        $category->level = $currentLevel + 1;
-                        $category->menuPage()->associate( $page );
-                        $category->save();
-                        $currentCategory = $category;
+                        // guard : parent must exist
+                        if ( $parent ) {
+                            $node->parent_id = $parent->id;
+                            $node->save();
+                            $node->refresh();
 
-                        echo "\nG {$category->level}  {$category->title} {$category->type}";
+                            // always fix the tree
+                            $root->fixTree();
 
-                    } elseif ( $row->isMenuItem() ) {
-                        $menuitem = Impex::menuItemOf( $row );
-                        if ( $currentCategory ) {
-                            $menuitem->menuCategory()->associate( $currentCategory );
-                            $menuitem->save();
+                            // set parent for this level
+                            $parents[($node->level + 1)] = $node;
                         }
-                        echo "\n  - {$menuitem->title}  {$menuitem->type}";
                     }
-                }
 
+
+                } );
+
+
+//                if ( false ) {
+
+//                    print_r( $page->toArray() );
+//
+//                    $currentLevel = 0;
+//                    $currentCategory = null;
+//                    $parents = [];
+//                    foreach ( $page_items as $row ) {
+//
+//                        if ( $row->isCategory() ) {
+//                            $category = Impex::menuCategoryOf( $row );
+//                            $category->menuPage()->associate( $page );
+//                            $category->save();
+//                            $category->refresh();
+//
+//                            if ( $category->level === 0 ) {
+//                                // top level category
+//                                $category->saveAsRoot();
+//
+//                            } elseif ( strtolower( $category->title ) === 'frozen' ) {
+//                                $parent = $parents[$category->level - 1] ?? null;
+//                                $child = $category;
+//
+//                                echo "\n  parent {$parent->title} -> child {$child->title}";
+//                                if ( $parent && $parent->exists ) {
+//                                    echo "\n  parent exists : " . ($parent && $parent->exists ? 'yes' : 'no');
+//                                    $parent->refresh();
+//                                    $child->appendToNode( $parent )->save();
+//                                }
+//                            }
+//
+//                            $parents[$category->level] = $category;
+//
+////                        print_r( $parents );
+////                        if ( $currentCategory && $category->level > 0 ) {
+////                            echo "\n:parent:" . $currentCategory->id;
+////                            $category->parent()->associate( $currentCategory )->save();
+////                        }
+//
+//                            // debug
+//                            echo "\n> {$category->level}  {$category->title} {$category->type}";
+//
+//                            // next
+//                            $currentCategory = $category;
+//                            $currentLevel = $category->level;
+//
+//                        } elseif ( $row->isGroup() ) {
+//                            continue;
+//                            $category = Impex::menuCategoryOf( $row );
+//                            $category->level = $currentLevel + 1;
+//                            $category->menuPage()->associate( $page );
+//                            $category->save();
+//
+//                            // debug
+//                            echo "\nG {$category->level}  {$category->title} {$category->type}";
+//
+//                            // next
+//                            $currentCategory = $category;
+//
+//                        } elseif ( $row->isMenuItem() ) {
+//                            continue;
+//                            $menuitem = Impex::menuItemOf( $row );
+//                            if ( $currentCategory ) {
+//                                $menuitem->menuCategory()->associate( $currentCategory );
+//                                $menuitem->save();
+//                            }
+//                            echo "\n  - {$menuitem->title}  {$menuitem->type}";
+//                        }
+//                    }
+//                }
             } );
+            MenuNode::fixTree();
         } );
 
         return true;

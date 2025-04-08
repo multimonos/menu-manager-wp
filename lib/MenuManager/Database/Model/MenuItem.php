@@ -21,6 +21,10 @@ class MenuItem extends \Illuminate\Database\Eloquent\Model {
         'description',
     ];
 
+    public function menuNode() {
+        return $this->belongsTo( MenuNode::class, 'menu_node_id' );
+    }
+
     public static function createTable() {
         error_log( self::TABLE );
 
@@ -33,8 +37,8 @@ class MenuItem extends \Illuminate\Database\Eloquent\Model {
 
         db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
-            $table->bigInteger( 'menu_category_id' )->unsigned();
-            $table->foreign( 'menu_category_id' )->references( 'id' )->on( MenuCategory::TABLE )->onDelete( 'cascade' );
+            $table->bigInteger( 'menu_node_id' )->unsigned();
+            $table->foreign( 'menu_node_id' )->references( 'id' )->on( MenuNode::TABLE )->onDelete( 'cascade' );
             $table->string( 'type', 32 );
             $table->string( 'title' );
             $table->text( 'description' )->nullable();
@@ -45,7 +49,4 @@ class MenuItem extends \Illuminate\Database\Eloquent\Model {
         } );
     }
 
-    public function menuCategory() {
-        return $this->belongsTo( MenuCategory::class, 'menu_category_id' );
-    }
 }

@@ -3,6 +3,8 @@
 namespace MenuManager\Wpcli\Commands;
 
 
+use MenuManager\Database\db;
+use MenuManager\Database\Model\MenuNode;
 use MenuManager\Database\PostType\MenuPost;
 use WP_CLI;
 
@@ -59,31 +61,37 @@ class MenuCommands {
      * @when after_wp_load
      */
     public function view( $args, $assoc_args ) {
+        db::load();
+
         $id = $args[0];
 
+        // menu
         $menu = MenuPost::find( $id );
 
-        $pages = MenuPost::menuPages( $menu );
-        print_r( $pages->count() );
+        // menu nodes root
+        $root = MenuNode::where( 'menu_id', $menu->ID )->where( 'type', 'root' )->first();
 
-        $pages->each( function ( $page ) {
-            echo "\nPa {$page->slug}";
+        // tree traversal
+        $traverse = function ( $nodes, $prefix = '--' ) use ( &$traverse ) {
+            foreach ( $nodes as $node ) {
+                echo "\n" . $prefix . ' ' . $node->title;
 
-            $page->menuCategories()->each( function ( $category ) {
-                $indent = str_repeat( '  ', $category->level );
+                $traverse( $node->children, $prefix . '--' );
+            }
+        };
 
-                echo "\n{$indent}C{$category->level} {$category->title} $[$category->prices]";
+        $nodes = MenuNode::descendantsOf( $root->id );
+//        print_r( get_class( $nodes ) );
+//
+//        print_r( [
+//            'menu'        => $menu->post_name,
+//            'root.title'  => $root->title,
+//            'nodes.count' => $nodes->count(),
+//        ] );
 
-                echo "\n{$indent}  {$category->menuItems()->count()}";
+        echo "\n{$menu->post_name}";
+        $traverse( $nodes->toTree() );
 
-                $category->menuItems()->each( function ( $item, $k ) use ( $indent ) {
-                    $n = str_pad( $k + 1, 2, );
-                    echo "\n{$indent}  {$n}  It {$item->title} $[{$item->prices}]";
-
-                } );
-            } );
-
-        } );
 
     }
 }

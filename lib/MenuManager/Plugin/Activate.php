@@ -2,11 +2,11 @@
 
 namespace MenuManager\Plugin;
 
+use MenuManager\Database\db;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Job;
-use MenuManager\Database\Model\MenuCategory;
 use MenuManager\Database\Model\MenuItem;
-use MenuManager\Database\Model\MenuPage;
+use MenuManager\Database\Model\MenuNode;
 
 class Activate {
 
@@ -22,12 +22,11 @@ class Activate {
     }
 
     public function create_database() {
-        global $wpdb;
-
-        Job::createTable();
+        db::load()->getConnection()->statement( 'SET foreign_key_checks=0;' );
         Impex::createTable();
-        MenuPage::createTable();
-        MenuCategory::createTable();
+        Job::createTable();
         MenuItem::createTable();
+        MenuNode::createTable();
+        db::load()->getConnection()->statement( 'SET foreign_key_checks=1;' );
     }
 }

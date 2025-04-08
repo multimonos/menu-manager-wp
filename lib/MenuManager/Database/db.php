@@ -2,7 +2,9 @@
 
 namespace MenuManager\Database;
 
+use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Events\Dispatcher;
 
 class db {
     protected static $capsule;
@@ -29,10 +31,16 @@ class db {
             $capsule = new Capsule();
             $capsule->addConnection( $config );
             $capsule->setAsGlobal();
+            $capsule->setEventDispatcher( new Dispatcher( new Container() ) );
             $capsule->bootEloquent();
 
-            self::$capsule = $capsule;
+            // hook into save event
+//            MenuNode::saving( function ( $model ) {
+//                echo "\nSAVING: " . $model->id;
+//                return true; // Important: return true to allow the save to continue
+//            } );
 
+            self::$capsule = $capsule;
         }
 
         return self::$capsule;

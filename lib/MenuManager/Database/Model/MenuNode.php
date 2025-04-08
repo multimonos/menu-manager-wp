@@ -3,23 +3,32 @@
 namespace MenuManager\Database\Model;
 
 use Illuminate\Database\Schema\Blueprint;
+use Kalnoy\Nestedset\NestedSet;
+use Kalnoy\Nestedset\NodeTrait;
 use MenuManager\Database\db;
 
-class MenuCategory extends \Illuminate\Database\Eloquent\Model {
-    const TABLE = 'mm_menu_category';
-    protected $table = 'mm_menu_category';
+class MenuNode extends \Illuminate\Database\Eloquent\Model {
+    const TABLE = 'mm_menu_node';
+    protected $table = 'mm_menu_node';
+
+    use NodeTrait;
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
     protected $fillable = [
-        'menu_page_id',
+        'menu_id',
+        'parent_id',
         'type',
-        'title',
         'level',
+        'title',
         'prices',
         'description',
     ];
+
+    public function menuItems() {
+        return $this->hasMany( MenuItem::class, 'menu_node_id' );
+    }
 
     public static function createTable() {
         error_log( self::TABLE );
@@ -33,11 +42,12 @@ class MenuCategory extends \Illuminate\Database\Eloquent\Model {
 
         db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
-            $table->bigInteger( 'menu_page_id' )->unsigned();
-            $table->foreign( 'menu_page_id' )->references( 'id' )->on( MenuPage::TABLE )->onDelete( 'cascade' );
+            $table->bigInteger( 'menu_id' )->unsigned();
+            $table->foreign( 'menu_id' )->references( 'ID' )->on( 'posts' )->onDelete( 'cascade' );
+            NestedSet::columns( $table );
             $table->string( 'type', 32 );
-            $table->string( 'title' );
-            $table->tinyInteger( 'level' )->default( 1 );
+            $table->tinyInteger( 'level' )->default( 0 );
+            $table->string( 'title' )->nullable();
             $table->text( 'description' )->nullable();
             $table->string( 'prices', 64 )->nullable();
             $table->dateTime( 'created_at' )->useCurrent();
@@ -45,12 +55,5 @@ class MenuCategory extends \Illuminate\Database\Eloquent\Model {
         } );
     }
 
-    public function menuPage() {
-        return $this->belongsTo( MenuPage::class, 'menu_page_id' );
-    }
-
-    public function menuItems() {
-        return $this->hasMany( MenuItem::class, 'menu_category_id' );
-    }
 
 }

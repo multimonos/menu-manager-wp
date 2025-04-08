@@ -39,9 +39,9 @@ test:
 
 test-run:
 	clear \
-  	&& wp db query "SET foreign_key_checks=0; truncate wp_mm_menu_item; truncate wp_mm_menu_category; truncate wp_mm_menu_page; delete from wp_posts where post_name ='victoria'; SET foreign_key_checks=1;" \
+  	&& wp db query "SET foreign_key_checks=0; truncate wp_mm_menu_item; truncate table wp_mm_menu_node;  delete from wp_posts where post_name ='victoria'; SET foreign_key_checks=1;" \
 	&& XDEBUG_SESSION=PHPSTORM wp mm import run 1 \
-	&& wp mm menus view victoria
+	&& XDEBUG_SESSION=PHPSTORM wp mm menus view victoria
 
 export:
 	wp mm export crowfoot

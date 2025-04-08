@@ -94,15 +94,16 @@ class Impex extends \Illuminate\Database\Eloquent\Model {
         ] );
     }
 
-    public static function extractCategoryLevel( Impex $item ): int {
+    public static function extractLevel( Impex $item ): int {
         return (int)preg_replace( '/\D*/', '', $item->type );
     }
 
-    public static function menuCategoryOf( Impex $item ): MenuCategory {
-        return new MenuCategory( [
-            'title'       => $item->title,
+    public static function menuNodeOf( \WP_Post $menu, Impex $item ): MenuNode {
+        return new MenuNode( [
+            'menu_id'     => $menu->ID,
+            'title'       => ucwords( strtolower( $item->title ) ),
             'type'        => $item->type,
-            'level'       => self::extractCategoryLevel( $item ),
+            'level'       => self::extractLevel( $item ),
             'prices'      => $item->prices,
             'description' => $item->description,
         ] );
