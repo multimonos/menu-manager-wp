@@ -23,8 +23,8 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
         'type',
         'level',
         'title',
-        'prices',
         'description',
+        'prices',
     ];
 
 
@@ -53,8 +53,10 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
         } );
     }
 
-    public function menuItems() {
-        return $this->hasMany( MenuItem::class, 'menu_node_id' );
+    public function menuItem() {
+        // Always return an empty object if join does not exist
+        // MenuNode -> MenuItem ( 1 to zero or one )
+        return $this->hasOne( MenuItem::class, 'menu_node_id' )->withDefault();
     }
 
     public function saveWithParent( MenuNode $parent ): MenuNode {

@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Job;
-use MenuManager\Database\Model\MenuNodeFactory;
+use MenuManager\Database\Model\MenuFactory;
 use MenuManager\Database\PostType\MenuPost;
 
 class ImportExecuteAction {
@@ -71,10 +71,7 @@ class ImportExecuteAction {
             }
 
             // ROOT
-            $root = MenuNodeFactory::root( $menu );
-            $root->saveAsRoot();
-            $root->refresh();
-            $root->fixTree();
+            $root = MenuFactory::createRootNode( $menu );
 
             // PAGE
             $pages = $items->groupBy( 'page' );
@@ -82,10 +79,7 @@ class ImportExecuteAction {
             $pages->each( function ( Collection $rows, string $page_slug ) use ( $menu, $root ) {
 
                 // PAGE
-                $page = MenuNodeFactory::pageNode( $menu, $root, $page_slug );
-                $page->save();
-                $page->refresh();
-                $root->fixTree();
+                $page = MenuFactory::createPageNode( $menu, $root, $page_slug );
 
                 // ALL ITEMS
                 $parents = [
@@ -97,10 +91,10 @@ class ImportExecuteAction {
                 while ( $cnt < $rows->count() ) {
                     $row = $rows[$cnt];
 
-                    if ( Impex::isCategory( $row ) ) {
+                    if ( Impex::isCategoryType( $row ) ) {
                         // CATEGORY
-                        $node = MenuNodeFactory::categoryNode( $menu, $row );
-                        $node->save();
+                        $node = MenuFactory::createCategoryNode( $menu, $row );
+                        $root->fixTree();
 
                         // get parent for this level
                         $parent = $parents[$node->level] ?? null;
@@ -117,36 +111,33 @@ class ImportExecuteAction {
 
                         $cnt++;
 
-                    } elseif ( true && Impex::isMenuItemGroup( $row ) ) {
+                    } elseif ( true && Impex::isGroupType( $row ) ) {
                         // OPTION-GROUP,ADDON-GROUP
                         $parent = $parents[($level + 1)] ?? null;
 
-                        $group = MenuNodeFactory::menuNode( $menu, $row );
-                        $group->save();
+                        $group = MenuFactory::createMenuItemNode( $menu, $row );
 
                         if ( $parent ) {
                             $group->saveWithParent( $parent );
                             $root->fixTree();
 
-                            // OPTIONS
-                            $cnt++; // move to first available option
+                            // OPTIONS,ADDONS
+                            $cnt++; // move to first available 'option'
 
-                            while ( $cnt < $rows->count() && in_array( $rows[$cnt]->type, ['option', 'addon'] ) ) {
-                                $item = MenuNodeFactory::menuNode( $menu, $rows[$cnt], $group );
-                                $item->save();
+                            while ( $cnt < $rows->count() && Impex::isGroupItemType( $rows[$cnt] ) ) {
+                                $item = MenuFactory::createMenuItemNode( $menu, $rows[$cnt], $group );
                                 $cnt++;
                             }
                         }
 
                         $cnt++;
 
-                    } elseif ( true && Impex::isMenuItem( $row ) ) {
+                    } elseif ( true && Impex::isItemType( $row ) ) {
                         // ITEM,WINE
                         $parent = $parents[($level + 1)] ?? null;
 
                         if ( $parent ) {
-                            $item = MenuNodeFactory::menuNode( $menu, $row, $parent );
-                            $item->save();
+                            $item = MenuFactory::createMenuItemNode( $menu, $row, $parent );
                         }
                         $cnt++;
 

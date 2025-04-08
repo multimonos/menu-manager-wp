@@ -73,11 +73,11 @@ class Impex extends \Illuminate\Database\Eloquent\Model {
         return $this->belongsTo( Job::class, 'job_id' );
     }
 
-    public static function isCategory( Impex $row ): bool {
-        return str_contains( (string)$row->type, 'category' );
+    public static function isCategoryType( Impex $row ): bool {
+        return str_contains( (string)$row->type, 'category-' );
     }
 
-    public static function isMenuItemGroup( Impex $row ): bool {
+    public static function isGroupType( Impex $row ): bool {
         $types = [
             'option-group',
             'addon-group',
@@ -85,34 +85,22 @@ class Impex extends \Illuminate\Database\Eloquent\Model {
         return in_array( $row->type, $types );
     }
 
-    public static function isMenuItem( Impex $row ): bool {
+    public static function isGroupItemType( Impex $row ): bool {
         return in_array( $row->type, [
-            'item',
             'option',
             'addon',
+        ] );
+    }
+
+    public static function isItemType( Impex $row ): bool {
+        return in_array( $row->type, [
+            'item',
             'wine',
         ] );
     }
 
     public static function levelFromType( Impex $row ): int {
         return (int)preg_replace( '/\D*/', '', $row->type );
-    }
-
-    public static function menuNodeOf( \WP_Post $menu, Impex $row, MenuNode $parent = null ): MenuNode {
-        $node = new MenuNode( [
-            'menu_id'     => $menu->ID,
-            'title'       => ucwords( strtolower( $row->title ) ),
-            'type'        => $row->type,
-            'level'       => self::levelFromType( $row ),
-            'prices'      => $row->prices,
-            'description' => $row->description,
-        ] );
-
-        if ( $parent instanceof MenuNode ) {
-            $node->parent_id = $parent->id;
-        }
-
-        return $node;
     }
 
 }

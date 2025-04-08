@@ -21,13 +21,12 @@ class TextMenuPrinter {
 
     protected function traverse( $nodes, $prefix = '' ) {
         foreach ( $nodes as $node ) {
-            echo "\n" . $prefix . ' ' . $node->title;
+            echo "\n"
+                . $prefix
+                . ' ' . $node->title
+                . ($node->menuItem->prices ? '  $[' . $node->menuItem->prices . ']' : '');
 
             $this->traverse( $node->children, $prefix . '..' );
-
-            $node->menuItems()->each( function ( $item ) use ( $prefix ) {
-                echo "\n{$prefix} {$prefix} " . $item->title;
-            } );
         }
     }
 }
