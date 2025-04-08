@@ -73,20 +73,20 @@ class Impex extends \Illuminate\Database\Eloquent\Model {
         return $this->belongsTo( Job::class, 'job_id' );
     }
 
-    public function isGroup(): bool {
+    public static function isCategory( Impex $row ): bool {
+        return str_contains( (string)$row->type, 'category' );
+    }
+
+    public static function isMenuItemGroup( Impex $row ): bool {
         $types = [
             'option-group',
             'addon-group',
         ];
-        return in_array( $this->type, $types );
+        return in_array( $row->type, $types );
     }
 
-    public function isCategory(): bool {
-        return str_contains( (string)$this->type, 'category' );
-    }
-
-    public function isMenuItem(): bool {
-        return in_array( $this->type, [
+    public static function isMenuItem( Impex $row ): bool {
+        return in_array( $row->type, [
             'item',
             'option',
             'addon',
@@ -94,29 +94,25 @@ class Impex extends \Illuminate\Database\Eloquent\Model {
         ] );
     }
 
-    public static function extractLevel( Impex $item ): int {
-        return (int)preg_replace( '/\D*/', '', $item->type );
+    public static function levelFromType( Impex $row ): int {
+        return (int)preg_replace( '/\D*/', '', $row->type );
     }
 
-    public static function menuNodeOf( \WP_Post $menu, Impex $item ): MenuNode {
-        return new MenuNode( [
+    public static function menuNodeOf( \WP_Post $menu, Impex $row, MenuNode $parent = null ): MenuNode {
+        $node = new MenuNode( [
             'menu_id'     => $menu->ID,
-            'title'       => ucwords( strtolower( $item->title ) ),
-            'type'        => $item->type,
-            'level'       => self::extractLevel( $item ),
-            'prices'      => $item->prices,
-            'description' => $item->description,
+            'title'       => ucwords( strtolower( $row->title ) ),
+            'type'        => $row->type,
+            'level'       => self::levelFromType( $row ),
+            'prices'      => $row->prices,
+            'description' => $row->description,
         ] );
+
+        if ( $parent instanceof MenuNode ) {
+            $node->parent_id = $parent->id;
+        }
+
+        return $node;
     }
 
-
-    public static function menuItemOf( Impex $item ): MenuItem {
-        return new MenuItem( [
-            'title'       => $item->title,
-            'type'        => $item->type,
-            'prices'      => $item->prices,
-            'description' => $item->description,
-            'image_ids'   => $item->image_ids,
-        ] );
-    }
 }

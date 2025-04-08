@@ -71,12 +71,21 @@ class MenuCommands {
         // menu nodes root
         $root = MenuNode::where( 'menu_id', $menu->ID )->where( 'type', 'root' )->first();
 
+
         // tree traversal
         $traverse = function ( $nodes, $prefix = '--' ) use ( &$traverse ) {
             foreach ( $nodes as $node ) {
                 echo "\n" . $prefix . ' ' . $node->title;
-
                 $traverse( $node->children, $prefix . '--' );
+
+                $node->menuItems()->each( function ( $item ) use ( $prefix ) {
+                    echo "\n{$prefix}{$prefix} " . $item->title;
+                } );
+//                $items = $node->menuItems()->get();
+////                echo "\n  " . $items->count();
+//                foreach ( $node->menuItems() as $item ) {
+//                    echo "\n" . $item->title;
+//                }
             }
         };
 
@@ -92,6 +101,7 @@ class MenuCommands {
         echo "\n{$menu->post_name}";
         $traverse( $nodes->toTree() );
 
+        echo "\nROOT:" . ($root->isRoot() ? 'yes' : 'no');
 
     }
 }

@@ -8,10 +8,11 @@ use Kalnoy\Nestedset\NodeTrait;
 use MenuManager\Database\db;
 
 class MenuNode extends \Illuminate\Database\Eloquent\Model {
-    const TABLE = 'mm_menu_node';
-    protected $table = 'mm_menu_node';
 
     use NodeTrait;
+
+    const TABLE = 'mm_menu_node';
+    protected $table = 'mm_menu_node';
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
@@ -26,9 +27,6 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
         'description',
     ];
 
-    public function menuItems() {
-        return $this->hasMany( MenuItem::class, 'menu_node_id' );
-    }
 
     public static function createTable() {
         error_log( self::TABLE );
@@ -55,5 +53,15 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
         } );
     }
 
+    public function menuItems() {
+        return $this->hasMany( MenuItem::class, 'menu_node_id' );
+    }
 
+    public function saveWithParent( MenuNode $parent ): MenuNode {
+        $this->parent_id = $parent->id;
+//        $this->setParentId( $parent->id ); // not 100% reliable
+        $this->save();
+        $this->refresh();
+        return $this;
+    }
 }
