@@ -16,6 +16,7 @@ class MenuItem extends \Illuminate\Database\Eloquent\Model {
     protected $fillable = [
         'menu_node_id',
         'title', //@todo deprecate
+        'tags',
         'prices',
         'image_ids',
     ];
@@ -34,9 +35,8 @@ class MenuItem extends \Illuminate\Database\Eloquent\Model {
             $table->bigIncrements( 'id' );
             $table->bigInteger( 'menu_node_id' )->unsigned();
             $table->foreign( 'menu_node_id' )->references( 'id' )->on( MenuNode::TABLE )->onDelete( 'cascade' );
-//            $table->string( 'type', 32 )->nullable();
             $table->string( 'title' )->nullable();
-//            $table->text( 'description' )->nullable();
+            $table->string( 'tags' )->nullable();
             $table->string( 'prices' )->nullable();
             $table->string( 'image_ids' )->nullable();
             $table->dateTime( 'created_at' )->useCurrent();

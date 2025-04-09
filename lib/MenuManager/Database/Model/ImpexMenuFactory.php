@@ -2,7 +2,7 @@
 
 namespace MenuManager\Database\Model;
 
-class MenuFactory {
+class ImpexMenuFactory {
     public static function createRootNode( \WP_Post $menu ): MenuNode {
         $root = new MenuNode( [
             'menu_id' => $menu->ID,
@@ -72,14 +72,13 @@ class MenuFactory {
 
         $item = new MenuItem( [
             'menu_node_id' => $node->id,
-            'title'        => $row->title,
             'prices'       => $row->prices,
+            'tags'         => Impex::collectTags( $row ),
             'image_ids'    => $row->image_ids,
         ] );
 
         $item->save();
+
         return $node;
     }
-
-
 }

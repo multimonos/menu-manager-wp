@@ -22,7 +22,7 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
         'type',
         'title',
         'description',
-        'prices',
+        'prices', //@todo deprecate ... only here for "wine category titles"
     ];
 
 

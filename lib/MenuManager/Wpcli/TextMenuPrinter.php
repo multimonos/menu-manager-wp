@@ -17,8 +17,12 @@ class TextMenuPrinter {
                 . ' ' . $node->title
                 . ($node->menuItem->prices ? '  $[' . $node->menuItem->prices . ']' : '');
 
+            if ( $node->menuItem->tags ) {
+                echo '  @[' . $node->menuItem->tags . ']';
+            }
+
             if ( $node->description ) {
-                echo "  §[" . substr( $node->description, 0, 20 ) . '...]';
+                echo '  §[' . substr( $node->description, 0, 20 ) . '...]';
             }
 
             $this->traverse( $node->children, $prefix . '..' );

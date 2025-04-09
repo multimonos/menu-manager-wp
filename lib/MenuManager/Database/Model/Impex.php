@@ -8,10 +8,10 @@ use MenuManager\Database\db;
 class Impex extends \Illuminate\Database\Eloquent\Model {
 
     const TABLE = 'mm_impex';
+    protected $table = 'mm_impex';
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-    protected $table = 'mm_impex';
     protected $fillable = [
         'job_id',
         'action',
@@ -41,7 +41,6 @@ class Impex extends \Illuminate\Database\Eloquent\Model {
             error_log( self::TABLE . ' dropped' );
         }
 
-
         db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
             $table->bigInteger( 'job_id' )->unsigned();
@@ -55,7 +54,6 @@ class Impex extends \Illuminate\Database\Eloquent\Model {
             $table->string( 'title' )->nullable();
             $table->string( 'prices', 64 )->nullable();
             $table->string( 'image_ids', 64 )->nullable();
-            $table->string( 'tags' )->nullable();
             $table->boolean( 'is_glutensmart' )->default( false );
             $table->boolean( 'is_new' )->default( false );
             $table->boolean( 'is_organic' )->default( false );
@@ -103,4 +101,36 @@ class Impex extends \Illuminate\Database\Eloquent\Model {
         return (int)preg_replace( '/\D*/', '', $row->type );
     }
 
+    public static function collectTags( Impex $row ): string {
+        $fieldmap = [
+            'is_glutensmart' => 'gluten-smart',
+            'is_new'         => 'new',
+            'is_organic'     => 'organic',
+            'is_vegan'       => 'vegan',
+            'is_vegetarian'  => 'vegetarian',
+        ];
+
+        $tags = array_filter( array_map(
+            fn( $field ) => self::toBoolean( $row->$field ) ? $fieldmap[$field] : null,
+            array_keys( $fieldmap )
+        ) );
+
+        return join( ',', $tags );
+    }
+
+    public static function toBoolean( mixed $v ) {
+        if ( is_bool( $v ) ) {
+            return $v;
+        }
+        if ( is_numeric( $v ) ) {
+            return (float)$v != 0.0;
+        }
+
+        $v = is_string( $v ) ? strtolower( trim( $v ) ) : $v;
+
+        return match ($v) {
+            1, '1', 'true', 'yes', 'on', 'y' => true,
+            default => false,
+        };
+    }
 }

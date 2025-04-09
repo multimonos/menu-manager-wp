@@ -42,7 +42,12 @@ class MenuCommands {
             WP_CLI::runcommand( "post get {$id} --format=table" );
         } else {
             $post = MenuPost::find( $id );
-            WP_CLI::runcommand( "post get {$post->ID} --format=table" );
+
+            if ( $post instanceof \WP_Post ) {
+                WP_CLI::runcommand( "post get {$post->ID} --format=table" );
+            } else {
+                WP_CLI::error( "Menu not found '$id'." );
+            }
         }
     }
 
