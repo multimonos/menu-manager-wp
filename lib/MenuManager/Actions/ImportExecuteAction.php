@@ -2,7 +2,6 @@
 
 namespace MenuManager\Actions;
 
-use Illuminate\Support\Collection;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Job;
 use MenuManager\Database\PostType\MenuPost;
@@ -38,33 +37,17 @@ class ImportExecuteAction {
             $menu = MenuPost::find( $menu_id );
 
             if ( $menu === null ) {
-                $action = new MenuCreateAction();
-                $action->run( $menu_id, $rows );
+                $create = new MenuCreateAction();
+                $create->run( $menu_id, $rows );
             } else {
-                $this->update( $menu, $rows );
+                $update = new MenuUpdateAction();
+                $update->run( $menu, $rows );
             }
 
         } );
 
-
-        // get menu
-
-        // add menu categories
-
-        // add menu items
-        echo "\n\n";
-
         return ActionResult::success( 'Done' );
-
     }
 
 
-    protected function update( \WP_Post $menu, Collection $items ) {
-        echo "\nUPDATE: {$menu->post_name}";
-        // only take action where specified
-        $action_items = $items->filter( fn( $x ) => ! empty( $x->action ) );
-        echo "\n- count: " . $action_items->count();
-
-
-    }
 }
