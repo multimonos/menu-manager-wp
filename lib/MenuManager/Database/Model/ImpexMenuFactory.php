@@ -37,7 +37,6 @@ class ImpexMenuFactory {
             'menu_id'     => $menu->ID,
             'title'       => ucwords( mb_strtolower( $row->title ) ),// . '.' . $menu->post_name,
             'type'        => strtolower( $row->type ),
-//            'level'       => Impex::levelFromType( $row ),
             'prices'      => $row->prices,
             'description' => $row->description,
         ] );
@@ -64,7 +63,7 @@ class ImpexMenuFactory {
 
         if ( $parent instanceof MenuNode ) {
             $node->parent_id = $parent->id;
-//            $n->setParentId( $parent );
+//            $n->setParentId( $parent ); // not reliable
         }
 
         $node->save();
