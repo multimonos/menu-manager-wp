@@ -3,6 +3,7 @@
 namespace MenuManager\Actions;
 
 use Illuminate\Database\Eloquent\Collection;
+use League\Csv\Bom;
 use League\Csv\Writer;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Impex;
@@ -37,41 +38,42 @@ class ExportAction {
         db::load();
         db::load()::connection()->enableQueryLog();
 
-        // ROOT
-        $root = Node::findRootNode( $menu );
-
-        if ( is_null( $root ) ) {
-            return ActionResult::failure( "Menu root node not found." );
-        }
-
-        $node_count = Node::countForMenu( $menu );
+        // PAGES
+        $expected_count = Node::countForMenu( $menu );
+        $pages = Node::findPageNames( $menu );
 
         // Collect rows ... write csv.
         echo "\n";
 
         // writer
-        $writer = Writer::createFromPath( $path, 'w+' );
-        $writer->setOutputBOM( Writer::BOM_UTF8 ); // Add BOM for UTF-8
-        $writer->setEnclosure( '"' );
+        $writer = Writer::createFromPath( $path, 'w' );
+//        $writer->setOutputBOM( Writer::BOM_UTF8 ); // Add BOM for UTF-8
+        $writer->setOutputBOM( Bom::Utf8 );
+//        $writer->setOutputBOM( Bom::Utf16Le );
+//        $writer->setEnclosure( '"' );
         $writer->forceEnclosure();
 
         // headings
         $writer->insertOne( self::FIELDS );
 
-        // collect rows
-        $tree = Node::findRootTree( $menu );
+        //  rows
+        if ( ! empty( $pages ) ) {
 
-        // visit
-        $rows = $this->visit( $tree, fn( Node $node ) => $this->create( $menu, $node ) );
+            foreach ( $pages as $page ) {
+                $tree = Node::findPageTree( $menu, $page );
 
-        foreach ( $rows as $row ) {
-            $writer->insertOne( self::array_fill_keys( self::FIELDS, $row ) );
+                $rows = $this->visit( $tree, fn( Node $node ) => $this->create( $menu, $page, $node ) );
+
+                foreach ( $rows as $row ) {
+                    $writer->insertOne( self::array_fill_keys( self::FIELDS, $row ) );
+                }
+            }
         }
 
         $queries = db::load()::connection()->getQueryLog();
 
         echo "\n" . count( $queries ) . ' queries';
-        echo "\nsource.count:" . $node_count;
+        echo "\nsource.count: " . $expected_count;
         echo "\nexport.count: " . count( $rows );
         echo "\n";
 
@@ -102,7 +104,7 @@ class ExportAction {
         return $rows;
     }
 
-    protected function create( \WP_Post $menu, Node $node ): ?array {
+    protected function create( \WP_Post $menu, string $page, Node $node ): ?array {
 
         // Only process these node types for export
         $allowed = [
@@ -119,8 +121,9 @@ class ExportAction {
             return [
                 'action'         => $node->action,
                 'menu'           => $menu->post_name,
-                'page'           => '@todo',
+                'page'           => $page,
                 'batch_id'       => $node->batch_id,
+                'item_id'        => $node->id,
                 'type'           => $node->type,
                 'title'          => $node->title,
                 'prices'         => (string)$node->meta->prices,

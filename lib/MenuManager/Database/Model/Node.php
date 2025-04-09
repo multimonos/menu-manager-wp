@@ -3,6 +3,7 @@
 namespace MenuManager\Database\Model;
 
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Collection;
 use Kalnoy\Nestedset\NestedSet;
 use Kalnoy\Nestedset\NodeTrait;
 use MenuManager\Database\db;
@@ -73,6 +74,13 @@ class Node extends \Illuminate\Database\Eloquent\Model {
     public static function findRootNode( \WP_Post $menu ): ?Node {
         $node = Node::where( 'menu_id', $menu->ID )->where( 'type', 'root' )->first();
         return $node;
+    }
+
+    public static function findPageNames( \WP_Post $menu ): Collection {
+        $root = self::findRootNode( $menu );
+        return is_null( $root )
+            ? []
+            : $root->children->pluck( 'title' )->map( fn( $x ) => mb_strtolower( $x ) );
     }
 
     public static function findPageNode( \WP_Post $menu, string $page ): ?Node {
