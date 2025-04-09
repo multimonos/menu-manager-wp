@@ -33,22 +33,30 @@ class ImpexMenuFactory {
     }
 
     public static function createCategoryNode( \WP_Post $menu, Impex $row, MenuNode $parent = null ): MenuNode {
-        $n = new MenuNode( [
+        $node = new MenuNode( [
             'menu_id'     => $menu->ID,
             'title'       => ucwords( mb_strtolower( $row->title ) ),// . '.' . $menu->post_name,
             'type'        => strtolower( $row->type ),
-            'prices'      => $row->prices,
             'description' => $row->description,
         ] );
 
         if ( $parent instanceof MenuNode ) {
-            $n->setParentId( $parent );
+            $node->setParentId( $parent );
         }
 
-        $n->save();
-        $n->refresh();
+        $node->save();
+        $node->refresh();
 
-        return $n;
+        // MenuItem data
+        if ( ! empty( $row->prices ) ) {
+            $item = new MenuItem( [
+                'menu_node_id' => $node->id,
+                'prices'       => $row->prices,
+            ] );
+            $item->save();
+        }
+
+        return $node;
     }
 
     public static function createMenuItemNode( \WP_Post $menu, Impex $row, MenuNode $parent = null ): MenuNode {
@@ -69,13 +77,13 @@ class ImpexMenuFactory {
         $node->save();
         $node->refresh();
 
+        // MenuItem data
         $item = new MenuItem( [
             'menu_node_id' => $node->id,
             'prices'       => $row->prices,
             'tags'         => Impex::collectTags( $row ),
             'image_ids'    => $row->image_ids,
         ] );
-
         $item->save();
 
         return $node;
