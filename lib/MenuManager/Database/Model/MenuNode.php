@@ -20,7 +20,6 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
         'menu_id',
         'parent_id',
         'type',
-        'level',
         'title',
         'description',
         'prices',
@@ -43,7 +42,6 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
             $table->foreign( 'menu_id' )->references( 'ID' )->on( 'posts' )->onDelete( 'cascade' );
             NestedSet::columns( $table );
             $table->string( 'type', 32 );
-            $table->tinyInteger( 'level' )->default( 0 );
             $table->string( 'title' )->nullable();
             $table->text( 'description' )->nullable();
             $table->string( 'prices', 64 )->nullable();

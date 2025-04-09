@@ -21,6 +21,7 @@ class MenuCreateAction {
             if ( ! $menu instanceof \WP_Post ) {
                 return false;
             }
+            error_log("created menu ".$menu->post_name);
 
             // ROOT
             $root = MenuFactory::createRootNode( $menu );
@@ -34,11 +35,11 @@ class MenuCreateAction {
                 $page = MenuFactory::createPageNode( $menu, $root, $page_slug );
 
                 // ALL ITEMS
+                $level = 0;
+                $cnt = 0;
                 $parents = [
                     0 => $page,
                 ];
-                $level = 0;
-                $cnt = 0;
 
                 while ( $cnt < $rows->count() ) {
                     $row = $rows[$cnt];
@@ -46,10 +47,11 @@ class MenuCreateAction {
                     if ( Impex::isCategoryType( $row ) ) {
                         // CATEGORY
                         $node = MenuFactory::createCategoryNode( $menu, $row );
+                        $node_level = Impex::levelFromType( $row );
                         $root->fixTree();
 
                         // get parent for this level
-                        $parent = $parents[$node->level] ?? null;
+                        $parent = $parents[$node_level] ?? null;
 
                         // guard : parent must exist
                         if ( $parent ) {
@@ -57,7 +59,7 @@ class MenuCreateAction {
                             $root->fixTree();
 
                             // set parent for this level
-                            $level = $node->level;
+                            $level = $node_level;
                             $parents[($level + 1)] = $node;
                         }
 
@@ -82,7 +84,7 @@ class MenuCreateAction {
                             }
                         }
 
-                        $cnt++;
+                        // $cnt++; // incorrect double increment
 
                     } elseif ( true && Impex::isItemType( $row ) ) {
                         // ITEM,WINE

@@ -37,7 +37,7 @@ class MenuFactory {
             'menu_id'     => $menu->ID,
             'title'       => ucwords( mb_strtolower( $row->title ) ),// . '.' . $menu->post_name,
             'type'        => strtolower( $row->type ),
-            'level'       => Impex::levelFromType( $row ),
+//            'level'       => Impex::levelFromType( $row ),
             'prices'      => $row->prices,
             'description' => $row->description,
         ] );
