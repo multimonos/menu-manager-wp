@@ -13,7 +13,6 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
 
     const TABLE = 'mm_menu_node';
     protected $table = 'mm_menu_node';
-
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -60,10 +59,39 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
     }
 
     public function saveWithParent( MenuNode $parent ): MenuNode {
-        $this->parent_id = $parent->id;
 //        $this->setParentId( $parent->id ); // not 100% reliable
+        $this->parent_id = $parent->id;
         $this->save();
         $this->refresh();
         return $this;
+    }
+
+    public static function findRootNode( \WP_Post $menu ): ?MenuNode {
+        $node = MenuNode::where( 'menu_id', $menu->ID )->where( 'type', 'root' )->first();
+        return $node;
+    }
+
+    public static function findPageNode( \WP_Post $menu, string $page ): ?MenuNode {
+        $node = MenuNode::where( 'menu_id', $menu->ID )->where( 'type', 'page' )->where( 'title', $page )->first();
+        return $node;
+    }
+
+    public static function findRootTree( \WP_Post $menu ): ?\Kalnoy\NestedSet\Collection {
+        $root = self::findRootNode( $menu );
+        if ( is_null( $root ) ) {
+            return null;
+        }
+        $tree = MenuNode::with( "menuItem" )->withDepth()->descendantsOf( $root->id )->toTree();
+        return $tree;
+    }
+
+
+    public static function findPageTree( \WP_Post $menu, string $page ): ?\Kalnoy\NestedSet\Collection {
+        $page = self::findPageNode( $menu, $page );
+        if ( is_null( $page ) ) {
+            return null;
+        }
+        $tree = MenuNode::with( "menuItem" )->withDepth()->descendantsOf( $page->id )->toTree();
+        return $tree;
     }
 }

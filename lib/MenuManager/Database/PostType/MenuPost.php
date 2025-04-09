@@ -3,8 +3,6 @@
 namespace MenuManager\Database\PostType;
 
 
-use Illuminate\Database\Eloquent\Builder;
-use MenuManager\Database\db;
 use MenuManager\Database\Model\MenuPage;
 
 class MenuPost extends Post {
@@ -32,9 +30,4 @@ class MenuPost extends Post {
         } );
     }
 
-    public static function menuPages( \WP_Post $menu ): Builder {
-        db::load();
-        $pages = MenuPage::where( 'menu_post_id', $menu->ID );
-        return $pages;
-    }
 }

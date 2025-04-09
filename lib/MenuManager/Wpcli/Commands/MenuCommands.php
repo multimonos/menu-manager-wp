@@ -4,6 +4,7 @@ namespace MenuManager\Wpcli\Commands;
 
 
 use MenuManager\Database\db;
+use MenuManager\Database\Model\MenuNode;
 use MenuManager\Database\PostType\MenuPost;
 use MenuManager\Wpcli\TextMenuPrinter;
 use WP_CLI;
@@ -52,24 +53,52 @@ class MenuCommands {
      * ## OPTIONS
      *
      * <id>
-     *  : The id or slug of the menu ot get.
+     * : The id or slug of the menu ot get.
+     *
+     * [<page>]
+     * : The page to fetch
      *
      * ## EXAMPLES
      *
-     *      wp mm menus view foobar
+     *   wp mm menus view crowfoot
+     *   wp mm menus view crowfoot drink
      *
      * @when after_wp_load
      */
     public function view( $args, $assoc_args ) {
-        db::load();
+
+        db::load()::connection()->enableQueryLog();
 
         $id = $args[0];
+        $page = $args[1] ?? null;
 
         // menu
         $menu = MenuPost::find( $id );
 
+        if ( ! $menu ) {
+            WP_CLI::error( "Menu not found '{$id}'." );
+        }
+
+        // tree
+        $tree = empty( $page )
+            ? MenuNode::findRootTree( $menu )
+            : MenuNode::findPageTree( $menu, $page );
+
+        if ( ! $tree || $tree->count() === 0 ) {
+            WP_CLI::error( "Menu not found or is empty '" . trim( $id . ' ' . $page ) . "'." );
+        }
+
         // printer
         $printer = new TextMenuPrinter();
-        $printer->print( $menu );
+
+        // print
+        echo "\n$id $page";
+        $printer->print( $tree );
+
+        // log
+        $queries = db::load()::connection()->getQueryLog();
+
+        echo "\n\n";
+        WP_CLI::success( count( $queries ) . ' queries.' );
     }
 }
