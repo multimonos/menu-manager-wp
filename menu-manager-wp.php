@@ -23,8 +23,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
     $command_namespace = 'mm';
     WP_CLI::add_command( $command_namespace, RootCommands::class );
     WP_CLI::add_command( $command_namespace . ' import', ImportCommands::class );
-    WP_CLI::add_command( $command_namespace . ' jobs', JobCommands::class );
-    WP_CLI::add_command( $command_namespace . ' menus', MenuCommands::class );
+    WP_CLI::add_command( $command_namespace . ' job', JobCommands::class );
+    WP_CLI::add_command( $command_namespace . ' menu', MenuCommands::class );
 }
 
 // plugin

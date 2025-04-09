@@ -58,9 +58,9 @@ class ImportValidateAction {
 
         $menus->each( function ( $rows ) use ( &$err, &$msg ) {
             echo "\nrowcount:" . count( $rows );
-            print_r( $rows );
+//            print_r( $rows );
 
-            print_r( $rows->pluck( 'action' )->unique() );
+//            print_r( $rows->pluck( 'action' )->unique() );
             $meta = ImpexMeta::analyze( $rows );
 
             $msg[] = [

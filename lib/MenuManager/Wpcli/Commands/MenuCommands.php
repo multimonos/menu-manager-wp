@@ -14,10 +14,20 @@ class MenuCommands {
     /**
      * Get a list of menus.
      *
+     * ## OPTIONS
+     *
+     * [--format=<format>]
+     * : Output format. Options: table, ids. Default: table.
+     *
+     * ## EXAMPLES
+     *
+     *      wp mm jobs list
+     *
      * @when after_wp_load
      */
     public function list( $args, $assoc_args ) {
-        WP_CLI::runcommand( 'post list --post_type=menus --format=table' );
+        $format = $assoc_args['format'] ?? 'table';
+        WP_CLI::runcommand( "post list --post_type=menus --format={$format}" );
     }
 
     /**

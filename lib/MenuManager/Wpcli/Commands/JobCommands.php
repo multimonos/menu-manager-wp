@@ -15,6 +15,9 @@ class JobCommands {
      *
      * ## OPTIONS
      *
+     * [--format=<format>]
+     * : Output format. Options: table, ids. Default: table.
+     *
      * ## EXAMPLES
      *
      *      wp mm jobs list
@@ -22,21 +25,46 @@ class JobCommands {
      * @when after_wp_load
      */
     public function list( $args, $assoc_args ) {
+        $format = $assoc_args['format'] ?? 'table';
+
         db::load();
 
-        $data = Job::all()->transform( function ( $x ) {
-            return ['id'         => $x->id,
-                    'type'       => $x->type,
-                    'status'     => $x->status,
-                    'created_at' => $x->created_at,
-            ];
-        } )->toArray();
+        switch ( $format ) {
+            case 'count':
+                WP_CLI::line( Job::all()->pluck( 'id' )->count() );
+                break;
 
-        CliOutput::table(
-            [5, 10, 10, 20],
-            ['id', 'type', 'status', 'created_at'],
-            $data,
-        );
+            case 'ids':
+                $ids = Job::all()->pluck( 'id' )->join( ' ' );
+                WP_CLI::line( $ids );
+                break;
+
+            default:
+            case 'table':
+
+                $data = Job::all()->transform( function ( $x ) {
+                    return [
+                        'id'         => $x->id,
+                        'type'       => $x->type,
+                        'status'     => $x->status,
+                        'created_at' => $x->created_at,
+                        'source'     => $x->source,
+                    ];
+                } )->toArray();
+
+                $maxlen_source = array_reduce(
+                    $data,
+                    fn( $max, $item ) => max( $max, strlen( $item['source'] ) ),
+                    0
+                );
+
+                CliOutput::table(
+                    [5, 10, 10, 20, $maxlen_source],
+                    ['id', 'type', 'status', 'created_at', 'source'],
+                    $data,
+                );
+                break;
+        }
     }
 
 

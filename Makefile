@@ -35,19 +35,19 @@ test:
 	XDEBUG_SESSION=PHPSTORM wp mm import load ./data/valid_create.csv; \
 	wp db query 'select count(*) from wp_mm_impex;'; \
 	wp db check | grep "mm_"; \
-	wp mm menus list; \
-	wp mm menus get crowfoot; \
-	wp mm jobs list; \
-	wp mm jobs get 1; \
+	wp mm menu list; \
+	wp mm menu get crowfoot; \
+	wp mm job list; \
+	wp mm job get 1; \
 	wp mm import validate 1; \
 	wp mm import run 1; \
-	wp mm menus view crowfoot;
+	wp mm menu view crowfoot;
 
 run: delete-data \
 	; XDEBUG_SESSION=PHPSTORM wp mm import run 1
 
 view:
-	wp mm menus view crowfoot
+	wp mm menu view crowfoot
 
 export:
 	wp mm export crowfoot
@@ -66,3 +66,6 @@ food-category:
 	wp term list food_menu_section
 drink-category:
 	wp term list drink_menu_section
+
+impex:
+	./impex.sh

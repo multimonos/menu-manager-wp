@@ -16,7 +16,7 @@ class Job extends \Illuminate\Database\Eloquent\Model {
     const STATUS_RUNNING = 'running';
     const STATUS_DONE = 'done';
 
-    protected $fillable = ['type', 'status'];
+    protected $fillable = ['type', 'status', 'source'];
 
     public static function createTable() {
         error_log( self::TABLE );
@@ -32,6 +32,7 @@ class Job extends \Illuminate\Database\Eloquent\Model {
             $table->bigIncrements( 'id' );
             $table->enum( 'type', ['import', 'export'] );
             $table->enum( 'status', ['created', 'validated', 'running', 'done'] )->default( 'created' );
+            $table->string( 'source' )->nullable();
             $table->dateTime( 'created_at' )->useCurrent();
             $table->dateTime( 'updated_at' )->useCurrent();
             $table->index( ['type', 'status'] );

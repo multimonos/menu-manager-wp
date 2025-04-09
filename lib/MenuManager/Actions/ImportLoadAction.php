@@ -35,13 +35,17 @@ class ImportLoadAction {
             }
 
             // csv : debug
-            print_r( [
-                'headers' => $headers,
-                'import'  => $import_id,
-            ] );
+//            print_r( [
+//                'headers' => $headers,
+//                'import'  => $import_id,
+//            ] );
 
             // job
-            $job = Job::create( ['type' => 'import', 'status' => 'created'] );
+            $job = Job::create( [
+                'type'   => 'import',
+                'status' => 'created',
+                'source' => $path,
+            ] );
 
 
             // impex : load rows
@@ -75,7 +79,7 @@ class ImportLoadAction {
                 ] );
             }
 
-            print_r( ['record' => $record] );
+//            print_r( ['record' => $record] );
 
             $conn->commit();
 

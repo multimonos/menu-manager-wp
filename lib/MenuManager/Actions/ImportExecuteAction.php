@@ -30,8 +30,6 @@ class ImportExecuteAction {
         // split the impex by menu
         $imports = $job->impexes->groupBy( 'menu' );
 
-        echo "\nimports:" . $imports->count();
-
         $imports->each( function ( $rows, $menu_id ) {
 
             $menu = MenuPost::find( $menu_id );
