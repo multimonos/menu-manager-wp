@@ -2,7 +2,7 @@
 
 namespace MenuManager\Database\Model;
 
-class ImpexNodeFactory {
+class ImportFactory {
     public static function createRootNode( \WP_Post $menu ): Node {
         $root = new Node( [
             'menu_id' => $menu->ID,
