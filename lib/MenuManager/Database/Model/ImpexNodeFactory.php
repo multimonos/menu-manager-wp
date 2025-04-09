@@ -2,9 +2,9 @@
 
 namespace MenuManager\Database\Model;
 
-class ImpexMenuFactory {
-    public static function createRootNode( \WP_Post $menu ): MenuNode {
-        $root = new MenuNode( [
+class ImpexNodeFactory {
+    public static function createRootNode( \WP_Post $menu ): Node {
+        $root = new Node( [
             'menu_id' => $menu->ID,
             'type'    => 'root',
             'title'   => 'menu.' . $menu->post_name,
@@ -17,8 +17,8 @@ class ImpexMenuFactory {
         return $root;
     }
 
-    public static function createPageNode( \WP_Post $menu, MenuNode $root, string $page_slug ): MenuNode {
-        $page = new MenuNode( [
+    public static function createPageNode( \WP_Post $menu, Node $root, string $page_slug ): Node {
+        $page = new Node( [
             'menu_id'   => $menu->ID,
             'parent_id' => $root->id,
             'type'      => 'page',
@@ -32,15 +32,15 @@ class ImpexMenuFactory {
         return $page;
     }
 
-    public static function createCategoryNode( \WP_Post $menu, Impex $row, MenuNode $parent = null ): MenuNode {
-        $node = new MenuNode( [
+    public static function createCategoryNode( \WP_Post $menu, Impex $row, Node $parent = null ): Node {
+        $node = new Node( [
             'menu_id'     => $menu->ID,
             'title'       => ucwords( mb_strtolower( $row->title ) ),// . '.' . $menu->post_name,
             'type'        => strtolower( $row->type ),
             'description' => $row->description,
         ] );
 
-        if ( $parent instanceof MenuNode ) {
+        if ( $parent instanceof Node ) {
             $node->parent_id = $parent->id;
 //            $node->setParentId( $parent );
         }
@@ -48,11 +48,11 @@ class ImpexMenuFactory {
         $node->save();
         $node->refresh();
 
-        // MenuItem data
+        // Meta data
         if ( ! empty( $row->prices ) ) {
-            $item = new MenuItem( [
-                'menu_node_id' => $node->id,
-                'prices'       => $row->prices,
+            $item = new NodeMeta( [
+                'node_id' => $node->id,
+                'prices'  => $row->prices,
             ] );
             $item->save();
         }
@@ -60,16 +60,16 @@ class ImpexMenuFactory {
         return $node;
     }
 
-    public static function createMenuItemNode( \WP_Post $menu, Impex $row, MenuNode $parent = null ): MenuNode {
+    public static function createMenuitemNode( \WP_Post $menu, Impex $row, Node $parent = null ): Node {
 
-        $node = new MenuNode( [
+        $node = new Node( [
             'menu_id'     => $menu->ID,
             'type'        => strtolower( $row->type ),
             'title'       => ucwords( mb_strtolower( $row->title ) ),// . '.' . $menu->post_name,
             'description' => $row->description,
         ] );
 
-        if ( $parent instanceof MenuNode ) {
+        if ( $parent instanceof Node ) {
             $node->parent_id = $parent->id;
 //            $n->setParentId( $parent ); // not reliable
         }
@@ -77,12 +77,12 @@ class ImpexMenuFactory {
         $node->save();
         $node->refresh();
 
-        // MenuItem data
-        $item = new MenuItem( [
-            'menu_node_id' => $node->id,
-            'prices'       => $row->prices,
-            'tags'         => Impex::collectTags( $row ),
-            'image_ids'    => $row->image_ids,
+        // Meta data
+        $item = new NodeMeta( [
+            'node_id'   => $node->id,
+            'prices'    => $row->prices,
+            'tags'      => Impex::collectTags( $row ),
+            'image_ids' => $row->image_ids,
         ] );
         $item->save();
 

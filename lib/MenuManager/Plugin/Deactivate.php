@@ -5,8 +5,8 @@ namespace MenuManager\Plugin;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Job;
-use MenuManager\Database\Model\MenuItem;
-use MenuManager\Database\Model\MenuNode;
+use MenuManager\Database\Model\Node;
+use MenuManager\Database\Model\NodeMeta;
 
 class Deactivate {
     public static function run() {
@@ -23,8 +23,8 @@ class Deactivate {
         db::load()->getConnection()->statement( 'SET foreign_key_checks=0;' );
         db::load()::schema()->dropIfExists( Impex::TABLE );
         db::load()::schema()->dropIfExists( Job::TABLE );
-        db::load()::schema()->dropIfExists( MenuItem::TABLE );
-        db::load()::schema()->dropIfExists( MenuNode::TABLE );
+        db::load()::schema()->dropIfExists( NodeMeta::TABLE );
+        db::load()::schema()->dropIfExists( Node::TABLE );
         db::load()->getConnection()->statement( 'SET foreign_key_checks=1;' );
     }
 }

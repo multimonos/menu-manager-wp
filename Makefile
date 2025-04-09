@@ -22,7 +22,7 @@ deactivate:
 	wp plugin deactivate menu-manager-wp
 
 delete-data:
-	wp db query "SET foreign_key_checks=0; truncate wp_mm_menu_item; truncate table wp_mm_menu_node; delete from wp_posts where post_name ='crowfoot' and post_type='menus'; delete from wp_posts where post_name ='victoria' and post_type='menus'; SET foreign_key_checks=1;"
+	wp db query "SET foreign_key_checks=0; truncate wp_mm_node_meta; truncate table wp_mm_node; delete from wp_posts where post_name ='crowfoot' and post_type='menus'; delete from wp_posts where post_name ='victoria' and post_type='menus'; SET foreign_key_checks=1;"
 
 test:
 	clear; \

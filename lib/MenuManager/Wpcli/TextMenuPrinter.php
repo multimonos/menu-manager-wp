@@ -15,10 +15,10 @@ class TextMenuPrinter {
                 . str_pad( $node->depth, 3 )
                 . $prefix
                 . ' ' . $node->title
-                . ($node->menuItem->prices ? '  $[' . $node->menuItem->prices . ']' : '');
+                . ($node->meta->prices ? '  $[' . $node->meta->prices . ']' : '');
 
-            if ( $node->menuItem->tags ) {
-                echo '  #[' . $node->menuItem->tags . ']';
+            if ( $node->meta->tags ) {
+                echo '  #[' . $node->meta->tags . ']';
             }
 
             if ( $node->description ) {

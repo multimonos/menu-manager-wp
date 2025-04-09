@@ -4,7 +4,7 @@ namespace MenuManager\Wpcli\Commands;
 
 
 use MenuManager\Database\db;
-use MenuManager\Database\Model\MenuNode;
+use MenuManager\Database\Model\Node;
 use MenuManager\Database\PostType\MenuPost;
 use MenuManager\Wpcli\TextMenuPrinter;
 use WP_CLI;
@@ -72,6 +72,8 @@ class MenuCommands {
      */
     public function view( $args, $assoc_args ) {
 
+        // @todo refactor into action
+
         db::load()::connection()->enableQueryLog();
 
         $id = $args[0];
@@ -86,8 +88,8 @@ class MenuCommands {
 
         // tree
         $tree = empty( $page )
-            ? MenuNode::findRootTree( $menu )
-            : MenuNode::findPageTree( $menu, $page );
+            ? Node::findRootTree( $menu )
+            : Node::findPageTree( $menu, $page );
 
         if ( ! $tree || $tree->count() === 0 ) {
             WP_CLI::error( "Menu not found or is empty '" . trim( $id . ' ' . $page ) . "'." );

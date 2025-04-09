@@ -4,7 +4,7 @@ namespace MenuManager\Wpcli\Commands;
 
 use League\Csv\Writer;
 use MenuManager\Database\db;
-use MenuManager\Database\Model\MenuNode;
+use MenuManager\Database\Model\Node;
 use MenuManager\Database\PostType\MenuPost;
 use WP_CLI;
 
@@ -72,27 +72,27 @@ class RootCommands {
             db::load()->getConnection()->transaction( function () {
 
                 echo "\nTEST -- " . date( 'Y-m-d\@H:i:s' );
-                echo "\ncount:" . MenuNode::all()->count();
+                echo "\ncount:" . Node::all()->count();
 
                 // menu
                 $menu = MenuPost::find( 'victoria' );
 
                 // parent
-                $parent = new MenuNode( [
+                $parent = new Node( [
                     'menu_id' => $menu->ID,
                     'title'   => 'parent',
                     'type'    => 'root',
                 ] );
                 $parent->saveAsRoot();  // important!
                 $parent->refresh();
-                MenuNode::fixTree();
+                Node::fixTree();
                 echo "\n" . print_r( $parent->toArray(), true );
 
                 // all nodes
-                echo "\ncount:" . MenuNode::all()->count();
+                echo "\ncount:" . Node::all()->count();
 
                 // child
-                $child = new MenuNode( [
+                $child = new Node( [
                     'parent_id' => $parent->id,
                     'menu_id'   => $menu->ID,
                     'title'     => 'child thing',
@@ -102,7 +102,7 @@ class RootCommands {
                 $child->refresh();
                 echo "\n" . print_r( $child->toArray(), true );
 
-                MenuNode::fixTree();
+                Node::fixTree();
 
             } );
         } catch (\Exception $e) {

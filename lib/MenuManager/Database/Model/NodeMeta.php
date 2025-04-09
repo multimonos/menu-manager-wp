@@ -5,16 +5,16 @@ namespace MenuManager\Database\Model;
 use Illuminate\Database\Schema\Blueprint;
 use MenuManager\Database\db;
 
-class MenuItem extends \Illuminate\Database\Eloquent\Model {
+class NodeMeta extends \Illuminate\Database\Eloquent\Model {
 
-    const TABLE = 'mm_menu_item';
-    protected $table = 'mm_menu_item';
+    const TABLE = 'mm_node_meta';
+    protected $table = 'mm_node_meta';
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
     protected $fillable = [
-        'menu_node_id',
+        'node_id',
         'tags',
         'prices',
         'image_ids',
@@ -32,8 +32,8 @@ class MenuItem extends \Illuminate\Database\Eloquent\Model {
 
         db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
-            $table->bigInteger( 'menu_node_id' )->unsigned();
-            $table->foreign( 'menu_node_id' )->references( 'id' )->on( MenuNode::TABLE )->onDelete( 'cascade' );
+            $table->bigInteger( 'node_id' )->unsigned();
+            $table->foreign( 'node_id' )->references( 'id' )->on( Node::TABLE )->onDelete( 'cascade' );
             $table->string( 'tags' )->nullable();
             $table->string( 'prices' )->nullable();
             $table->string( 'image_ids' )->nullable();
@@ -43,6 +43,6 @@ class MenuItem extends \Illuminate\Database\Eloquent\Model {
     }
 
     public function menuNode() {
-        return $this->belongsTo( MenuNode::class, 'menu_node_id' );
+        return $this->belongsTo( Node::class, 'node_id' );
     }
 }

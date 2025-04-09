@@ -7,12 +7,12 @@ use Kalnoy\Nestedset\NestedSet;
 use Kalnoy\Nestedset\NodeTrait;
 use MenuManager\Database\db;
 
-class MenuNode extends \Illuminate\Database\Eloquent\Model {
+class Node extends \Illuminate\Database\Eloquent\Model {
 
     use NodeTrait;
 
-    const TABLE = 'mm_menu_node';
-    protected $table = 'mm_menu_node';
+    const TABLE = 'mm_node';
+    protected $table = 'mm_node';
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -48,13 +48,13 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
         } );
     }
 
-    public function menuItem() {
+    public function meta() {
         // Always return an empty object if join does not exist
-        // MenuNode -> MenuItem ( 1 to zero or one )
-        return $this->hasOne( MenuItem::class, 'menu_node_id' )->withDefault();
+        // Node -> NodeMeta ( 1 to zero or one )
+        return $this->hasOne( NodeMeta::class, 'node_id' )->withDefault();
     }
 
-    public function saveWithParent( MenuNode $parent ): MenuNode {
+    public function saveWithParent( Node $parent ): Node {
 //        $this->setParentId( $parent->id ); // not 100% reliable
         $this->parent_id = $parent->id;
         $this->save();
@@ -62,13 +62,13 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
         return $this;
     }
 
-    public static function findRootNode( \WP_Post $menu ): ?MenuNode {
-        $node = MenuNode::where( 'menu_id', $menu->ID )->where( 'type', 'root' )->first();
+    public static function findRootNode( \WP_Post $menu ): ?Node {
+        $node = Node::where( 'menu_id', $menu->ID )->where( 'type', 'root' )->first();
         return $node;
     }
 
-    public static function findPageNode( \WP_Post $menu, string $page ): ?MenuNode {
-        $node = MenuNode::where( 'menu_id', $menu->ID )->where( 'type', 'page' )->where( 'title', $page )->first();
+    public static function findPageNode( \WP_Post $menu, string $page ): ?Node {
+        $node = Node::where( 'menu_id', $menu->ID )->where( 'type', 'page' )->where( 'title', $page )->first();
         return $node;
     }
 
@@ -77,7 +77,7 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
         if ( is_null( $root ) ) {
             return null;
         }
-        $tree = MenuNode::with( "menuItem" )->withDepth()->descendantsOf( $root->id )->toTree();
+        $tree = Node::with( "meta" )->withDepth()->descendantsOf( $root->id )->toTree();
         return $tree;
     }
 
@@ -87,7 +87,7 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
         if ( is_null( $page ) ) {
             return null;
         }
-        $tree = MenuNode::with( "menuItem" )->withDepth()->descendantsOf( $page->id )->toTree();
+        $tree = Node::with( "meta" )->withDepth()->descendantsOf( $page->id )->toTree();
         return $tree;
     }
 }

@@ -6,19 +6,16 @@ use Illuminate\Database\Schema\Blueprint;
 use MenuManager\Database\db;
 
 class Job extends \Illuminate\Database\Eloquent\Model {
-
-
-    // Eloquent
     const TABLE = 'mm_jobs';
+    protected $table = 'mm_jobs';
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = 'updated_at';
 
     const STATUS_CREATED = 'created';
     const STATUS_VALIDATED = 'validated';
     const STATUS_RUNNING = 'running';
     const STATUS_DONE = 'done';
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
 
-    protected $table = 'mm_jobs';
     protected $fillable = ['type', 'status'];
 
     public static function createTable() {

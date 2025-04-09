@@ -5,8 +5,8 @@ namespace MenuManager\Plugin;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Job;
-use MenuManager\Database\Model\MenuItem;
-use MenuManager\Database\Model\MenuNode;
+use MenuManager\Database\Model\Node;
+use MenuManager\Database\Model\NodeMeta;
 
 class Activate {
 
@@ -25,8 +25,8 @@ class Activate {
         db::load()->getConnection()->statement( 'SET foreign_key_checks=0;' );
         Impex::createTable();
         Job::createTable();
-        MenuItem::createTable();
-        MenuNode::createTable();
+        NodeMeta::createTable();
+        Node::createTable();
         db::load()->getConnection()->statement( 'SET foreign_key_checks=1;' );
     }
 }

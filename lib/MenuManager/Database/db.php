@@ -35,7 +35,7 @@ class db {
             $capsule->bootEloquent();
 
             // hook into save event
-//            MenuNode::saving( function ( $model ) {
+//            Node::saving( function ( $model ) {
 //                echo "\nSAVING: " . $model->id;
 //                return true; // Important: return true to allow the save to continue
 //            } );
