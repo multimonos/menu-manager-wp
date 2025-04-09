@@ -2,7 +2,7 @@
 
 namespace MenuManager\Wpcli\Commands;
 
-use League\Csv\Writer;
+use MenuManager\Actions\ExportAction;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Node;
 use MenuManager\Database\PostType\MenuPost;
@@ -27,38 +27,30 @@ class RootCommands {
      * @when after_wp_load
      */
     public function export( $args, $assoc_args ) {
-
-        // menu
         $menu_id = $args[0];
 
+        // menu
         $menu = MenuPost::find( $menu_id );
-
 
         if ( ! $menu instanceof \WP_Post ) {
             WP_CLI::error( "Menu not found" );
-            return;
         }
 
-        // filepath
+        // output path
         $dst = $args[1] ?? null;
         $dst = empty( $dst )
-            ? $this->filenameFromPost( $menu )
+            ? "menu-export_{$menu->post_name}_{$menu->ID}__" . date( 'Ymd\THis' ) . '.csv'
             : sanitize_file_name( $dst );
 
+        // action
+        $action = new ExportAction();
+        $rs = $action->run( $menu, $dst );
 
-        // write
-        $writer = Writer::createFromPath( $dst, 'w+' );
-        $writer->insertOne( ['name', 'email'] );
-        $writer->insertAll( [
-            ['Alice', 'alice@example.com'],
-            ['Bob', 'bob@example.com'],
-        ] );
-    }
+        if ( ! $rs->ok() ) {
+            WP_CLI::error( $rs->getMessage() );
+        }
 
-
-    protected function filenameFromPost( \WP_Post $post ) {
-        $datetime = date( 'Ymd\THi' );
-        return "export-{$post->post_type}_{$post->post_name}_{$post->ID}_{$datetime}.csv";
+        WP_CLI::success( $rs->getMessage() );
     }
 
     /**

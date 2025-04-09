@@ -50,7 +50,10 @@ view:
 	wp mm menu view crowfoot
 
 export:
-	wp mm export crowfoot
+	rm -f crowfoot-export.csv \
+	; XDEBUG_SESSION=PHPSTORM wp mm export crowfoot crowfoot.csv \
+	; echo "" \
+	; tail -n25 crowfoot.csv
 
 migrate:
 	clear && wp ccm migrate crowfoot

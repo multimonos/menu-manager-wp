@@ -48,6 +48,10 @@ class Node extends \Illuminate\Database\Eloquent\Model {
         } );
     }
 
+    protected function getScopeAttributes() {
+        return ['menu_id'];
+    }
+
     public function meta() {
         // Always return an empty object if join does not exist
         // Node -> NodeMeta ( 1 to zero or one )
@@ -60,6 +64,10 @@ class Node extends \Illuminate\Database\Eloquent\Model {
         $this->save();
         $this->refresh();
         return $this;
+    }
+
+    public static function countForMenu( \WP_Post $menu ): int {
+        return Node::where( 'menu_id', $menu->ID )->whereNotIn( 'type', ['root', 'page'] )->count();
     }
 
     public static function findRootNode( \WP_Post $menu ): ?Node {
@@ -77,17 +85,17 @@ class Node extends \Illuminate\Database\Eloquent\Model {
         if ( is_null( $root ) ) {
             return null;
         }
-        $tree = Node::with( "meta" )->withDepth()->descendantsOf( $root->id )->toTree();
+        $tree = Node::scoped( ['menu_id' => $menu->ID] )->with( "meta" )->withDepth()->descendantsOf( $root->id )->toTree();
         return $tree;
     }
-
 
     public static function findPageTree( \WP_Post $menu, string $page ): ?\Kalnoy\NestedSet\Collection {
         $page = self::findPageNode( $menu, $page );
         if ( is_null( $page ) ) {
             return null;
         }
-        $tree = Node::with( "meta" )->withDepth()->descendantsOf( $page->id )->toTree();
+        $tree = Node::scoped( ['menu_id' => $menu->ID] )->with( "meta" )->withDepth()->descendantsOf( $page->id )->toTree();
         return $tree;
     }
+
 }

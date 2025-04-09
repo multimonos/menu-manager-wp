@@ -12,7 +12,7 @@ class ImportLoadAction {
         return in_array( $v, ['yes', 'true', true, 'Y'] ) ? true : false;
     }
 
-    public function run( string $path ) {
+    public function run( string $path ): ActionResult {
 
         $conn = db::load()->getConnection();
 

@@ -42,7 +42,11 @@ class NodeMeta extends \Illuminate\Database\Eloquent\Model {
         } );
     }
 
-    public function menuNode() {
+    public function node() {
         return $this->belongsTo( Node::class, 'node_id' );
+    }
+
+    public function hasTag( string $name ): bool {
+        return empty( $this->tags ) ? false : in_array( $name, explode( ',', $this->tags ) );
     }
 }

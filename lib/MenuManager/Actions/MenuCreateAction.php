@@ -44,10 +44,10 @@ class MenuCreateAction {
                 while ( $cnt < $rows->count() ) {
                     $row = $rows[$cnt];
 
-                    if ( Impex::isCategoryType( $row ) ) {
+                    if ( Impex::isCategoryType( $row->type ) ) {
                         // CATEGORY
                         $node = ImportFactory::createCategoryNode( $menu, $row );
-                        $node_level = Impex::levelFromType( $row );
+                        $node_level = Impex::levelFromType( $row->type );
                         $root->fixTree();
 
                         // get parent for this level
@@ -65,7 +65,7 @@ class MenuCreateAction {
 
                         $cnt++;
 
-                    } elseif ( true && Impex::isGroupType( $row ) ) {
+                    } elseif ( true && Impex::isGroupType( $row->type ) ) {
                         // OPTION-GROUP,ADDON-GROUP
                         $parent = $parents[($level + 1)] ?? null;
 
@@ -78,7 +78,7 @@ class MenuCreateAction {
                             // OPTIONS,ADDONS
                             $cnt++; // move to first available 'option'
 
-                            while ( $cnt < $rows->count() && Impex::isGroupItemType( $rows[$cnt] ) ) {
+                            while ( $cnt < $rows->count() && Impex::isGroupItemType( $rows[$cnt]->type ) ) {
                                 $item = ImportFactory::createMenuitemNode( $menu, $rows[$cnt], $group );
                                 $cnt++;
                             }
@@ -86,7 +86,7 @@ class MenuCreateAction {
 
                         // $cnt++; // incorrect double increment
 
-                    } elseif ( true && Impex::isItemType( $row ) ) {
+                    } elseif ( true && Impex::isItemType( $row->type ) ) {
                         // ITEM,WINE
                         $parent = $parents[($level + 1)] ?? null;
 

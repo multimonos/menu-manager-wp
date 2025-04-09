@@ -105,6 +105,7 @@ class MenuCommands {
             WP_CLI::error( "Menu not found or is empty '" . trim( $id . ' ' . $page ) . "'." );
         }
 
+
         // printer
         $printer = new TextMenuPrinter();
 
@@ -116,6 +117,7 @@ class MenuCommands {
         $queries = db::load()::connection()->getQueryLog();
 
         echo "\n\n";
+        WP_CLI::line( "Nodes: " . $tree->count() );
         WP_CLI::success( count( $queries ) . ' queries.' );
     }
 }

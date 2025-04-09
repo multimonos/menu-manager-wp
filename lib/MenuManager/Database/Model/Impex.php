@@ -71,34 +71,34 @@ class Impex extends \Illuminate\Database\Eloquent\Model {
         return $this->belongsTo( Job::class, 'job_id' );
     }
 
-    public static function isCategoryType( Impex $row ): bool {
-        return str_contains( (string)$row->type, 'category-' );
+    public static function isCategoryType( string $type ): bool {
+        return str_contains( $type, 'category-' );
     }
 
-    public static function isGroupType( Impex $row ): bool {
+    public static function isGroupType( string $type ): bool {
         $types = [
             'option-group',
             'addon-group',
         ];
-        return in_array( $row->type, $types );
+        return in_array( $type, $types );
     }
 
-    public static function isGroupItemType( Impex $row ): bool {
-        return in_array( $row->type, [
+    public static function isGroupItemType( string $type ): bool {
+        return in_array( $type, [
             'option',
             'addon',
         ] );
     }
 
-    public static function isItemType( Impex $row ): bool {
-        return in_array( $row->type, [
+    public static function isItemType( string $type ): bool {
+        return in_array( $type, [
             'item',
             'wine',
         ] );
     }
 
-    public static function levelFromType( Impex $row ): int {
-        return (int)preg_replace( '/\D*/', '', $row->type );
+    public static function levelFromType( string $type ): int {
+        return (int)preg_replace( '/\D*/', '', $type );
     }
 
     public static function collectTags( Impex $row ): string {
