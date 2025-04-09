@@ -22,7 +22,6 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
         'type',
         'title',
         'description',
-        'prices', //@todo deprecate ... only here for "wine category titles"
     ];
 
 
@@ -44,7 +43,6 @@ class MenuNode extends \Illuminate\Database\Eloquent\Model {
             $table->string( 'type', 32 );
             $table->string( 'title' )->nullable();
             $table->text( 'description' )->nullable();
-            $table->string( 'prices', 64 )->nullable();
             $table->dateTime( 'created_at' )->useCurrent();
             $table->dateTime( 'updated_at' )->useCurrent();
         } );

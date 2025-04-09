@@ -41,7 +41,8 @@ class ImpexMenuFactory {
         ] );
 
         if ( $parent instanceof MenuNode ) {
-            $node->setParentId( $parent );
+            $node->parent_id = $parent->id;
+//            $node->setParentId( $parent );
         }
 
         $node->save();
@@ -63,9 +64,8 @@ class ImpexMenuFactory {
 
         $node = new MenuNode( [
             'menu_id'     => $menu->ID,
-            'title'       => ucwords( mb_strtolower( $row->title ) ),// . '.' . $menu->post_name,
             'type'        => strtolower( $row->type ),
-            'prices'      => $row->prices,
+            'title'       => ucwords( mb_strtolower( $row->title ) ),// . '.' . $menu->post_name,
             'description' => $row->description,
         ] );
 

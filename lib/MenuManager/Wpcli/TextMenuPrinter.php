@@ -18,7 +18,7 @@ class TextMenuPrinter {
                 . ($node->menuItem->prices ? '  $[' . $node->menuItem->prices . ']' : '');
 
             if ( $node->menuItem->tags ) {
-                echo '  @[' . $node->menuItem->tags . ']';
+                echo '  #[' . $node->menuItem->tags . ']';
             }
 
             if ( $node->description ) {
