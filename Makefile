@@ -36,7 +36,7 @@ deactivate:
 	wp plugin deactivate menu-manager-wp
 
 delete-data:
-	wp db query "SET foreign_key_checks=0; truncate wp_mm_node_meta; truncate table wp_mm_node; delete from wp_posts where post_name ='crowfoot' and post_type='menus'; delete from wp_posts where post_name ='victoria' and post_type='menus'; SET foreign_key_checks=1;"
+	wp db query "SET foreign_key_checks=0; truncate wp_mm_node_meta; truncate table wp_mm_node; delete from wp_posts where post_type='menus'; SET foreign_key_checks=1;"
 
 test:
 	clear; \
@@ -55,13 +55,31 @@ test:
 	wp mm job get 1; \
 	wp mm import validate 1; \
 	wp mm job run 1; \
-	wp mm menu view crowfoot;
+	wp mm view crowfoot;
+
+test-impex-loop:
+	clear \
+	; cp ../menu-scraper/data/merged_crowfoot.csv ./import-impex-loop.csv \
+	; sed -i '' 's/crowfoot/impex-loop/g' ./import-impex-loop.csv \
+	; wp plugin deactivate menu-manager-wp \
+	; sleep 1 \
+	; wp plugin activate menu-manager-wp \
+	; make delete-data \
+	; XDEBUG_SESSION=PHPSTORM wp mm import load ./import-impex-loop.csv \
+	; wp mm job run 1 \
+	; wp mm view impex-loop \
+	; wp mm export impex-loop ./export-impex-loop.csv \
+	; wc -l ./import-impex-loop.csv \
+	; wc -l ./export-impex-loop.csv \
+	; diff ./export-impex-loop.csv ./import-impex-loop.csv \
+	; echo "Done"
+
 
 run: delete-data \
 	; XDEBUG_SESSION=PHPSTORM wp mm job run 1
 
 view:
-	wp mm menu view crowfoot
+	wp mm view crowfoot
 
 export:
 	rm -f *.csv \
