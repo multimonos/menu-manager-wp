@@ -62,7 +62,7 @@ class ImportLoadAction {
                 Impex::create( [
                     'job_id'         => $job->id,
                     'action'         => $record['action'],
-                    'batch_id'       => $record['batch_id'],
+                    'uuid'           => $record['uuid'],
                     'description'    => $record['description'],
                     'image_ids'      => $record['image_ids'],
                     'is_glutensmart' => Impex::toBoolean( $record['is_glutensmart'] ),

@@ -16,7 +16,7 @@ class Impex extends Model {
     protected $fillable = [
         'job_id',
         'action',
-        'batch_id',
+        'uuid',
         'description',
         'image_ids',
         'is_glutensmart',
@@ -37,7 +37,7 @@ class Impex extends Model {
         'action',
         'menu',
         'page',
-        'batch_id',
+        'uuid',
         'type',
         'item_id',
         'title',
@@ -71,7 +71,7 @@ class Impex extends Model {
             $table->string( 'action', 32 );
             $table->string( 'menu', 32 );
             $table->string( 'page', 32 );
-            $table->string( 'batch_id', 32 )->nullable();
+            $table->string( 'uuid', 32 )->nullable();
             $table->string( 'type', 32 );
             $table->bigInteger( 'item_id' )->nullable();
             $table->string( 'title' )->nullable();

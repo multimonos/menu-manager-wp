@@ -40,7 +40,7 @@ class ImportNodeFactory {
     public static function createCategoryNode( \WP_Post $menu, Impex $row, Node $parent = null ): Node {
         $node = new Node( [
             'menu_id'     => $menu->ID,
-            'batch_id'    => $row->batch_id,
+            'uuid'        => $row->uuid,
             'title'       => $row->title,
             'type'        => $row->type,
             'description' => $row->description,
@@ -70,7 +70,7 @@ class ImportNodeFactory {
 
         $node = new Node( [
             'menu_id'     => $menu->ID,
-            'batch_id'    => $row->batch_id,
+            'uuid'        => $row->uuid,
             'type'        => $row->type,
             'title'       => $row->title,
             'description' => $row->description,
