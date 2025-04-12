@@ -64,8 +64,9 @@ class ExportAction {
 
                 $rows = $this->visit( $tree, fn( Node $node ) => $this->create( $menu, $page, $node ) );
 
-                foreach ( $rows as $row ) {
-                    $writer->insertOne( self::array_fill_keys( self::FIELDS, $row ) );
+                foreach ( $rows as $sparse_row ) {
+                    $dense_row = self::array_fill_keys( self::FIELDS, $sparse_row );
+                    $writer->insertOne( $dense_row );
                 }
             }
         }
