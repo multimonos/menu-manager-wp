@@ -50,9 +50,9 @@ view:
 	wp mm menu view crowfoot
 
 export:
-	rm -f crowfoot-export.csv \
+	rm -f *.csv \
 	; XDEBUG_SESSION=PHPSTORM wp mm export crowfoot crowfoot.csv \
-	; echo "" \
+	; wc -l crowfoot.csv \
 	; tail -n25 crowfoot.csv
 
 migrate:
@@ -72,3 +72,7 @@ drink-category:
 
 impex:
 	./impex.sh
+
+
+scope:
+	php-scoper add-prefix --output-dir=./prefixed-vendor
