@@ -2,3 +2,4 @@
 *.csv
 *.sql
 prefixed-vendor/
+data/*.csv
