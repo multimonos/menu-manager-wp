@@ -22,6 +22,7 @@ class Node extends Model {
     protected $fillable = [
         'menu_id',
         'parent_id',
+        'batch_id',
         'type',
         'title',
         'description',
@@ -42,6 +43,7 @@ class Node extends Model {
             $table->bigIncrements( 'id' );
             $table->bigInteger( 'menu_id' )->unsigned();
             $table->foreign( 'menu_id' )->references( 'ID' )->on( 'posts' )->onDelete( 'cascade' );
+            $table->string( 'batch_id', 32 )->nullable();
             NestedSet::columns( $table );
             $table->string( 'type', 32 );
             $table->string( 'title' )->nullable();

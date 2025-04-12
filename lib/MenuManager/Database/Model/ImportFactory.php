@@ -3,6 +3,7 @@
 namespace MenuManager\Database\Model;
 
 class ImportFactory {
+
     public static function createRootNode( \WP_Post $menu ): Node {
         $root = new Node( [
             'menu_id' => $menu->ID,
@@ -22,7 +23,7 @@ class ImportFactory {
             'menu_id'   => $menu->ID,
             'parent_id' => $root->id,
             'type'      => 'page',
-            'title'     => ucwords( strtolower( $page_slug ) ),
+            'title'     => $page_slug,
         ] );
 
         $page->save();
@@ -35,8 +36,9 @@ class ImportFactory {
     public static function createCategoryNode( \WP_Post $menu, Impex $row, Node $parent = null ): Node {
         $node = new Node( [
             'menu_id'     => $menu->ID,
-            'title'       => ucwords( mb_strtolower( $row->title ) ),// . '.' . $menu->post_name,
-            'type'        => strtolower( $row->type ),
+            'batch_id'    => $row->batch_id,
+            'title'       => $row->title,
+            'type'        => $row->type,
             'description' => $row->description,
         ] );
 
@@ -64,8 +66,9 @@ class ImportFactory {
 
         $node = new Node( [
             'menu_id'     => $menu->ID,
-            'type'        => strtolower( $row->type ),
-            'title'       => ucwords( mb_strtolower( $row->title ) ),// . '.' . $menu->post_name,
+            'batch_id'    => $row->batch_id,
+            'type'        => $row->type,
+            'title'       => $row->title,
             'description' => $row->description,
         ] );
 
