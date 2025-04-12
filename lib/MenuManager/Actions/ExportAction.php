@@ -107,7 +107,7 @@ class ExportAction {
     protected function create( \WP_Post $menu, string $page, Node $node ): ?array {
 
         // Only process these node types for export
-        $allowed = [
+        $simple_types = [
             'item',
             'option-group',
             'option',
@@ -116,14 +116,14 @@ class ExportAction {
             'wine',
         ];
 
-        if ( Impex::isCategoryType( $node->type ) || in_array( $node->type, $allowed ) ) {
+        if ( in_array( $node->type, $simple_types ) ) {
 
             return [
                 'action'         => $node->action,
                 'menu'           => $menu->post_name,
                 'page'           => $page,
                 'batch_id'       => $node->batch_id,
-                'item_id'        => $node->id,
+                'item_id'        => '',//$node->id,
                 'type'           => $node->type,
                 'title'          => $node->title,
                 'prices'         => (string)$node->meta->prices,
@@ -134,6 +134,27 @@ class ExportAction {
                 'is_vegetarian'  => (string)($node->meta->hasTag( 'vegetarian' ) ? self::ON : self::OFF),
                 'is_glutensmart' => (string)($node->meta->hasTag( 'gluten-smart' ) ? self::ON : self::OFF),
                 'is_organic'     => (string)($node->meta->hasTag( 'organic' ) ? self::ON : self::OFF),
+                'description'    => $node->description,
+            ];
+
+        } elseif ( Impex::isCategoryType( $node->type ) ) {
+
+            return [
+                'action'         => $node->action,
+                'menu'           => $menu->post_name,
+                'page'           => $page,
+                'batch_id'       => $node->batch_id,
+                'item_id'        => '',//$node->id,
+                'type'           => $node->type,
+                'title'          => $node->title,
+                'prices'         => (string)$node->meta->prices,
+                'image_ids'      => '',
+                'custom'         => '',
+                'is_new'         => '',
+                'is_vegan'       => '',
+                'is_vegetarian'  => '',
+                'is_glutensmart' => '',
+                'is_organic'     => '',
                 'description'    => $node->description,
             ];
         }
