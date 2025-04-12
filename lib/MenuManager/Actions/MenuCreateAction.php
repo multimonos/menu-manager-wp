@@ -3,8 +3,8 @@
 namespace MenuManager\Actions;
 
 use MenuManager\Database\db;
+use MenuManager\Database\Mapper\ImportNodeMapper;
 use MenuManager\Database\Model\Impex;
-use MenuManager\Database\Model\ImportFactory;
 use MenuManager\Database\PostType\MenuPost;
 use MenuManager\Vendor\Illuminate\Support\Collection;
 
@@ -24,7 +24,7 @@ class MenuCreateAction {
             error_log( "created menu " . $menu->post_name );
 
             // ROOT
-            $root = ImportFactory::createRootNode( $menu );
+            $root = ImportNodeMapper::createRootNode( $menu );
 
             // PAGE
             $pages = $items->groupBy( 'page' );
@@ -32,7 +32,7 @@ class MenuCreateAction {
             $pages->each( function ( Collection $rows, string $page_slug ) use ( $menu, $root ) {
 
                 // PAGE
-                $page = ImportFactory::createPageNode( $menu, $root, $page_slug );
+                $page = ImportNodeMapper::createPageNode( $menu, $root, $page_slug );
 
                 // ALL ITEMS
                 $level = 0;
@@ -46,7 +46,7 @@ class MenuCreateAction {
 
                     if ( Impex::isCategoryType( $row->type ) ) {
                         // CATEGORY
-                        $node = ImportFactory::createCategoryNode( $menu, $row );
+                        $node = ImportNodeMapper::createCategoryNode( $menu, $row );
                         $node_level = Impex::levelFromType( $row->type );
                         $root->fixTree();
 
@@ -69,7 +69,7 @@ class MenuCreateAction {
                         // OPTION-GROUP,ADDON-GROUP
                         $parent = $parents[($level + 1)] ?? null;
 
-                        $group = ImportFactory::createMenuitemNode( $menu, $row );
+                        $group = ImportNodeMapper::createMenuitemNode( $menu, $row );
 
                         if ( $parent ) {
                             $group->saveWithParent( $parent );
@@ -79,7 +79,7 @@ class MenuCreateAction {
                             $cnt++; // move to first available 'option'
 
                             while ( $cnt < $rows->count() && Impex::isGroupItemType( $rows[$cnt]->type ) ) {
-                                $item = ImportFactory::createMenuitemNode( $menu, $rows[$cnt], $group );
+                                $item = ImportNodeMapper::createMenuitemNode( $menu, $rows[$cnt], $group );
                                 $cnt++;
                             }
                         }
@@ -91,7 +91,7 @@ class MenuCreateAction {
                         $parent = $parents[($level + 1)] ?? null;
 
                         if ( $parent ) {
-                            $item = ImportFactory::createMenuitemNode( $menu, $row, $parent );
+                            $item = ImportNodeMapper::createMenuitemNode( $menu, $row, $parent );
                         }
                         $cnt++;
 
