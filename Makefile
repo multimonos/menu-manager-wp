@@ -18,7 +18,7 @@ build:
 	&& composer clear-cache \
 	&& composer dump-autoload \
 	&& rm -rf ./prefixed-vendor \
-	&& php test.php
+	&& php scoper.test.php
 
 bulk-impex:
 	chmod u+x ./bulk-impex.sh && ./bulk-impex.sh

@@ -17,11 +17,12 @@ done
 for x in $(wp mm job list --format=ids); do
   echo "Job ${x}: "
   wp mm job get $x
+  wp mm job run $x
 done
 
 
 # view
-for x in $(wp mm menus list --format=ids); do
+for x in $(wp mm menu list --format=ids); do
   echo "Menu ${x}: "
   wp mm menu view $x
 done
