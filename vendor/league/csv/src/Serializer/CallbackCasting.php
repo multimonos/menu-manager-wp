@@ -8,13 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
-
-namespace League\Csv\Serializer;
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv\Serializer;
 
 use Closure;
-use Deprecated;
+use MenuManager\Vendor\Deprecated;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionParameter;
@@ -22,207 +20,166 @@ use ReflectionProperty;
 use ReflectionType;
 use ReflectionUnionType;
 use Throwable;
-
 use function array_key_exists;
 use function class_exists;
-
 /**
  * @internal Container for registering Closure as type and/or type alias casting
  * @template TValue
  */
-final class CallbackCasting implements TypeCasting
+final class CallbackCasting implements \MenuManager\Vendor\League\Csv\Serializer\TypeCasting
 {
     /** @var array<string, Closure(mixed, bool, mixed...): mixed> */
     private static array $types = [];
     /** @var array<string, array<string, Closure(mixed, bool, mixed...): mixed>> */
     private static array $aliases = [];
-
     private string $type;
     private readonly bool $isNullable;
     /** @var Closure(mixed, bool, mixed...): mixed */
     private Closure $callback;
     private array $options = [];
     private string $message;
-    private readonly TypeCastingInfo $info;
-
-    public function __construct(
-        ReflectionProperty|ReflectionParameter $reflectionProperty,
-        private readonly ?string $alias = null
-    ) {
+    private readonly \MenuManager\Vendor\League\Csv\Serializer\TypeCastingInfo $info;
+    public function __construct(ReflectionProperty|ReflectionParameter $reflectionProperty, private readonly ?string $alias = null)
+    {
         [$this->type, $this->isNullable] = self::resolve($reflectionProperty);
-
-        $this->message = match (true) {
-            $reflectionProperty instanceof ReflectionParameter => 'The method `'.$reflectionProperty->getDeclaringClass()?->getName().'::'.$reflectionProperty->getDeclaringFunction()->getName().'` argument `'.$reflectionProperty->getName().'` must be typed with a supported type.',
-            $reflectionProperty instanceof ReflectionProperty => 'The property `'.$reflectionProperty->getDeclaringClass()->getName().'::'.$reflectionProperty->getName().'` must be typed with a supported type.',
+        $this->message = match (\true) {
+            $reflectionProperty instanceof ReflectionParameter => 'The method `' . $reflectionProperty->getDeclaringClass()?->getName() . '::' . $reflectionProperty->getDeclaringFunction()->getName() . '` argument `' . $reflectionProperty->getName() . '` must be typed with a supported type.',
+            $reflectionProperty instanceof ReflectionProperty => 'The property `' . $reflectionProperty->getDeclaringClass()->getName() . '::' . $reflectionProperty->getName() . '` must be typed with a supported type.',
         };
-
-        $this->callback = fn (mixed $value, bool $isNullable, mixed ...$arguments): mixed => $value;
-        $this->info = TypeCastingInfo::fromAccessor($reflectionProperty);
+        $this->callback = fn(mixed $value, bool $isNullable, mixed ...$arguments): mixed => $value;
+        $this->info = \MenuManager\Vendor\League\Csv\Serializer\TypeCastingInfo::fromAccessor($reflectionProperty);
     }
-
-    public function info(): TypeCastingInfo
+    public function info() : \MenuManager\Vendor\League\Csv\Serializer\TypeCastingInfo
     {
         return $this->info;
     }
-
     /**
      * @throws MappingFailed
      */
-    public function setOptions(?string $type = null, mixed ...$options): void
+    public function setOptions(?string $type = null, mixed ...$options) : void
     {
         if (null === $this->alias) {
-            if (Type::Mixed->value === $this->type && null !== $type) {
+            if (\MenuManager\Vendor\League\Csv\Serializer\Type::Mixed->value === $this->type && null !== $type) {
                 $this->type = $type;
             }
-
             try {
-                $this->callback = self::resolveTypeCallback($this->type); /* @phpstan-ignore-line */
+                $this->callback = self::resolveTypeCallback($this->type);
+                /* @phpstan-ignore-line */
                 $this->options = $options;
-
                 return;
             } catch (Throwable) {
-
             }
-
-            throw new MappingFailed($this->message);
+            throw new \MenuManager\Vendor\League\Csv\Serializer\MappingFailed($this->message);
         }
-
-        if (Type::Mixed->value === $this->type) {
+        if (\MenuManager\Vendor\League\Csv\Serializer\Type::Mixed->value === $this->type) {
             $this->type = self::aliases()[$this->alias];
         }
-
         $this->callback = self::resolveAliasCallback($this->type, $this->alias);
         $this->options = $options;
     }
-
     /**
      * @return TValue
      */
-    public function toVariable(mixed $value): mixed
+    public function toVariable(mixed $value) : mixed
     {
         try {
             return ($this->callback)($value, $this->isNullable, ...$this->options);
         } catch (Throwable $exception) {
-            ! $exception instanceof TypeCastingFailed || throw $exception;
-            null !== $value || throw TypeCastingFailed::dueToNotNullableType($this->type, $exception, $this->info);
-
-            throw TypeCastingFailed::dueToInvalidValue(match (true) {
+            !$exception instanceof \MenuManager\Vendor\League\Csv\Serializer\TypeCastingFailed || throw $exception;
+            null !== $value || throw \MenuManager\Vendor\League\Csv\Serializer\TypeCastingFailed::dueToNotNullableType($this->type, $exception, $this->info);
+            throw \MenuManager\Vendor\League\Csv\Serializer\TypeCastingFailed::dueToInvalidValue(match (\true) {
                 '' === $value => 'empty string',
                 default => $value,
             }, $this->type, $exception, $this->info);
         }
     }
-
     /**
      * @param Closure(mixed, bool, mixed...): TValue $callback
      */
-    public static function register(string $type, Closure $callback, ?string $alias = null): void
+    public static function register(string $type, Closure $callback, ?string $alias = null) : void
     {
         if (null === $alias) {
-            self::$types[$type] = match (true) {
-                class_exists($type),
-                interface_exists($type),
-                Type::tryFrom($type) instanceof Type => $callback,
-                default => throw new MappingFailed('The `'.$type.'` could not be register.'),
+            self::$types[$type] = match (\true) {
+                class_exists($type), \interface_exists($type), \MenuManager\Vendor\League\Csv\Serializer\Type::tryFrom($type) instanceof \MenuManager\Vendor\League\Csv\Serializer\Type => $callback,
+                default => throw new \MenuManager\Vendor\League\Csv\Serializer\MappingFailed('The `' . $type . '` could not be register.'),
             };
-
             return;
         }
-
-        1 === preg_match('/^@\w+$/', $alias) || throw new MappingFailed("The alias `$alias` is invalid. It must start with an `@` character and contain alphanumeric (letters, numbers, regardless of case) plus underscore (_).");
-
+        1 === \preg_match('/^@\\w+$/', $alias) || throw new \MenuManager\Vendor\League\Csv\Serializer\MappingFailed("The alias `{$alias}` is invalid. It must start with an `@` character and contain alphanumeric (letters, numbers, regardless of case) plus underscore (_).");
         foreach (self::$aliases as $aliases) {
             foreach ($aliases as $registeredAlias => $__) {
-                $alias !== $registeredAlias || throw new MappingFailed("The alias `$alias` is already registered. Please choose another name.");
+                $alias !== $registeredAlias || throw new \MenuManager\Vendor\League\Csv\Serializer\MappingFailed("The alias `{$alias}` is already registered. Please choose another name.");
             }
         }
-
-        self::$aliases[$type][$alias] = match (true) {
-            class_exists($type),
-            interface_exists($type),
-            Type::tryFrom($type) instanceof Type => $callback,
-            default => throw new MappingFailed('The `'.$type.'` could not be register.'),
+        self::$aliases[$type][$alias] = match (\true) {
+            class_exists($type), \interface_exists($type), \MenuManager\Vendor\League\Csv\Serializer\Type::tryFrom($type) instanceof \MenuManager\Vendor\League\Csv\Serializer\Type => $callback,
+            default => throw new \MenuManager\Vendor\League\Csv\Serializer\MappingFailed('The `' . $type . '` could not be register.'),
         };
     }
-
-    public static function unregisterType(string $type): bool
+    public static function unregisterType(string $type) : bool
     {
         if (!array_key_exists($type, self::$types)) {
-            return false;
+            return \false;
         }
-
         unset(self::$types[$type]);
-
-        return true;
+        return \true;
     }
-
-    public static function unregisterTypes(): void
+    public static function unregisterTypes() : void
     {
         self::$types = [];
     }
-
-    public static function unregisterAlias(string $alias): bool
+    public static function unregisterAlias(string $alias) : bool
     {
-        if (1 !== preg_match('/^@\w+$/', $alias)) {
-            return false;
+        if (1 !== \preg_match('/^@\\w+$/', $alias)) {
+            return \false;
         }
-
         foreach (self::$aliases as $type => $aliases) {
             foreach ($aliases as $registeredAlias => $__) {
                 if ($registeredAlias === $alias) {
                     unset(self::$aliases[$type][$registeredAlias]);
-
-                    return true;
+                    return \true;
                 }
             }
         }
-
-        return false;
+        return \false;
     }
-
-    public static function unregisterAliases(): void
+    public static function unregisterAliases() : void
     {
         self::$aliases = [];
     }
-
-    public static function unregisterAll(): void
+    public static function unregisterAll() : void
     {
         self::unregisterTypes();
         self::unregisterAliases();
     }
-
-    public static function supportsAlias(?string $alias): bool
+    public static function supportsAlias(?string $alias) : bool
     {
         return null !== $alias && array_key_exists($alias, self::aliases());
     }
-
-    public static function supportsType(?string $type): bool
+    public static function supportsType(?string $type) : bool
     {
         if (null === $type) {
-            return false;
+            return \false;
         }
-
         try {
-            self::resolveTypeCallback($type);  /* @phpstan-ignore-line */
-
-            return true;
+            self::resolveTypeCallback($type);
+            /* @phpstan-ignore-line */
+            return \true;
         } catch (Throwable) {
-            return false;
+            return \false;
         }
     }
-
     /**
      * @return array<string>
      */
-    public static function types(): array
+    public static function types() : array
     {
-        return array_keys(self::$types);
+        return \array_keys(self::$types);
     }
-
     /**
      * @return array<string, string>
      */
-    public static function aliases(): array
+    public static function aliases() : array
     {
         $res = [];
         foreach (self::$aliases as $registeredType => $aliases) {
@@ -230,63 +187,53 @@ final class CallbackCasting implements TypeCasting
                 $res[$registeredAlias] = $registeredType;
             }
         }
-
         return $res;
     }
-
-    public static function supports(ReflectionParameter|ReflectionProperty $reflectionProperty, ?string $alias = null): bool
+    public static function supports(ReflectionParameter|ReflectionProperty $reflectionProperty, ?string $alias = null) : bool
     {
         $propertyTypeList = self::getTypes($reflectionProperty->getType());
         if ([] === $propertyTypeList && self::supportsAlias($alias)) {
-            return true;
+            return \true;
         }
-
         foreach ($propertyTypeList as $propertyType) {
             $type = $propertyType->getName();
             if (null === $alias) {
                 if (self::supportsType($type)) {
-                    return true;
+                    return \true;
                 }
-
                 continue;
             }
-
-            if (self::aliasSupportsType($type) || (Type::Mixed->value === $type && self::supportsAlias($alias))) {
-                return true;
+            if (self::aliasSupportsType($type) || \MenuManager\Vendor\League\Csv\Serializer\Type::Mixed->value === $type && self::supportsAlias($alias)) {
+                return \true;
             }
         }
-
-        return false;
+        return \false;
     }
-
-    private static function aliasSupportsType(string $type): bool
+    private static function aliasSupportsType(string $type) : bool
     {
         foreach (self::aliases() as $registeredType) {
             if ($type === $registeredType) {
-                return true;
+                return \true;
             }
-
             try {
-                if ((new ReflectionClass($type))->implementsInterface($registeredType)) {  /* @phpstan-ignore-line */
-                    return true;
+                if ((new ReflectionClass($type))->implementsInterface($registeredType)) {
+                    /* @phpstan-ignore-line */
+                    return \true;
                 }
             } catch (Throwable) {
             }
         }
-
-        return false;
+        return \false;
     }
-
     /**
      * @param class-string $type
      */
-    private static function resolveTypeCallback(string $type): Closure
+    private static function resolveTypeCallback(string $type) : Closure
     {
         foreach (self::$types as $registeredType => $callback) {
             if ($type === $registeredType) {
                 return $callback;
             }
-
             try {
                 $reflType = new ReflectionClass($type);
                 if ($reflType->implementsInterface($registeredType)) {
@@ -295,88 +242,74 @@ final class CallbackCasting implements TypeCasting
             } catch (Throwable) {
             }
         }
-
-        throw new MappingFailed('The `'.$type.'` could not be resolved.');
+        throw new \MenuManager\Vendor\League\Csv\Serializer\MappingFailed('The `' . $type . '` could not be resolved.');
     }
-
-    private static function resolveAliasCallback(string $type, string $alias): Closure
+    private static function resolveAliasCallback(string $type, string $alias) : Closure
     {
         $rType = self::aliases()[$alias] ?? null;
         if (isset($rType)) {
             return self::$aliases[$rType][$alias];
         }
-
         foreach (self::aliases() as $aliasName => $registeredType) {
             try {
-                $reflType = new ReflectionClass($type); /* @phpstan-ignore-line */
+                $reflType = new ReflectionClass($type);
+                /* @phpstan-ignore-line */
                 if ($reflType->implementsInterface($registeredType)) {
                     return self::$aliases[$registeredType][$aliasName];
                 }
             } catch (Throwable) {
             }
         }
-
-        throw new MappingFailed('The `'.$type.'` could not be resolved.');
+        throw new \MenuManager\Vendor\League\Csv\Serializer\MappingFailed('The `' . $type . '` could not be resolved.');
     }
-
     /**
      * @throws MappingFailed
      *
      * @return array{0:string, 1:bool}
      */
-    private static function resolve(ReflectionParameter|ReflectionProperty $reflectionProperty): array
+    private static function resolve(ReflectionParameter|ReflectionProperty $reflectionProperty) : array
     {
         if (null === $reflectionProperty->getType()) {
-            return [Type::Mixed->value, true];
+            return [\MenuManager\Vendor\League\Csv\Serializer\Type::Mixed->value, \true];
         }
-
         $types = self::getTypes($reflectionProperty->getType());
-
         $type = null;
-        $isNullable = false;
-        $hasMixed = false;
+        $isNullable = \false;
+        $hasMixed = \false;
         foreach ($types as $foundType) {
             if (!$isNullable && $foundType->allowsNull()) {
-                $isNullable = true;
+                $isNullable = \true;
             }
-
             if (null === $type) {
                 $instanceName = $foundType->getName();
                 if (self::supportsType($instanceName) || array_key_exists($instanceName, self::$aliases)) {
                     $type = $foundType;
                 }
-
-                if (true !== $hasMixed && Type::Mixed->value === $instanceName) {
-                    $hasMixed = true;
+                if (\true !== $hasMixed && \MenuManager\Vendor\League\Csv\Serializer\Type::Mixed->value === $instanceName) {
+                    $hasMixed = \true;
                 }
             }
         }
-
-        return match (true) {
+        return match (\true) {
             $type instanceof ReflectionNamedType => [$type->getName(), $isNullable],
-            $hasMixed => [Type::Mixed->value, true],
-            default => throw new MappingFailed(match (true) {
-                $reflectionProperty instanceof ReflectionParameter => 'The method `'.$reflectionProperty->getDeclaringClass()?->getName().'::'.$reflectionProperty->getDeclaringFunction()->getName().'` argument `'.$reflectionProperty->getName().'` must be typed with a supported type.',
-                $reflectionProperty instanceof ReflectionProperty => 'The property `'.$reflectionProperty->getDeclaringClass()->getName().'::'.$reflectionProperty->getName().'` must be typed with a supported type.',
+            $hasMixed => [\MenuManager\Vendor\League\Csv\Serializer\Type::Mixed->value, \true],
+            default => throw new \MenuManager\Vendor\League\Csv\Serializer\MappingFailed(match (\true) {
+                $reflectionProperty instanceof ReflectionParameter => 'The method `' . $reflectionProperty->getDeclaringClass()?->getName() . '::' . $reflectionProperty->getDeclaringFunction()->getName() . '` argument `' . $reflectionProperty->getName() . '` must be typed with a supported type.',
+                $reflectionProperty instanceof ReflectionProperty => 'The property `' . $reflectionProperty->getDeclaringClass()->getName() . '::' . $reflectionProperty->getName() . '` must be typed with a supported type.',
             }),
         };
     }
-
     /**
      * @return array<ReflectionNamedType>
      */
-    private static function getTypes(?ReflectionType $type): array
+    private static function getTypes(?ReflectionType $type) : array
     {
-        return match (true) {
+        return match (\true) {
             $type instanceof ReflectionNamedType => [$type],
-            $type instanceof ReflectionUnionType => array_filter(
-                $type->getTypes(),
-                fn (ReflectionType $innerType) => $innerType instanceof ReflectionNamedType
-            ),
+            $type instanceof ReflectionUnionType => \array_filter($type->getTypes(), fn(ReflectionType $innerType) => $innerType instanceof ReflectionNamedType),
             default => [],
         };
     }
-
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
@@ -384,8 +317,8 @@ final class CallbackCasting implements TypeCasting
      * @see CallbackCasting::unregisterType()
      * @codeCoverageIgnore
      */
-    #[Deprecated(message:'use League\Csv\Serializer\CallbackCasting::unregisterType() instead', since:'league/csv:9.13.0')]
-    public static function unregister(string $type): bool
+    #[\Deprecated(message: 'use League\\Csv\\Serializer\\CallbackCasting::unregisterType() instead', since: 'league/csv:9.13.0')]
+    public static function unregister(string $type) : bool
     {
         return self::unregisterType($type);
     }

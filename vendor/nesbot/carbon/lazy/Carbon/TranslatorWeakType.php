@@ -8,11 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MenuManager\Vendor\Carbon;
 
-namespace Carbon;
-
-if (!class_exists(LazyTranslator::class, false)) {
-    class LazyTranslator extends AbstractTranslator
+if (!\class_exists(\MenuManager\Vendor\Carbon\LazyTranslator::class, \false)) {
+    class LazyTranslator extends \MenuManager\Vendor\Carbon\AbstractTranslator
     {
         /**
          * Returns the translation.

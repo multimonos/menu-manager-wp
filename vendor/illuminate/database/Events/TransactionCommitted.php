@@ -1,8 +1,8 @@
 <?php
 
-namespace Illuminate\Database\Events;
+namespace MenuManager\Vendor\Illuminate\Database\Events;
 
-class TransactionCommitted extends ConnectionEvent
+class TransactionCommitted extends \MenuManager\Vendor\Illuminate\Database\Events\ConnectionEvent
 {
     //
 }

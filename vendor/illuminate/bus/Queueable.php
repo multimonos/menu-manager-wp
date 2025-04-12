@@ -1,12 +1,11 @@
 <?php
 
-namespace Illuminate\Bus;
+namespace MenuManager\Vendor\Illuminate\Bus;
 
 use Closure;
-use Illuminate\Queue\CallQueuedClosure;
-use Illuminate\Support\Arr;
+use MenuManager\Vendor\Illuminate\Queue\CallQueuedClosure;
+use MenuManager\Vendor\Illuminate\Support\Arr;
 use RuntimeException;
-
 trait Queueable
 {
     /**
@@ -15,63 +14,54 @@ trait Queueable
      * @var string|null
      */
     public $connection;
-
     /**
      * The name of the queue the job should be sent to.
      *
      * @var string|null
      */
     public $queue;
-
     /**
      * The name of the connection the chain should be sent to.
      *
      * @var string|null
      */
     public $chainConnection;
-
     /**
      * The name of the queue the chain should be sent to.
      *
      * @var string|null
      */
     public $chainQueue;
-
     /**
      * The callbacks to be executed on chain failure.
      *
      * @var array|null
      */
     public $chainCatchCallbacks;
-
     /**
      * The number of seconds before the job should be made available.
      *
      * @var \DateTimeInterface|\DateInterval|array|int|null
      */
     public $delay;
-
     /**
      * Indicates whether the job should be dispatched after all database transactions have committed.
      *
      * @var bool|null
      */
     public $afterCommit;
-
     /**
      * The middleware the job should be dispatched through.
      *
      * @var array
      */
     public $middleware = [];
-
     /**
      * The jobs that should run if this job is successful.
      *
      * @var array
      */
     public $chained = [];
-
     /**
      * Set the desired connection for the job.
      *
@@ -81,10 +71,8 @@ trait Queueable
     public function onConnection($connection)
     {
         $this->connection = $connection;
-
         return $this;
     }
-
     /**
      * Set the desired queue for the job.
      *
@@ -94,10 +82,8 @@ trait Queueable
     public function onQueue($queue)
     {
         $this->queue = $queue;
-
         return $this;
     }
-
     /**
      * Set the desired connection for the chain.
      *
@@ -108,10 +94,8 @@ trait Queueable
     {
         $this->chainConnection = $connection;
         $this->connection = $connection;
-
         return $this;
     }
-
     /**
      * Set the desired queue for the chain.
      *
@@ -122,10 +106,8 @@ trait Queueable
     {
         $this->chainQueue = $queue;
         $this->queue = $queue;
-
         return $this;
     }
-
     /**
      * Set the desired delay in seconds for the job.
      *
@@ -135,10 +117,8 @@ trait Queueable
     public function delay($delay)
     {
         $this->delay = $delay;
-
         return $this;
     }
-
     /**
      * Indicate that the job should be dispatched after all database transactions have committed.
      *
@@ -146,11 +126,9 @@ trait Queueable
      */
     public function afterCommit()
     {
-        $this->afterCommit = true;
-
+        $this->afterCommit = \true;
         return $this;
     }
-
     /**
      * Indicate that the job should not wait until database transactions have been committed before dispatching.
      *
@@ -158,11 +136,9 @@ trait Queueable
      */
     public function beforeCommit()
     {
-        $this->afterCommit = false;
-
+        $this->afterCommit = \false;
         return $this;
     }
-
     /**
      * Specify the middleware the job should be dispatched through.
      *
@@ -172,10 +148,8 @@ trait Queueable
     public function through($middleware)
     {
         $this->middleware = Arr::wrap($middleware);
-
         return $this;
     }
-
     /**
      * Set the jobs that should run if this job is successful.
      *
@@ -187,10 +161,8 @@ trait Queueable
         $this->chained = collect($chain)->map(function ($job) {
             return $this->serializeJob($job);
         })->all();
-
         return $this;
     }
-
     /**
      * Prepend a job to the current chain so that it is run after the currently running job.
      *
@@ -199,16 +171,13 @@ trait Queueable
      */
     public function prependToChain($job)
     {
-        $job = match (true) {
-            $job instanceof PendingBatch => new ChainedBatch($job),
+        $job = match (\true) {
+            $job instanceof \MenuManager\Vendor\Illuminate\Bus\PendingBatch => new \MenuManager\Vendor\Illuminate\Bus\ChainedBatch($job),
             default => $job,
         };
-
         $this->chained = Arr::prepend($this->chained, $this->serializeJob($job));
-
         return $this;
     }
-
     /**
      * Append a job to the end of the current chain.
      *
@@ -217,16 +186,13 @@ trait Queueable
      */
     public function appendToChain($job)
     {
-        $job = match (true) {
-            $job instanceof PendingBatch => new ChainedBatch($job),
+        $job = match (\true) {
+            $job instanceof \MenuManager\Vendor\Illuminate\Bus\PendingBatch => new \MenuManager\Vendor\Illuminate\Bus\ChainedBatch($job),
             default => $job,
         };
-
-        $this->chained = array_merge($this->chained, [$this->serializeJob($job)]);
-
+        $this->chained = \array_merge($this->chained, [$this->serializeJob($job)]);
         return $this;
     }
-
     /**
      * Serialize a job for queuing.
      *
@@ -238,18 +204,13 @@ trait Queueable
     protected function serializeJob($job)
     {
         if ($job instanceof Closure) {
-            if (! class_exists(CallQueuedClosure::class)) {
-                throw new RuntimeException(
-                    'To enable support for closure jobs, please install the illuminate/queue package.'
-                );
+            if (!\class_exists(CallQueuedClosure::class)) {
+                throw new RuntimeException('To enable support for closure jobs, please install the illuminate/queue package.');
             }
-
             $job = CallQueuedClosure::create($job);
         }
-
-        return serialize($job);
+        return \serialize($job);
     }
-
     /**
      * Dispatch the next job on the chain.
      *
@@ -257,20 +218,17 @@ trait Queueable
      */
     public function dispatchNextJobInChain()
     {
-        if (! empty($this->chained)) {
-            dispatch(tap(unserialize(array_shift($this->chained)), function ($next) {
+        if (!empty($this->chained)) {
+            dispatch(tap(\unserialize(\array_shift($this->chained)), function ($next) {
                 $next->chained = $this->chained;
-
                 $next->onConnection($next->connection ?: $this->chainConnection);
                 $next->onQueue($next->queue ?: $this->chainQueue);
-
                 $next->chainConnection = $this->chainConnection;
                 $next->chainQueue = $this->chainQueue;
                 $next->chainCatchCallbacks = $this->chainCatchCallbacks;
             }));
         }
     }
-
     /**
      * Invoke all of the chain's failed job callbacks.
      *
@@ -279,7 +237,7 @@ trait Queueable
      */
     public function invokeChainCatchCallbacks($e)
     {
-        collect($this->chainCatchCallbacks)->each(function ($callback) use ($e) {
+        collect($this->chainCatchCallbacks)->each(function ($callback) use($e) {
             $callback($e);
         });
     }

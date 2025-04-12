@@ -1,11 +1,10 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
-use Illuminate\Notifications\AnonymousNotifiable;
-use Illuminate\Notifications\ChannelManager;
-use Illuminate\Support\Testing\Fakes\NotificationFake;
-
+use MenuManager\Vendor\Illuminate\Notifications\AnonymousNotifiable;
+use MenuManager\Vendor\Illuminate\Notifications\ChannelManager;
+use MenuManager\Vendor\Illuminate\Support\Testing\Fakes\NotificationFake;
 /**
  * @method static void send(\Illuminate\Support\Collection|array|mixed $notifiables, mixed $notification)
  * @method static void sendNow(\Illuminate\Support\Collection|array|mixed $notifiables, mixed $notification, array|null $channels = null)
@@ -41,7 +40,7 @@ use Illuminate\Support\Testing\Fakes\NotificationFake;
  * @see \Illuminate\Notifications\ChannelManager
  * @see \Illuminate\Support\Testing\Fakes\NotificationFake
  */
-class Notification extends Facade
+class Notification extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Replace the bound instance with a fake.
@@ -50,11 +49,10 @@ class Notification extends Facade
      */
     public static function fake()
     {
-        return tap(new NotificationFake, function ($fake) {
+        return tap(new NotificationFake(), function ($fake) {
             static::swap($fake);
         });
     }
-
     /**
      * Begin sending a notification to an anonymous notifiable on the given channels.
      *
@@ -63,15 +61,12 @@ class Notification extends Facade
      */
     public static function routes(array $channels)
     {
-        $notifiable = new AnonymousNotifiable;
-
+        $notifiable = new AnonymousNotifiable();
         foreach ($channels as $channel => $route) {
             $notifiable->route($channel, $route);
         }
-
         return $notifiable;
     }
-
     /**
      * Begin sending a notification to an anonymous notifiable.
      *
@@ -81,9 +76,8 @@ class Notification extends Facade
      */
     public static function route($channel, $route)
     {
-        return (new AnonymousNotifiable)->route($channel, $route);
+        return (new AnonymousNotifiable())->route($channel, $route);
     }
-
     /**
      * Get the registered name of the component.
      *

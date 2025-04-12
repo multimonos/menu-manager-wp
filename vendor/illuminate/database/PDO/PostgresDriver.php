@@ -1,14 +1,12 @@
 <?php
 
-namespace Illuminate\Database\PDO;
+namespace MenuManager\Vendor\Illuminate\Database\PDO;
 
-use Doctrine\DBAL\Driver\AbstractPostgreSQLDriver;
-use Illuminate\Database\PDO\Concerns\ConnectsToDatabase;
-
+use MenuManager\Vendor\Doctrine\DBAL\Driver\AbstractPostgreSQLDriver;
+use MenuManager\Vendor\Illuminate\Database\PDO\Concerns\ConnectsToDatabase;
 class PostgresDriver extends AbstractPostgreSQLDriver
 {
     use ConnectsToDatabase;
-
     /**
      * {@inheritdoc}
      */

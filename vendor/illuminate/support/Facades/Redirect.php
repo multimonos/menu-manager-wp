@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static \Illuminate\Http\RedirectResponse back(int $status = 302, array $headers = [], mixed $fallback = false)
@@ -25,7 +25,7 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\Routing\Redirector
  */
-class Redirect extends Facade
+class Redirect extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.

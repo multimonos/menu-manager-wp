@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Contracts\Encryption;
+namespace MenuManager\Vendor\Illuminate\Contracts\Encryption;
 
 use RuntimeException;
-
 class EncryptException extends RuntimeException
 {
     //

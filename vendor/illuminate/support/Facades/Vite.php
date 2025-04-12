@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static array preloadedAssets()
@@ -29,7 +29,7 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\Foundation\Vite
  */
-class Vite extends Facade
+class Vite extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.
@@ -38,6 +38,6 @@ class Vite extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return \Illuminate\Foundation\Vite::class;
+        return \MenuManager\Vendor\Illuminate\Foundation\Vite::class;
     }
 }

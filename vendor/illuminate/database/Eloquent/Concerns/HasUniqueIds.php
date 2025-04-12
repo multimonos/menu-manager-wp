@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database\Eloquent\Concerns;
+namespace MenuManager\Vendor\Illuminate\Database\Eloquent\Concerns;
 
 trait HasUniqueIds
 {
@@ -9,8 +9,7 @@ trait HasUniqueIds
      *
      * @var bool
      */
-    public $usesUniqueIds = false;
-
+    public $usesUniqueIds = \false;
     /**
      * Determine if the model uses unique ids.
      *
@@ -20,7 +19,6 @@ trait HasUniqueIds
     {
         return $this->usesUniqueIds;
     }
-
     /**
      * Generate unique keys for the model.
      *
@@ -34,7 +32,6 @@ trait HasUniqueIds
             }
         }
     }
-
     /**
      * Generate a new key for the model.
      *
@@ -44,7 +41,6 @@ trait HasUniqueIds
     {
         return null;
     }
-
     /**
      * Get the columns that should receive a unique identifier.
      *

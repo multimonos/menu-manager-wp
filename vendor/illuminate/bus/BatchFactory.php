@@ -1,10 +1,9 @@
 <?php
 
-namespace Illuminate\Bus;
+namespace MenuManager\Vendor\Illuminate\Bus;
 
-use Carbon\CarbonImmutable;
-use Illuminate\Contracts\Queue\Factory as QueueFactory;
-
+use MenuManager\Vendor\Carbon\CarbonImmutable;
+use MenuManager\Vendor\Illuminate\Contracts\Queue\Factory as QueueFactory;
 class BatchFactory
 {
     /**
@@ -13,7 +12,6 @@ class BatchFactory
      * @var \Illuminate\Contracts\Queue\Factory
      */
     protected $queue;
-
     /**
      * Create a new batch factory instance.
      *
@@ -24,7 +22,6 @@ class BatchFactory
     {
         $this->queue = $queue;
     }
-
     /**
      * Create a new batch instance.
      *
@@ -41,18 +38,8 @@ class BatchFactory
      * @param  \Carbon\CarbonImmutable|null  $finishedAt
      * @return \Illuminate\Bus\Batch
      */
-    public function make(BatchRepository $repository,
-                         string $id,
-                         string $name,
-                         int $totalJobs,
-                         int $pendingJobs,
-                         int $failedJobs,
-                         array $failedJobIds,
-                         array $options,
-                         CarbonImmutable $createdAt,
-                         ?CarbonImmutable $cancelledAt,
-                         ?CarbonImmutable $finishedAt)
+    public function make(\MenuManager\Vendor\Illuminate\Bus\BatchRepository $repository, string $id, string $name, int $totalJobs, int $pendingJobs, int $failedJobs, array $failedJobIds, array $options, CarbonImmutable $createdAt, ?CarbonImmutable $cancelledAt, ?CarbonImmutable $finishedAt)
     {
-        return new Batch($this->queue, $repository, $id, $name, $totalJobs, $pendingJobs, $failedJobs, $failedJobIds, $options, $createdAt, $cancelledAt, $finishedAt);
+        return new \MenuManager\Vendor\Illuminate\Bus\Batch($this->queue, $repository, $id, $name, $totalJobs, $pendingJobs, $failedJobs, $failedJobIds, $options, $createdAt, $cancelledAt, $finishedAt);
     }
 }

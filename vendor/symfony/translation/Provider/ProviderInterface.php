@@ -8,12 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MenuManager\Vendor\Symfony\Component\Translation\Provider;
 
-namespace Symfony\Component\Translation\Provider;
-
-use Symfony\Component\Translation\TranslatorBag;
-use Symfony\Component\Translation\TranslatorBagInterface;
-
+use MenuManager\Vendor\Symfony\Component\Translation\TranslatorBag;
+use MenuManager\Vendor\Symfony\Component\Translation\TranslatorBagInterface;
 interface ProviderInterface extends \Stringable
 {
     /**
@@ -22,9 +20,7 @@ interface ProviderInterface extends \Stringable
      * must be overwritten.
      * Translations available on the provider only must be kept.
      */
-    public function write(TranslatorBagInterface $translatorBag): void;
-
-    public function read(array $domains, array $locales): TranslatorBag;
-
-    public function delete(TranslatorBagInterface $translatorBag): void;
+    public function write(TranslatorBagInterface $translatorBag) : void;
+    public function read(array $domains, array $locales) : TranslatorBag;
+    public function delete(TranslatorBagInterface $translatorBag) : void;
 }

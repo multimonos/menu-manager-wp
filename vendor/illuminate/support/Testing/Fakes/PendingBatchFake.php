@@ -1,10 +1,9 @@
 <?php
 
-namespace Illuminate\Support\Testing\Fakes;
+namespace MenuManager\Vendor\Illuminate\Support\Testing\Fakes;
 
-use Illuminate\Bus\PendingBatch;
-use Illuminate\Support\Collection;
-
+use MenuManager\Vendor\Illuminate\Bus\PendingBatch;
+use MenuManager\Vendor\Illuminate\Support\Collection;
 class PendingBatchFake extends PendingBatch
 {
     /**
@@ -13,7 +12,6 @@ class PendingBatchFake extends PendingBatch
      * @var \Illuminate\Support\Testing\Fakes\BusFake
      */
     protected $bus;
-
     /**
      * Create a new pending batch instance.
      *
@@ -21,12 +19,11 @@ class PendingBatchFake extends PendingBatch
      * @param  \Illuminate\Support\Collection  $jobs
      * @return void
      */
-    public function __construct(BusFake $bus, Collection $jobs)
+    public function __construct(\MenuManager\Vendor\Illuminate\Support\Testing\Fakes\BusFake $bus, Collection $jobs)
     {
         $this->bus = $bus;
         $this->jobs = $jobs;
     }
-
     /**
      * Dispatch the batch.
      *
@@ -36,7 +33,6 @@ class PendingBatchFake extends PendingBatch
     {
         return $this->bus->recordPendingBatch($this);
     }
-
     /**
      * Dispatch the batch after the response is sent to the browser.
      *

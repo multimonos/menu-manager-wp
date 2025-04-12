@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
-use Illuminate\Contracts\Broadcasting\Factory as BroadcastingFactoryContract;
-
+use MenuManager\Vendor\Illuminate\Contracts\Broadcasting\Factory as BroadcastingFactoryContract;
 /**
  * @method static void routes(array|null $attributes = null)
  * @method static void userRoutes(array|null $attributes = null)
@@ -33,7 +32,7 @@ use Illuminate\Contracts\Broadcasting\Factory as BroadcastingFactoryContract;
  * @see \Illuminate\Broadcasting\BroadcastManager
  * @see \Illuminate\Broadcasting\Broadcasters\Broadcaster
  */
-class Broadcast extends Facade
+class Broadcast extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.

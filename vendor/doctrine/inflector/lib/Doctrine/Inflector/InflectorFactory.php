@@ -1,52 +1,39 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace MenuManager\Vendor\Doctrine\Inflector;
 
-namespace Doctrine\Inflector;
-
-use Doctrine\Inflector\Rules\English;
-use Doctrine\Inflector\Rules\French;
-use Doctrine\Inflector\Rules\NorwegianBokmal;
-use Doctrine\Inflector\Rules\Portuguese;
-use Doctrine\Inflector\Rules\Spanish;
-use Doctrine\Inflector\Rules\Turkish;
+use MenuManager\Vendor\Doctrine\Inflector\Rules\English;
+use MenuManager\Vendor\Doctrine\Inflector\Rules\French;
+use MenuManager\Vendor\Doctrine\Inflector\Rules\NorwegianBokmal;
+use MenuManager\Vendor\Doctrine\Inflector\Rules\Portuguese;
+use MenuManager\Vendor\Doctrine\Inflector\Rules\Spanish;
+use MenuManager\Vendor\Doctrine\Inflector\Rules\Turkish;
 use InvalidArgumentException;
-
 use function sprintf;
-
 final class InflectorFactory
 {
-    public static function create(): LanguageInflectorFactory
+    public static function create() : \MenuManager\Vendor\Doctrine\Inflector\LanguageInflectorFactory
     {
-        return self::createForLanguage(Language::ENGLISH);
+        return self::createForLanguage(\MenuManager\Vendor\Doctrine\Inflector\Language::ENGLISH);
     }
-
-    public static function createForLanguage(string $language): LanguageInflectorFactory
+    public static function createForLanguage(string $language) : \MenuManager\Vendor\Doctrine\Inflector\LanguageInflectorFactory
     {
         switch ($language) {
-            case Language::ENGLISH:
+            case \MenuManager\Vendor\Doctrine\Inflector\Language::ENGLISH:
                 return new English\InflectorFactory();
-
-            case Language::FRENCH:
+            case \MenuManager\Vendor\Doctrine\Inflector\Language::FRENCH:
                 return new French\InflectorFactory();
-
-            case Language::NORWEGIAN_BOKMAL:
+            case \MenuManager\Vendor\Doctrine\Inflector\Language::NORWEGIAN_BOKMAL:
                 return new NorwegianBokmal\InflectorFactory();
-
-            case Language::PORTUGUESE:
+            case \MenuManager\Vendor\Doctrine\Inflector\Language::PORTUGUESE:
                 return new Portuguese\InflectorFactory();
-
-            case Language::SPANISH:
+            case \MenuManager\Vendor\Doctrine\Inflector\Language::SPANISH:
                 return new Spanish\InflectorFactory();
-
-            case Language::TURKISH:
+            case \MenuManager\Vendor\Doctrine\Inflector\Language::TURKISH:
                 return new Turkish\InflectorFactory();
-
             default:
-                throw new InvalidArgumentException(sprintf(
-                    'Language "%s" is not supported.',
-                    $language
-                ));
+                throw new InvalidArgumentException(sprintf('Language "%s" is not supported.', $language));
         }
     }
 }

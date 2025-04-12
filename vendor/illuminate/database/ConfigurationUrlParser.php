@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Database;
+namespace MenuManager\Vendor\Illuminate\Database;
 
-use Illuminate\Support\ConfigurationUrlParser as BaseConfigurationUrlParser;
-
+use MenuManager\Vendor\Illuminate\Support\ConfigurationUrlParser as BaseConfigurationUrlParser;
 class ConfigurationUrlParser extends BaseConfigurationUrlParser
 {
     //

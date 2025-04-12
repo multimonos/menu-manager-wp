@@ -8,27 +8,22 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
-
-namespace League\Csv\Query\Constraint;
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv\Query\Constraint;
 
 use CallbackFilterIterator;
 use Closure;
 use Iterator;
-use League\Csv\MapIterator;
-use League\Csv\Query\Predicate;
-use League\Csv\Query\QueryException;
-use League\Csv\Query\Row;
+use MenuManager\Vendor\League\Csv\MapIterator;
+use MenuManager\Vendor\League\Csv\Query\Predicate;
+use MenuManager\Vendor\League\Csv\Query\QueryException;
+use MenuManager\Vendor\League\Csv\Query\Row;
 use ReflectionException;
-
 use function array_filter;
 use function is_array;
 use function is_int;
 use function is_string;
-
 use const ARRAY_FILTER_USE_BOTH;
-
 /**
  * Enable filtering a record by comparing the values of two of its column.
  *
@@ -40,59 +35,45 @@ final class TwoColumns implements Predicate
     /**
      * @throws QueryException
      */
-    private function __construct(
-        public readonly string|int $first,
-        public readonly Comparison|Closure $operator,
-        public readonly array|string|int $second,
-    ) {
+    private function __construct(public readonly string|int $first, public readonly \MenuManager\Vendor\League\Csv\Query\Constraint\Comparison|Closure $operator, public readonly array|string|int $second)
+    {
         !$this->operator instanceof Closure || !is_array($this->second) || throw new QueryException('The second column must be a string if the operator is a callback.');
-
         if (is_array($this->second)) {
-            $res = array_filter($this->second, fn (mixed $value): bool => !is_string($value) && !is_int($value));
+            $res = array_filter($this->second, fn(mixed $value): bool => !is_string($value) && !is_int($value));
             if ([] !== $res) {
                 throw new QueryException('The second column must be a string, an integer or a list of strings and/or integer when the operator is not a callback.');
             }
         }
     }
-
     /**
      * @throws QueryException
      */
-    public static function filterOn(
-        string|int $firstColumn,
-        Comparison|Closure|callable|string $operator,
-        array|string|int $secondColumn
-    ): self {
+    public static function filterOn(string|int $firstColumn, \MenuManager\Vendor\League\Csv\Query\Constraint\Comparison|Closure|callable|string $operator, array|string|int $secondColumn) : self
+    {
         if (is_string($operator)) {
-            $operator = Comparison::fromOperator($operator);
+            $operator = \MenuManager\Vendor\League\Csv\Query\Constraint\Comparison::fromOperator($operator);
         }
-
-        if (is_callable($operator)) {
+        if (\is_callable($operator)) {
             return new self($firstColumn, Closure::fromCallable($operator), $secondColumn);
         }
-
         return new self($firstColumn, $operator, $secondColumn);
     }
-
     /**
      * @throws QueryException
      * @throws ReflectionException
      */
-    public function __invoke(mixed $value, int|string $key): bool
+    public function __invoke(mixed $value, int|string $key) : bool
     {
-        $val = match (true) {
-            is_array($this->second) => array_values(Row::from($value)->select(...$this->second)),
+        $val = match (\true) {
+            is_array($this->second) => \array_values(Row::from($value)->select(...$this->second)),
             default => Row::from($value)->value($this->second),
         };
-
         if ($this->operator instanceof Closure) {
             return ($this->operator)(Row::from($value)->value($this->first), $val);
         }
-
-        return Column::filterOn($this->first, $this->operator, $val)($value, $key);
+        return \MenuManager\Vendor\League\Csv\Query\Constraint\Column::filterOn($this->first, $this->operator, $val)($value, $key);
     }
-
-    public function filter(iterable $value): Iterator
+    public function filter(iterable $value) : Iterator
     {
         return new CallbackFilterIterator(MapIterator::toIterator($value), $this);
     }

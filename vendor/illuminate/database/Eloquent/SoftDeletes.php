@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database\Eloquent;
+namespace MenuManager\Vendor\Illuminate\Database\Eloquent;
 
 /**
  * @method static \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder withTrashed(bool $withTrashed = true)
@@ -14,8 +14,7 @@ trait SoftDeletes
      *
      * @var bool
      */
-    protected $forceDeleting = false;
-
+    protected $forceDeleting = \false;
     /**
      * Boot the soft deleting trait for a model.
      *
@@ -23,9 +22,8 @@ trait SoftDeletes
      */
     public static function bootSoftDeletes()
     {
-        static::addGlobalScope(new SoftDeletingScope);
+        static::addGlobalScope(new \MenuManager\Vendor\Illuminate\Database\Eloquent\SoftDeletingScope());
     }
-
     /**
      * Initialize the soft deleting trait for an instance.
      *
@@ -33,11 +31,10 @@ trait SoftDeletes
      */
     public function initializeSoftDeletes()
     {
-        if (! isset($this->casts[$this->getDeletedAtColumn()])) {
+        if (!isset($this->casts[$this->getDeletedAtColumn()])) {
             $this->casts[$this->getDeletedAtColumn()] = 'datetime';
         }
     }
-
     /**
      * Force a hard delete on a soft deleted model.
      *
@@ -45,21 +42,17 @@ trait SoftDeletes
      */
     public function forceDelete()
     {
-        if ($this->fireModelEvent('forceDeleting') === false) {
-            return false;
+        if ($this->fireModelEvent('forceDeleting') === \false) {
+            return \false;
         }
-
-        $this->forceDeleting = true;
-
+        $this->forceDeleting = \true;
         return tap($this->delete(), function ($deleted) {
-            $this->forceDeleting = false;
-
+            $this->forceDeleting = \false;
             if ($deleted) {
-                $this->fireModelEvent('forceDeleted', false);
+                $this->fireModelEvent('forceDeleted', \false);
             }
         });
     }
-
     /**
      * Force a hard delete on a soft deleted model without raising any events.
      *
@@ -67,9 +60,8 @@ trait SoftDeletes
      */
     public function forceDeleteQuietly()
     {
-        return static::withoutEvents(fn () => $this->forceDelete());
+        return static::withoutEvents(fn() => $this->forceDelete());
     }
-
     /**
      * Perform the actual delete query on this model instance.
      *
@@ -79,13 +71,11 @@ trait SoftDeletes
     {
         if ($this->forceDeleting) {
             return tap($this->setKeysForSaveQuery($this->newModelQuery())->forceDelete(), function () {
-                $this->exists = false;
+                $this->exists = \false;
             });
         }
-
         return $this->runSoftDelete();
     }
-
     /**
      * Perform the actual delete query on this model instance.
      *
@@ -94,26 +84,17 @@ trait SoftDeletes
     protected function runSoftDelete()
     {
         $query = $this->setKeysForSaveQuery($this->newModelQuery());
-
         $time = $this->freshTimestamp();
-
         $columns = [$this->getDeletedAtColumn() => $this->fromDateTime($time)];
-
         $this->{$this->getDeletedAtColumn()} = $time;
-
-        if ($this->usesTimestamps() && ! is_null($this->getUpdatedAtColumn())) {
+        if ($this->usesTimestamps() && !\is_null($this->getUpdatedAtColumn())) {
             $this->{$this->getUpdatedAtColumn()} = $time;
-
             $columns[$this->getUpdatedAtColumn()] = $this->fromDateTime($time);
         }
-
         $query->update($columns);
-
-        $this->syncOriginalAttributes(array_keys($columns));
-
-        $this->fireModelEvent('trashed', false);
+        $this->syncOriginalAttributes(\array_keys($columns));
+        $this->fireModelEvent('trashed', \false);
     }
-
     /**
      * Restore a soft-deleted model instance.
      *
@@ -124,24 +105,18 @@ trait SoftDeletes
         // If the restoring event does not return false, we will proceed with this
         // restore operation. Otherwise, we bail out so the developer will stop
         // the restore totally. We will clear the deleted timestamp and save.
-        if ($this->fireModelEvent('restoring') === false) {
-            return false;
+        if ($this->fireModelEvent('restoring') === \false) {
+            return \false;
         }
-
         $this->{$this->getDeletedAtColumn()} = null;
-
         // Once we have saved the model, we will fire the "restored" event so this
         // developer will do anything they need to after a restore operation is
         // totally finished. Then we will return the result of the save call.
-        $this->exists = true;
-
+        $this->exists = \true;
         $result = $this->save();
-
-        $this->fireModelEvent('restored', false);
-
+        $this->fireModelEvent('restored', \false);
         return $result;
     }
-
     /**
      * Restore a soft-deleted model instance without raising any events.
      *
@@ -149,9 +124,8 @@ trait SoftDeletes
      */
     public function restoreQuietly()
     {
-        return static::withoutEvents(fn () => $this->restore());
+        return static::withoutEvents(fn() => $this->restore());
     }
-
     /**
      * Determine if the model instance has been soft-deleted.
      *
@@ -159,9 +133,8 @@ trait SoftDeletes
      */
     public function trashed()
     {
-        return ! is_null($this->{$this->getDeletedAtColumn()});
+        return !\is_null($this->{$this->getDeletedAtColumn()});
     }
-
     /**
      * Register a "softDeleted" model event callback with the dispatcher.
      *
@@ -172,7 +145,6 @@ trait SoftDeletes
     {
         static::registerModelEvent('trashed', $callback);
     }
-
     /**
      * Register a "restoring" model event callback with the dispatcher.
      *
@@ -183,7 +155,6 @@ trait SoftDeletes
     {
         static::registerModelEvent('restoring', $callback);
     }
-
     /**
      * Register a "restored" model event callback with the dispatcher.
      *
@@ -194,7 +165,6 @@ trait SoftDeletes
     {
         static::registerModelEvent('restored', $callback);
     }
-
     /**
      * Register a "forceDeleting" model event callback with the dispatcher.
      *
@@ -205,7 +175,6 @@ trait SoftDeletes
     {
         static::registerModelEvent('forceDeleting', $callback);
     }
-
     /**
      * Register a "forceDeleted" model event callback with the dispatcher.
      *
@@ -216,7 +185,6 @@ trait SoftDeletes
     {
         static::registerModelEvent('forceDeleted', $callback);
     }
-
     /**
      * Determine if the model is currently force deleting.
      *
@@ -226,7 +194,6 @@ trait SoftDeletes
     {
         return $this->forceDeleting;
     }
-
     /**
      * Get the name of the "deleted at" column.
      *
@@ -234,9 +201,8 @@ trait SoftDeletes
      */
     public function getDeletedAtColumn()
     {
-        return defined(static::class.'::DELETED_AT') ? static::DELETED_AT : 'deleted_at';
+        return \defined(static::class . '::DELETED_AT') ? static::DELETED_AT : 'deleted_at';
     }
-
     /**
      * Get the fully qualified "deleted at" column.
      *

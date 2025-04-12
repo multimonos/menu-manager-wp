@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Queue;
+namespace MenuManager\Vendor\Illuminate\Contracts\Queue;
 
 interface ShouldBeUnique
 {

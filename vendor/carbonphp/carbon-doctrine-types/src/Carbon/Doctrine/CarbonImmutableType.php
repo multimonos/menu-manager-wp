@@ -1,7 +1,7 @@
 <?php
 
-namespace Carbon\Doctrine;
+namespace MenuManager\Vendor\Carbon\Doctrine;
 
-class CarbonImmutableType extends DateTimeImmutableType implements CarbonDoctrineType
+class CarbonImmutableType extends \MenuManager\Vendor\Carbon\Doctrine\DateTimeImmutableType implements \MenuManager\Vendor\Carbon\Doctrine\CarbonDoctrineType
 {
 }

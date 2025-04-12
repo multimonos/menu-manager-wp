@@ -8,29 +8,26 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
-
-namespace League\Csv;
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv;
 
 use ArrayIterator;
 use CallbackFilterIterator;
 use Closure;
-use Deprecated;
+use MenuManager\Vendor\Deprecated;
 use Generator;
 use Iterator;
 use JsonSerializable;
-use League\Csv\Serializer\Denormalizer;
-use League\Csv\Serializer\MappingFailed;
-use League\Csv\Serializer\TypeCastingFailed;
+use MenuManager\Vendor\League\Csv\Serializer\Denormalizer;
+use MenuManager\Vendor\League\Csv\Serializer\MappingFailed;
+use MenuManager\Vendor\League\Csv\Serializer\TypeCastingFailed;
 use LimitIterator;
 use mysqli_result;
 use PDOStatement;
-use PgSql\Result;
+use MenuManager\Vendor\PgSql\Result;
 use RuntimeException;
 use SQLite3Result;
 use Throwable;
-
 use function array_filter;
 use function array_flip;
 use function array_key_exists;
@@ -40,20 +37,17 @@ use function array_values;
 use function is_int;
 use function is_string;
 use function iterator_count;
-
 /**
  * Represents the result set of a {@link Reader} processed by a {@link Statement}.
  *
  * @template TValue of array
  */
-class ResultSet implements TabularDataReader, JsonSerializable
+class ResultSet implements \MenuManager\Vendor\League\Csv\TabularDataReader, JsonSerializable
 {
     /** @var array<string> */
     protected array $header;
-
     /* @var Iterator<array-key, array<array-key, mixed>> */
     protected Iterator $records;
-
     /**
      * @internal
      *
@@ -66,33 +60,30 @@ class ResultSet implements TabularDataReader, JsonSerializable
      */
     public function __construct(Iterator|array $records = [], array $header = [])
     {
-        $header === array_filter($header, is_string(...)) || throw SyntaxError::dueToInvalidHeaderColumnNames();
-
+        $header === array_filter($header, is_string(...)) || throw \MenuManager\Vendor\League\Csv\SyntaxError::dueToInvalidHeaderColumnNames();
         $this->header = array_values($this->validateHeader($header));
-        $this->records = match (true) {
+        $this->records = match (\true) {
             $records instanceof Iterator => $records,
             default => new ArrayIterator($records),
         };
     }
-
     /**
      * @throws SyntaxError if the header syntax is invalid
      */
-    protected function validateHeader(array $header): array
+    protected function validateHeader(array $header) : array
     {
-        return match (true) {
-            $header !== array_unique($header) => throw SyntaxError::dueToDuplicateHeaderColumnNames($header),
-            [] !== array_filter(array_keys($header), fn (string|int $value) => !is_int($value) || $value < 0) => throw new SyntaxError('The header mapper indexes should only contain positive integer or 0.'),
+        return match (\true) {
+            $header !== \array_unique($header) => throw \MenuManager\Vendor\League\Csv\SyntaxError::dueToDuplicateHeaderColumnNames($header),
+            [] !== array_filter(\array_keys($header), fn(string|int $value) => !is_int($value) || $value < 0) => throw new \MenuManager\Vendor\League\Csv\SyntaxError('The header mapper indexes should only contain positive integer or 0.'),
             default => $header,
         };
     }
-
     /**
      * Returns a new instance from a tabular data implementing object.
      *
      * @throws RuntimeException|SyntaxError If the column names can not be found
      */
-    public static function tryFrom(PDOStatement|Result|mysqli_result|SQLite3Result|TabularData $tabularData): ?self
+    public static function tryFrom(PDOStatement|Result|mysqli_result|SQLite3Result|\MenuManager\Vendor\League\Csv\TabularData $tabularData) : ?self
     {
         try {
             return self::from($tabularData);
@@ -100,78 +91,67 @@ class ResultSet implements TabularDataReader, JsonSerializable
             return null;
         }
     }
-
     /**
      * Returns a new instance from a tabular data implementing object.
      *
      * @throws RuntimeException|SyntaxError If the column names can not be found
      */
-    public static function from(PDOStatement|Result|mysqli_result|SQLite3Result|TabularData $tabularData): self
+    public static function from(PDOStatement|Result|mysqli_result|SQLite3Result|\MenuManager\Vendor\League\Csv\TabularData $tabularData) : self
     {
-        if (!$tabularData instanceof TabularData) {
+        if (!$tabularData instanceof \MenuManager\Vendor\League\Csv\TabularData) {
             /** @var ArrayIterator<array-key, array<array-key, mixed>> $data */
             $data = new ArrayIterator();
-            foreach (RdbmsResult::rows($tabularData) as $offset => $row) {
+            foreach (\MenuManager\Vendor\League\Csv\RdbmsResult::rows($tabularData) as $offset => $row) {
                 $data[$offset] = $row;
             }
-
-            return new self($data, RdbmsResult::columnNames($tabularData));
+            return new self($data, \MenuManager\Vendor\League\Csv\RdbmsResult::columnNames($tabularData));
         }
-
         return new self($tabularData->getRecords(), $tabularData->getHeader());
     }
-
     public function __destruct()
     {
         unset($this->records);
     }
-
     /**
      * Returns the header associated with the result set.
      *
      * @return array<string>
      */
-    public function getHeader(): array
+    public function getHeader() : array
     {
         return $this->header;
     }
-
     /**
      * @throws SyntaxError
      */
-    public function getIterator(): Iterator
+    public function getIterator() : Iterator
     {
         return $this->getRecords();
     }
-
     /**
      * @param callable(array<mixed>, array-key=): mixed $callback
      */
-    public function each(callable $callback): bool
+    public function each(callable $callback) : bool
     {
         foreach ($this as $offset => $record) {
-            if (false === $callback($record, $offset)) {
-                return false;
+            if (\false === $callback($record, $offset)) {
+                return \false;
             }
         }
-
-        return true;
+        return \true;
     }
-
     /**
      * @param callable(array<mixed>, array-key=): bool $callback
      */
-    public function exists(callable $callback): bool
+    public function exists(callable $callback) : bool
     {
         foreach ($this as $offset => $record) {
-            if (true === $callback($record, $offset)) {
-                return true;
+            if (\true === $callback($record, $offset)) {
+                return \true;
             }
         }
-
-        return false;
+        return \false;
     }
-
     /**
      * @param callable(TInitial|null, array<mixed>, array-key=): TInitial $callback
      * @param TInitial|null $initial
@@ -180,15 +160,13 @@ class ResultSet implements TabularDataReader, JsonSerializable
      *
      * @return TInitial|null
      */
-    public function reduce(callable $callback, mixed $initial = null): mixed
+    public function reduce(callable $callback, mixed $initial = null) : mixed
     {
         foreach ($this as $offset => $record) {
             $initial = $callback($initial, $record, $offset);
         }
-
         return $initial;
     }
-
     /**
      * Run a map over each container members.
      *
@@ -198,11 +176,10 @@ class ResultSet implements TabularDataReader, JsonSerializable
      *
      * @return Iterator<TMap>
      */
-    public function map(callable $callback): Iterator
+    public function map(callable $callback) : Iterator
     {
-        return MapIterator::fromIterable($this, $callback);
+        return \MenuManager\Vendor\League\Csv\MapIterator::fromIterable($this, $callback);
     }
-
     /**
      * @param positive-int $recordsCount
      *
@@ -210,10 +187,9 @@ class ResultSet implements TabularDataReader, JsonSerializable
      *
      * @return iterable<TabularDataReader>
      */
-    public function chunkBy(int $recordsCount): iterable
+    public function chunkBy(int $recordsCount) : iterable
     {
-        $recordsCount > 0 || throw InvalidArgument::dueToInvalidChunkSize($recordsCount, __METHOD__);
-
+        $recordsCount > 0 || throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidChunkSize($recordsCount, __METHOD__);
         $header = $this->getHeader();
         $records = [];
         $nbRecords = 0;
@@ -221,126 +197,100 @@ class ResultSet implements TabularDataReader, JsonSerializable
             $records[] = $record;
             ++$nbRecords;
             if ($nbRecords === $recordsCount) {
-                yield new self($records, $header);
+                (yield new self($records, $header));
                 $records = [];
                 $nbRecords = 0;
             }
         }
-
         if ([] !== $records) {
-            yield new self($records, $header);
+            (yield new self($records, $header));
         }
     }
-
     /**
      * @param array<string> $headers
      */
-    public function mapHeader(array $headers): TabularDataReader
+    public function mapHeader(array $headers) : \MenuManager\Vendor\League\Csv\TabularDataReader
     {
-        return (new Statement())->process($this, $headers);
+        return (new \MenuManager\Vendor\League\Csv\Statement())->process($this, $headers);
     }
-
-    public function filter(Query\Predicate|Closure $predicate): TabularDataReader
+    public function filter(\MenuManager\Vendor\League\Csv\Query\Predicate|Closure $predicate) : \MenuManager\Vendor\League\Csv\TabularDataReader
     {
-        return (new Statement())->where($predicate)->process($this);
+        return (new \MenuManager\Vendor\League\Csv\Statement())->where($predicate)->process($this);
     }
-
-    public function slice(int $offset, ?int $length = null): TabularDataReader
+    public function slice(int $offset, ?int $length = null) : \MenuManager\Vendor\League\Csv\TabularDataReader
     {
-        return (new Statement())->offset($offset)->limit($length ?? -1)->process($this);
+        return (new \MenuManager\Vendor\League\Csv\Statement())->offset($offset)->limit($length ?? -1)->process($this);
     }
-
-    public function sorted(Query\Sort|Closure $orderBy): TabularDataReader
+    public function sorted(\MenuManager\Vendor\League\Csv\Query\Sort|Closure $orderBy) : \MenuManager\Vendor\League\Csv\TabularDataReader
     {
-        return (new Statement())->orderBy($orderBy)->process($this);
+        return (new \MenuManager\Vendor\League\Csv\Statement())->orderBy($orderBy)->process($this);
     }
-
-    public function select(string|int ...$columns): TabularDataReader
+    public function select(string|int ...$columns) : \MenuManager\Vendor\League\Csv\TabularDataReader
     {
         if ([] === $columns) {
             return $this;
         }
-
         $recordsHeader = $this->getHeader();
         $hasHeader = [] !== $recordsHeader;
-        $selectColumn = function (array $header, string|int $field) use ($recordsHeader, $hasHeader): array {
+        $selectColumn = function (array $header, string|int $field) use($recordsHeader, $hasHeader) : array {
             if (is_string($field)) {
-                $index = array_search($field, $recordsHeader, true);
-                if (false === $index) {
-                    throw InvalidArgument::dueToInvalidColumnIndex($field, 'offset', __METHOD__);
+                $index = array_search($field, $recordsHeader, \true);
+                if (\false === $index) {
+                    throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidColumnIndex($field, 'offset', __METHOD__);
                 }
-
                 $header[$index] = $field;
-
                 return $header;
             }
-
             if ($hasHeader && !array_key_exists($field, $recordsHeader)) {
-                throw InvalidArgument::dueToInvalidColumnIndex($field, 'offset', __METHOD__);
+                throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidColumnIndex($field, 'offset', __METHOD__);
             }
-
             $header[$field] = $recordsHeader[$field] ?? $field;
-
             return $header;
         };
-
         /** @var array<string> $header */
         $header = array_reduce($columns, $selectColumn, []);
-        $callback = function (array $record) use ($header): array {
+        $callback = function (array $record) use($header) : array {
             $element = [];
             $row = array_values($record);
             foreach ($header as $offset => $headerName) {
                 $element[$headerName] = $row[$offset] ?? null;
             }
-
             return $element;
         };
-
-        return new self(new MapIterator($this, $callback), $hasHeader ? $header : []);
+        return new self(new \MenuManager\Vendor\League\Csv\MapIterator($this, $callback), $hasHeader ? $header : []);
     }
-
-    public function selectAllExcept(string|int ...$columns): TabularDataReader
+    public function selectAllExcept(string|int ...$columns) : \MenuManager\Vendor\League\Csv\TabularDataReader
     {
         if ([] === $columns) {
             return $this;
         }
-
         $recordsHeader = $this->getHeader();
         $hasHeader = [] !== $recordsHeader;
-        $selectColumnsToSkip = function (array $res, string|int $column) use ($recordsHeader, $hasHeader): array {
+        $selectColumnsToSkip = function (array $res, string|int $column) use($recordsHeader, $hasHeader) : array {
             if ($hasHeader) {
                 if (is_string($column)) {
-                    $index = array_search($column, $recordsHeader, true);
-                    if (false === $index) {
-                        throw InvalidArgument::dueToInvalidColumnIndex($column, 'offset', __METHOD__);
+                    $index = array_search($column, $recordsHeader, \true);
+                    if (\false === $index) {
+                        throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidColumnIndex($column, 'offset', __METHOD__);
                     }
-
                     $res[$index] = 1;
-
                     return $res;
                 }
-
                 if (!array_key_exists($column, $recordsHeader)) {
-                    throw InvalidArgument::dueToInvalidColumnIndex($column, 'offset', __METHOD__);
+                    throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidColumnIndex($column, 'offset', __METHOD__);
                 }
-
                 $res[$column] = 1;
-
                 return $res;
             }
-
             if (!is_int($column)) {
-                throw InvalidArgument::dueToInvalidColumnIndex($column, 'offset', __METHOD__);
+                throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidColumnIndex($column, 'offset', __METHOD__);
             }
-
             $res[$column] = 1;
-
             return $res;
         };
-
         /** @var array<int> $columnsToSkip */
         $columnsToSkip = array_reduce($columns, $selectColumnsToSkip, []);
-        $callback = function (array $record) use ($columnsToSkip): array {
+        $callback = function (array $record) use($columnsToSkip) : array {
             $element = [];
             $index = 0;
             foreach ($record as $name => $value) {
@@ -349,24 +299,14 @@ class ResultSet implements TabularDataReader, JsonSerializable
                 }
                 ++$index;
             }
-
             return $element;
         };
-
         $newHeader = [];
         if ($hasHeader) {
-            $newHeader = array_values(
-                array_filter(
-                    $recordsHeader,
-                    fn (string|int $key) => !array_key_exists($key, $columnsToSkip),
-                    ARRAY_FILTER_USE_KEY
-                )
-            );
+            $newHeader = array_values(array_filter($recordsHeader, fn(string|int $key) => !array_key_exists($key, $columnsToSkip), \ARRAY_FILTER_USE_KEY));
         }
-
-        return new self(new MapIterator($this, $callback), $newHeader);
+        return new self(new \MenuManager\Vendor\League\Csv\MapIterator($this, $callback), $newHeader);
     }
-
     /**
      * EXPERIMENTAL WARNING! This method implementation will change in the next major point release.
      *
@@ -377,11 +317,10 @@ class ResultSet implements TabularDataReader, JsonSerializable
      * @throws SyntaxError
      * @return iterable<int, TabularDataReader>
      */
-    public function matching(string $expression): iterable
+    public function matching(string $expression) : iterable
     {
-        return (new FragmentFinder())->findAll($expression, $this);
+        return (new \MenuManager\Vendor\League\Csv\FragmentFinder())->findAll($expression, $this);
     }
-
     /**
      * EXPERIMENTAL WARNING! This method implementation will change in the next major point release.
      *
@@ -391,11 +330,10 @@ class ResultSet implements TabularDataReader, JsonSerializable
      *
      * @throws SyntaxError
      */
-    public function matchingFirst(string $expression): ?TabularDataReader
+    public function matchingFirst(string $expression) : ?\MenuManager\Vendor\League\Csv\TabularDataReader
     {
-        return (new FragmentFinder())->findFirst($expression, $this);
+        return (new \MenuManager\Vendor\League\Csv\FragmentFinder())->findFirst($expression, $this);
     }
-
     /**
      * EXPERIMENTAL WARNING! This method implementation will change in the next major point release.
      *
@@ -406,11 +344,10 @@ class ResultSet implements TabularDataReader, JsonSerializable
      * @throws SyntaxError
      * @throws FragmentNotFound
      */
-    public function matchingFirstOrFail(string $expression): TabularDataReader
+    public function matchingFirstOrFail(string $expression) : \MenuManager\Vendor\League\Csv\TabularDataReader
     {
-        return (new FragmentFinder())->findFirstOrFail($expression, $this);
+        return (new \MenuManager\Vendor\League\Csv\FragmentFinder())->findFirstOrFail($expression, $this);
     }
-
     /**
      * @param array<string> $header
      *
@@ -418,11 +355,10 @@ class ResultSet implements TabularDataReader, JsonSerializable
      *
      * @return Iterator<array-key, TValue>
      */
-    public function getRecords(array $header = []): Iterator
+    public function getRecords(array $header = []) : Iterator
     {
         return $this->combineHeader($this->prepareHeader($header));
     }
-
     /**
      * @template T of object
      * @param class-string<T> $className
@@ -433,33 +369,26 @@ class ResultSet implements TabularDataReader, JsonSerializable
      * @throws TypeCastingFailed
      * @return iterator<T>
      */
-    public function getRecordsAsObject(string $className, array $header = []): Iterator
+    public function getRecordsAsObject(string $className, array $header = []) : Iterator
     {
         $header = $this->prepareHeader($header);
-
-        return Denormalizer::assignAll(
-            $className,
-            $this->combineHeader($header),
-            $header
-        );
+        return Denormalizer::assignAll($className, $this->combineHeader($header), $header);
     }
-
     /**
      * @param array<string> $header
      *
      * @throws SyntaxError
      * @return array<string>
      */
-    protected function prepareHeader(array $header): array
+    protected function prepareHeader(array $header) : array
     {
-        $header === array_filter($header, is_string(...)) || throw SyntaxError::dueToInvalidHeaderColumnNames();
+        $header === array_filter($header, is_string(...)) || throw \MenuManager\Vendor\League\Csv\SyntaxError::dueToInvalidHeaderColumnNames();
         $header = $this->validateHeader($header);
         if ([] === $header) {
             $header = $this->header;
         }
         return $header;
     }
-
     /**
      * Combines the header to each record if present.
      *
@@ -467,166 +396,135 @@ class ResultSet implements TabularDataReader, JsonSerializable
      *
      * @return Iterator<array-key, TValue>
      */
-    protected function combineHeader(array $header): Iterator
+    protected function combineHeader(array $header) : Iterator
     {
-        return match (true) {
+        return match (\true) {
             [] === $header => $this->records,
-            default => new MapIterator($this->records, function (array $record) use ($header): array {
+            default => new \MenuManager\Vendor\League\Csv\MapIterator($this->records, function (array $record) use($header) : array {
                 $assocRecord = [];
                 $row = array_values($record);
                 foreach ($header as $offset => $headerName) {
                     $assocRecord[$headerName] = $row[$offset] ?? null;
                 }
-
                 return $assocRecord;
             }),
         };
     }
-
-    public function count(): int
+    public function count() : int
     {
         return iterator_count($this->records);
     }
-
-    public function jsonSerialize(): array
+    public function jsonSerialize() : array
     {
         return array_values([...$this->records]);
     }
-
-    public function first(): array
+    public function first() : array
     {
         return $this->nth(0);
     }
-
-    public function value(int|string $column = 0): mixed
+    public function value(int|string $column = 0) : mixed
     {
-        return match (true) {
+        return match (\true) {
             is_string($column) => $this->first()[$column] ?? null,
             default => array_values($this->first())[$column] ?? null,
         };
     }
-
-    public function nth(int $nth): array
+    public function nth(int $nth) : array
     {
-        0 <= $nth || throw InvalidArgument::dueToInvalidRecordOffset($nth, __METHOD__);
-
+        0 <= $nth || throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidRecordOffset($nth, __METHOD__);
         $iterator = new LimitIterator($this->getIterator(), $nth, 1);
         $iterator->rewind();
-
         /** @var array|null $result */
         $result = $iterator->current();
-
         return $result ?? [];
     }
-
     /**
      * @param class-string $className
      *
      * @throws InvalidArgument
      */
-    public function nthAsObject(int $nth, string $className, array $header = []): ?object
+    public function nthAsObject(int $nth, string $className, array $header = []) : ?object
     {
         $header = $this->prepareHeader($header);
         $record = $this->nth($nth);
         if ([] === $record) {
             return null;
         }
-
         if ([] === $header || $this->header === $header) {
             return Denormalizer::assign($className, $record);
         }
-
         $row = array_values($record);
         $record = [];
         foreach ($header as $offset => $headerName) {
             $record[$headerName] = $row[$offset] ?? null;
         }
-
         return Denormalizer::assign($className, $record);
     }
-
     /**
      * @param class-string $className
      *
      * @throws InvalidArgument
      */
-    public function firstAsObject(string $className, array $header = []): ?object
+    public function firstAsObject(string $className, array $header = []) : ?object
     {
         return $this->nthAsObject(0, $className, $header);
     }
-
-    public function fetchColumn(string|int $index = 0): Iterator
+    public function fetchColumn(string|int $index = 0) : Iterator
     {
-        return $this->yieldColumn(
-            $this->getColumnIndex($index, 'offset', __METHOD__)
-        );
+        return $this->yieldColumn($this->getColumnIndex($index, 'offset', __METHOD__));
     }
-
-    protected function yieldColumn(string|int $offset): Generator
+    protected function yieldColumn(string|int $offset) : Generator
     {
-        yield from new MapIterator(
-            new CallbackFilterIterator($this->records, fn (array $record): bool => isset($record[$offset])),
-            fn (array $record): string => $record[$offset]
-        );
+        yield from new \MenuManager\Vendor\League\Csv\MapIterator(new CallbackFilterIterator($this->records, fn(array $record): bool => isset($record[$offset])), fn(array $record): string => $record[$offset]);
     }
-
     /**
      * Filters a column name against the header if any.
      *
      * @throws InvalidArgument if the field is invalid or not found
      */
-    protected function getColumnIndex(string|int $field, string $type, string $method): string|int
+    protected function getColumnIndex(string|int $field, string $type, string $method) : string|int
     {
-        return match (true) {
+        return match (\true) {
             is_string($field) => $this->getColumnIndexByValue($field, $type, $method),
             default => $this->getColumnIndexByKey($field, $type, $method),
         };
     }
-
     /**
      * Returns the selected column name.
      *
      * @throws InvalidArgument if the column is not found
      */
-    protected function getColumnIndexByValue(string $value, string $type, string $method): string
+    protected function getColumnIndexByValue(string $value, string $type, string $method) : string
     {
-        return match (true) {
-            false === array_search($value, $this->header, true) => throw InvalidArgument::dueToInvalidColumnIndex($value, $type, $method),
+        return match (\true) {
+            \false === array_search($value, $this->header, \true) => throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidColumnIndex($value, $type, $method),
             default => $value,
         };
     }
-
     /**
      * Returns the selected column name according to its offset.
      *
      * @throws InvalidArgument if the field is invalid or not found
      */
-    protected function getColumnIndexByKey(int $index, string $type, string $method): int|string
+    protected function getColumnIndexByKey(int $index, string $type, string $method) : int|string
     {
-        return match (true) {
-            $index < 0 => throw InvalidArgument::dueToInvalidColumnIndex($index, $type, $method),
+        return match (\true) {
+            $index < 0 => throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidColumnIndex($index, $type, $method),
             [] === $this->header => $index,
-            false !== ($value = array_search($index, array_flip($this->header), true)) => $value,
-            default => throw InvalidArgument::dueToInvalidColumnIndex($index, $type, $method),
+            \false !== ($value = array_search($index, array_flip($this->header), \true)) => $value,
+            default => throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidColumnIndex($index, $type, $method),
         };
     }
-
-    public function fetchPairs(string|int $offset_index = 0, string|int $value_index = 1): Iterator
+    public function fetchPairs(string|int $offset_index = 0, string|int $value_index = 1) : Iterator
     {
         $offset = $this->getColumnIndex($offset_index, 'offset', __METHOD__);
         $value = $this->getColumnIndex($value_index, 'value', __METHOD__);
-
-        $iterator = new MapIterator(
-            new CallbackFilterIterator($this->records, fn (array $record): bool => isset($record[$offset])),
-            fn (array $record): array => [$record[$offset], $record[$value] ?? null]
-        );
-
+        $iterator = new \MenuManager\Vendor\League\Csv\MapIterator(new CallbackFilterIterator($this->records, fn(array $record): bool => isset($record[$offset])), fn(array $record): array => [$record[$offset], $record[$value] ?? null]);
         /** @var array{0:int|string, 1:string|null} $pair */
         foreach ($iterator as $pair) {
-            yield $pair[0] => $pair[1];
+            (yield $pair[0] => $pair[1]);
         }
     }
-
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
@@ -637,14 +535,11 @@ class ResultSet implements TabularDataReader, JsonSerializable
      *
      * @see ResultSet::fetchColumn()
      */
-    #[Deprecated(message:'use League\Csv\Resultset::fetchColumn() instead', since:'league/csv:9.23.0')]
-    public function fetchColumnByName(string $name): Iterator
+    #[\Deprecated(message: 'use League\\Csv\\Resultset::fetchColumn() instead', since: 'league/csv:9.23.0')]
+    public function fetchColumnByName(string $name) : Iterator
     {
-        return $this->yieldColumn(
-            $this->getColumnIndexByValue($name, 'name', __METHOD__)
-        );
+        return $this->yieldColumn($this->getColumnIndexByValue($name, 'name', __METHOD__));
     }
-
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
@@ -655,14 +550,11 @@ class ResultSet implements TabularDataReader, JsonSerializable
      *
      * @see ResultSet::fetchColumn()
      */
-    #[Deprecated(message:'use League\Csv\Resultset::fetchColumn() instead', since:'league/csv:9.23.0')]
-    public function fetchColumnByOffset(int $offset): Iterator
+    #[\Deprecated(message: 'use League\\Csv\\Resultset::fetchColumn() instead', since: 'league/csv:9.23.0')]
+    public function fetchColumnByOffset(int $offset) : Iterator
     {
-        return $this->yieldColumn(
-            $this->getColumnIndexByKey($offset, 'offset', __METHOD__)
-        );
+        return $this->yieldColumn($this->getColumnIndexByKey($offset, 'offset', __METHOD__));
     }
-
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
@@ -670,12 +562,11 @@ class ResultSet implements TabularDataReader, JsonSerializable
      * @deprecated since version 9.9.0
      * @codeCoverageIgnore
      */
-    #[Deprecated(message:'use League\Csv\Resultset::nth() instead', since:'league/csv:9.9.0')]
-    public function fetchOne(int $nth_record = 0): array
+    #[\Deprecated(message: 'use League\\Csv\\Resultset::nth() instead', since: 'league/csv:9.9.0')]
+    public function fetchOne(int $nth_record = 0) : array
     {
         return $this->nth($nth_record);
     }
-
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
@@ -690,29 +581,27 @@ class ResultSet implements TabularDataReader, JsonSerializable
      * @throws MappingFailed
      * @throws TypeCastingFailed
      */
-    #[Deprecated(message:'use League\Csv\ResultSet::getRecordsAsObject() instead', since:'league/csv:9.15.0')]
-    public function getObjects(string $className, array $header = []): Iterator
+    #[\Deprecated(message: 'use League\\Csv\\ResultSet::getRecordsAsObject() instead', since: 'league/csv:9.15.0')]
+    public function getObjects(string $className, array $header = []) : Iterator
     {
         return $this->getRecordsAsObject($className, $header);
     }
-
     /**
      * Returns a new instance from an object implementing the TabularDataReader interface.
      *
      * @throws SyntaxError
      */
-    #[Deprecated(message:'use League\Csv\ResultSet::from() instead', since:'league/csv:9.22.0')]
-    public static function createFromTabularDataReader(TabularDataReader $reader): self
+    #[\Deprecated(message: 'use League\\Csv\\ResultSet::from() instead', since: 'league/csv:9.22.0')]
+    public static function createFromTabularDataReader(\MenuManager\Vendor\League\Csv\TabularDataReader $reader) : self
     {
         return self::from($reader);
     }
-
     /**
      * Returns a new instance from a collection without header.
      */
-    #[Deprecated(message:'use League\Csv\ResultSet::from() instead', since:'league/csv:9.22.0')]
-    public static function createFromRecords(iterable $records = []): self
+    #[\Deprecated(message: 'use League\\Csv\\ResultSet::from() instead', since: 'league/csv:9.22.0')]
+    public static function createFromRecords(iterable $records = []) : self
     {
-        return new self(MapIterator::toIterator($records));
+        return new self(\MenuManager\Vendor\League\Csv\MapIterator::toIterator($records));
     }
 }

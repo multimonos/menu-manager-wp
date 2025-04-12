@@ -1,10 +1,9 @@
 <?php
 
-namespace Illuminate\Contracts\Container;
+namespace MenuManager\Vendor\Illuminate\Contracts\Container;
 
 use Exception;
-use Psr\Container\ContainerExceptionInterface;
-
+use MenuManager\Vendor\Psr\Container\ContainerExceptionInterface;
 class CircularDependencyException extends Exception implements ContainerExceptionInterface
 {
     //

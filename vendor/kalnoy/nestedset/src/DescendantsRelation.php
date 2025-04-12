@@ -1,13 +1,11 @@
 <?php
 
-namespace Kalnoy\Nestedset;
+namespace MenuManager\Vendor\Kalnoy\Nestedset;
 
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Eloquent\Model;
-
-class DescendantsRelation extends BaseRelation
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
+class DescendantsRelation extends \MenuManager\Vendor\Kalnoy\Nestedset\BaseRelation
 {
-
     /**
      * Set the base constraints on the relation query.
      *
@@ -15,12 +13,11 @@ class DescendantsRelation extends BaseRelation
      */
     public function addConstraints()
     {
-        if ( ! static::$constraints) return;
-
-        $this->query->whereDescendantOf($this->parent)
-        ->applyNestedSetScope();
+        if (!static::$constraints) {
+            return;
+        }
+        $this->query->whereDescendantOf($this->parent)->applyNestedSetScope();
     }
-
     /**
      * @param QueryBuilder $query
      * @param Model $model
@@ -29,7 +26,6 @@ class DescendantsRelation extends BaseRelation
     {
         $query->orWhereDescendantOf($model);
     }
-
     /**
      * @param Model $model
      * @param $related
@@ -40,7 +36,6 @@ class DescendantsRelation extends BaseRelation
     {
         return $related->isDescendantOf($model);
     }
-
     /**
      * @param $hash
      * @param $table

@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database\Eloquent\Factories;
+namespace MenuManager\Vendor\Illuminate\Database\Eloquent\Factories;
 
 trait HasFactory
 {
@@ -13,13 +13,9 @@ trait HasFactory
      */
     public static function factory($count = null, $state = [])
     {
-        $factory = static::newFactory() ?: Factory::factoryForModel(get_called_class());
-
-        return $factory
-                    ->count(is_numeric($count) ? $count : null)
-                    ->state(is_callable($count) || is_array($count) ? $count : $state);
+        $factory = static::newFactory() ?: \MenuManager\Vendor\Illuminate\Database\Eloquent\Factories\Factory::factoryForModel(\get_called_class());
+        return $factory->count(\is_numeric($count) ? $count : null)->state(\is_callable($count) || \is_array($count) ? $count : $state);
     }
-
     /**
      * Create a new factory instance for the model.
      *

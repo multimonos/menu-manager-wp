@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
-use Illuminate\Support\Testing\Fakes\MailFake;
-
+use MenuManager\Vendor\Illuminate\Support\Testing\Fakes\MailFake;
 /**
  * @method static \Illuminate\Contracts\Mail\Mailer mailer(string|null $name = null)
  * @method static \Illuminate\Mail\Mailer driver(string|null $driver = null)
@@ -59,7 +58,7 @@ use Illuminate\Support\Testing\Fakes\MailFake;
  * @see \Illuminate\Mail\MailManager
  * @see \Illuminate\Support\Testing\Fakes\MailFake
  */
-class Mail extends Facade
+class Mail extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Replace the bound instance with a fake.
@@ -68,15 +67,11 @@ class Mail extends Facade
      */
     public static function fake()
     {
-        $actualMailManager = static::isFake()
-                ? static::getFacadeRoot()->manager
-                : static::getFacadeRoot();
-
+        $actualMailManager = static::isFake() ? static::getFacadeRoot()->manager : static::getFacadeRoot();
         return tap(new MailFake($actualMailManager), function ($fake) {
             static::swap($fake);
         });
     }
-
     /**
      * Get the registered name of the component.
      *

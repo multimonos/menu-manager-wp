@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Database\Query\Processors;
+namespace MenuManager\Vendor\Illuminate\Database\Query\Processors;
 
-use Illuminate\Database\Query\Builder;
-
+use MenuManager\Vendor\Illuminate\Database\Query\Builder;
 class Processor
 {
     /**
@@ -17,7 +16,6 @@ class Processor
     {
         return $results;
     }
-
     /**
      * Process an  "insert get ID" query.
      *
@@ -30,12 +28,9 @@ class Processor
     public function processInsertGetId(Builder $query, $sql, $values, $sequence = null)
     {
         $query->getConnection()->insert($sql, $values);
-
         $id = $query->getConnection()->getPdo()->lastInsertId($sequence);
-
-        return is_numeric($id) ? (int) $id : $id;
+        return \is_numeric($id) ? (int) $id : $id;
     }
-
     /**
      * Process the results of a tables query.
      *
@@ -44,20 +39,21 @@ class Processor
      */
     public function processTables($results)
     {
-        return array_map(function ($result) {
+        return \array_map(function ($result) {
             $result = (object) $result;
-
             return [
                 'name' => $result->name,
-                'schema' => $result->schema ?? null, // PostgreSQL and SQL Server
+                'schema' => $result->schema ?? null,
+                // PostgreSQL and SQL Server
                 'size' => isset($result->size) ? (int) $result->size : null,
-                'comment' => $result->comment ?? null, // MySQL and PostgreSQL
-                'collation' => $result->collation ?? null, // MySQL only
-                'engine' => $result->engine ?? null, // MySQL only
+                'comment' => $result->comment ?? null,
+                // MySQL and PostgreSQL
+                'collation' => $result->collation ?? null,
+                // MySQL only
+                'engine' => $result->engine ?? null,
             ];
         }, $results);
     }
-
     /**
      * Process the results of a views query.
      *
@@ -66,17 +62,16 @@ class Processor
      */
     public function processViews($results)
     {
-        return array_map(function ($result) {
+        return \array_map(function ($result) {
             $result = (object) $result;
-
             return [
                 'name' => $result->name,
-                'schema' => $result->schema ?? null, // PostgreSQL and SQL Server
+                'schema' => $result->schema ?? null,
+                // PostgreSQL and SQL Server
                 'definition' => $result->definition,
             ];
         }, $results);
     }
-
     /**
      * Process the results of a types query.
      *
@@ -87,7 +82,6 @@ class Processor
     {
         return $results;
     }
-
     /**
      * Process the results of a columns query.
      *
@@ -98,7 +92,6 @@ class Processor
     {
         return $results;
     }
-
     /**
      * Process the results of an indexes query.
      *
@@ -109,7 +102,6 @@ class Processor
     {
         return $results;
     }
-
     /**
      * Process the results of a foreign keys query.
      *
@@ -120,7 +112,6 @@ class Processor
     {
         return $results;
     }
-
     /**
      * Process the results of a column listing query.
      *

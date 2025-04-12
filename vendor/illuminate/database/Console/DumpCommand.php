@@ -1,17 +1,16 @@
 <?php
 
-namespace Illuminate\Database\Console;
+namespace MenuManager\Vendor\Illuminate\Database\Console;
 
-use Illuminate\Console\Command;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Database\Connection;
-use Illuminate\Database\ConnectionResolverInterface;
-use Illuminate\Database\Events\SchemaDumped;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Config;
-use Symfony\Component\Console\Attribute\AsCommand;
-
-#[AsCommand(name: 'schema:dump')]
+use MenuManager\Vendor\Illuminate\Console\Command;
+use MenuManager\Vendor\Illuminate\Contracts\Events\Dispatcher;
+use MenuManager\Vendor\Illuminate\Database\Connection;
+use MenuManager\Vendor\Illuminate\Database\ConnectionResolverInterface;
+use MenuManager\Vendor\Illuminate\Database\Events\SchemaDumped;
+use MenuManager\Vendor\Illuminate\Filesystem\Filesystem;
+use MenuManager\Vendor\Illuminate\Support\Facades\Config;
+use MenuManager\Vendor\Symfony\Component\Console\Attribute\AsCommand;
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'schema:dump')]
 class DumpCommand extends Command
 {
     /**
@@ -23,14 +22,12 @@ class DumpCommand extends Command
                 {--database= : The database connection to use}
                 {--path= : The path where the schema dump file should be stored}
                 {--prune : Delete all existing migration files}';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Dump the given database schema';
-
     /**
      * Execute the console command.
      *
@@ -41,26 +38,15 @@ class DumpCommand extends Command
     public function handle(ConnectionResolverInterface $connections, Dispatcher $dispatcher)
     {
         $connection = $connections->connection($database = $this->input->getOption('database'));
-
-        $this->schemaState($connection)->dump(
-            $connection, $path = $this->path($connection)
-        );
-
+        $this->schemaState($connection)->dump($connection, $path = $this->path($connection));
         $dispatcher->dispatch(new SchemaDumped($connection, $path));
-
         $info = 'Database schema dumped';
-
         if ($this->option('prune')) {
-            (new Filesystem)->deleteDirectory(
-                database_path('migrations'), $preserve = false
-            );
-
+            (new Filesystem())->deleteDirectory(database_path('migrations'), $preserve = \false);
             $info .= ' and pruned';
         }
-
-        $this->components->info($info.' successfully.');
+        $this->components->info($info . ' successfully.');
     }
-
     /**
      * Create a schema state instance for the given connection.
      *
@@ -69,13 +55,10 @@ class DumpCommand extends Command
      */
     protected function schemaState(Connection $connection)
     {
-        return $connection->getSchemaState()
-                ->withMigrationTable($connection->getTablePrefix().Config::get('database.migrations', 'migrations'))
-                ->handleOutputUsing(function ($type, $buffer) {
-                    $this->output->write($buffer);
-                });
+        return $connection->getSchemaState()->withMigrationTable($connection->getTablePrefix() . Config::get('database.migrations', 'migrations'))->handleOutputUsing(function ($type, $buffer) {
+            $this->output->write($buffer);
+        });
     }
-
     /**
      * Get the path that the dump should be written to.
      *
@@ -83,8 +66,8 @@ class DumpCommand extends Command
      */
     protected function path(Connection $connection)
     {
-        return tap($this->option('path') ?: database_path('schema/'.$connection->getName().'-schema.sql'), function ($path) {
-            (new Filesystem)->ensureDirectoryExists(dirname($path));
+        return tap($this->option('path') ?: database_path('schema/' . $connection->getName() . '-schema.sql'), function ($path) {
+            (new Filesystem())->ensureDirectoryExists(\dirname($path));
         });
     }
 }

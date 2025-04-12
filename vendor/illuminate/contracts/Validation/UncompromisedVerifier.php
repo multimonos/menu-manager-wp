@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Validation;
+namespace MenuManager\Vendor\Illuminate\Contracts\Validation;
 
 interface UncompromisedVerifier
 {

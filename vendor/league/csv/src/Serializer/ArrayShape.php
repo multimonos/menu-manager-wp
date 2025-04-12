@@ -8,25 +8,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace League\Csv\Serializer;
+namespace MenuManager\Vendor\League\Csv\Serializer;
 
 use function in_array;
-
-enum ArrayShape: string
+enum ArrayShape : string
 {
     case List = 'list';
     case Csv = 'csv';
     case Json = 'json';
-
-    public function equals(mixed $value): bool
+    public function equals(mixed $value) : bool
     {
-        return $value instanceof self
-            && $value === $this;
+        return $value instanceof self && $value === $this;
     }
-
-    public function isOneOf(self ...$types): bool
+    public function isOneOf(self ...$types) : bool
     {
-        return in_array($this, $types, true);
+        return in_array($this, $types, \true);
     }
 }

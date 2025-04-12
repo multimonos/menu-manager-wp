@@ -1,10 +1,9 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
-use Illuminate\Queue\Worker;
-use Illuminate\Support\Testing\Fakes\QueueFake;
-
+use MenuManager\Vendor\Illuminate\Queue\Worker;
+use MenuManager\Vendor\Illuminate\Support\Testing\Fakes\QueueFake;
 /**
  * @method static void before(mixed $callback)
  * @method static void after(mixed $callback)
@@ -57,7 +56,7 @@ use Illuminate\Support\Testing\Fakes\QueueFake;
  * @see \Illuminate\Queue\Queue
  * @see \Illuminate\Support\Testing\Fakes\QueueFake
  */
-class Queue extends Facade
+class Queue extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Register a callback to be executed to pick jobs.
@@ -70,7 +69,6 @@ class Queue extends Facade
     {
         return Worker::popUsing($workerName, $callback);
     }
-
     /**
      * Replace the bound instance with a fake.
      *
@@ -79,15 +77,11 @@ class Queue extends Facade
      */
     public static function fake($jobsToFake = [])
     {
-        $actualQueueManager = static::isFake()
-                ? static::getFacadeRoot()->queue
-                : static::getFacadeRoot();
-
+        $actualQueueManager = static::isFake() ? static::getFacadeRoot()->queue : static::getFacadeRoot();
         return tap(new QueueFake(static::getFacadeApplication(), $jobsToFake, $actualQueueManager), function ($fake) {
             static::swap($fake);
         });
     }
-
     /**
      * Get the registered name of the component.
      *

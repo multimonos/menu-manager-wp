@@ -8,8 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Contracts\Translation;
+namespace MenuManager\Vendor\Symfony\Contracts\Translation;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
@@ -59,10 +58,9 @@ interface TranslatorInterface
      *
      * @throws \InvalidArgumentException If the locale contains invalid characters
      */
-    public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string;
-
+    public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null) : string;
     /**
      * Returns the default locale.
      */
-    public function getLocale(): string;
+    public function getLocale() : string;
 }

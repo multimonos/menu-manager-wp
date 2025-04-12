@@ -1,8 +1,8 @@
 <?php
 
-namespace Illuminate\Contracts\Queue;
+namespace MenuManager\Vendor\Illuminate\Contracts\Queue;
 
-interface ShouldBeUniqueUntilProcessing extends ShouldBeUnique
+interface ShouldBeUniqueUntilProcessing extends \MenuManager\Vendor\Illuminate\Contracts\Queue\ShouldBeUnique
 {
     //
 }

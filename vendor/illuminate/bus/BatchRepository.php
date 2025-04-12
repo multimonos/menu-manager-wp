@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Bus;
+namespace MenuManager\Vendor\Illuminate\Bus;
 
 use Closure;
-
 /**
  * @method void rollBack()
  */
@@ -17,7 +16,6 @@ interface BatchRepository
      * @return \Illuminate\Bus\Batch[]
      */
     public function get($limit, $before);
-
     /**
      * Retrieve information about an existing batch.
      *
@@ -25,15 +23,13 @@ interface BatchRepository
      * @return \Illuminate\Bus\Batch|null
      */
     public function find(string $batchId);
-
     /**
      * Store a new pending batch.
      *
      * @param  \Illuminate\Bus\PendingBatch  $batch
      * @return \Illuminate\Bus\Batch
      */
-    public function store(PendingBatch $batch);
-
+    public function store(\MenuManager\Vendor\Illuminate\Bus\PendingBatch $batch);
     /**
      * Increment the total number of jobs within the batch.
      *
@@ -42,7 +38,6 @@ interface BatchRepository
      * @return void
      */
     public function incrementTotalJobs(string $batchId, int $amount);
-
     /**
      * Decrement the total number of pending jobs for the batch.
      *
@@ -51,7 +46,6 @@ interface BatchRepository
      * @return \Illuminate\Bus\UpdatedBatchJobCounts
      */
     public function decrementPendingJobs(string $batchId, string $jobId);
-
     /**
      * Increment the total number of failed jobs for the batch.
      *
@@ -60,7 +54,6 @@ interface BatchRepository
      * @return \Illuminate\Bus\UpdatedBatchJobCounts
      */
     public function incrementFailedJobs(string $batchId, string $jobId);
-
     /**
      * Mark the batch that has the given ID as finished.
      *
@@ -68,7 +61,6 @@ interface BatchRepository
      * @return void
      */
     public function markAsFinished(string $batchId);
-
     /**
      * Cancel the batch that has the given ID.
      *
@@ -76,7 +68,6 @@ interface BatchRepository
      * @return void
      */
     public function cancel(string $batchId);
-
     /**
      * Delete the batch that has the given ID.
      *
@@ -84,7 +75,6 @@ interface BatchRepository
      * @return void
      */
     public function delete(string $batchId);
-
     /**
      * Execute the given Closure within a storage specific transaction.
      *

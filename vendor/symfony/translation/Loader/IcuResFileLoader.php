@@ -8,54 +8,45 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MenuManager\Vendor\Symfony\Component\Translation\Loader;
 
-namespace Symfony\Component\Translation\Loader;
-
-use Symfony\Component\Config\Resource\DirectoryResource;
-use Symfony\Component\Translation\Exception\InvalidResourceException;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
-use Symfony\Component\Translation\MessageCatalogue;
-
+use MenuManager\Vendor\Symfony\Component\Config\Resource\DirectoryResource;
+use MenuManager\Vendor\Symfony\Component\Translation\Exception\InvalidResourceException;
+use MenuManager\Vendor\Symfony\Component\Translation\Exception\NotFoundResourceException;
+use MenuManager\Vendor\Symfony\Component\Translation\MessageCatalogue;
 /**
  * IcuResFileLoader loads translations from a resource bundle.
  *
  * @author stealth35
  */
-class IcuResFileLoader implements LoaderInterface
+class IcuResFileLoader implements \MenuManager\Vendor\Symfony\Component\Translation\Loader\LoaderInterface
 {
-    public function load(mixed $resource, string $locale, string $domain = 'messages'): MessageCatalogue
+    public function load(mixed $resource, string $locale, string $domain = 'messages') : MessageCatalogue
     {
-        if (!stream_is_local($resource)) {
-            throw new InvalidResourceException(sprintf('This is not a local file "%s".', $resource));
+        if (!\stream_is_local($resource)) {
+            throw new InvalidResourceException(\sprintf('This is not a local file "%s".', $resource));
         }
-
-        if (!is_dir($resource)) {
-            throw new NotFoundResourceException(sprintf('File "%s" not found.', $resource));
+        if (!\is_dir($resource)) {
+            throw new NotFoundResourceException(\sprintf('File "%s" not found.', $resource));
         }
-
         try {
             $rb = new \ResourceBundle($locale, $resource);
         } catch (\Exception) {
             $rb = null;
         }
-
         if (!$rb) {
-            throw new InvalidResourceException(sprintf('Cannot load resource "%s".', $resource));
-        } elseif (intl_is_failure($rb->getErrorCode())) {
+            throw new InvalidResourceException(\sprintf('Cannot load resource "%s".', $resource));
+        } elseif (\intl_is_failure($rb->getErrorCode())) {
             throw new InvalidResourceException($rb->getErrorMessage(), $rb->getErrorCode());
         }
-
         $messages = $this->flatten($rb);
         $catalogue = new MessageCatalogue($locale);
         $catalogue->add($messages, $domain);
-
-        if (class_exists(DirectoryResource::class)) {
+        if (\class_exists(DirectoryResource::class)) {
             $catalogue->addResource(new DirectoryResource($resource));
         }
-
         return $catalogue;
     }
-
     /**
      * Flattens an ResourceBundle.
      *
@@ -70,17 +61,16 @@ class IcuResFileLoader implements LoaderInterface
      * @param array           $messages Used internally for recursive calls
      * @param string|null     $path     Current path being parsed, used internally for recursive calls
      */
-    protected function flatten(\ResourceBundle $rb, array &$messages = [], ?string $path = null): array
+    protected function flatten(\ResourceBundle $rb, array &$messages = [], ?string $path = null) : array
     {
         foreach ($rb as $key => $value) {
-            $nodePath = $path ? $path.'.'.$key : $key;
+            $nodePath = $path ? $path . '.' . $key : $key;
             if ($value instanceof \ResourceBundle) {
                 $this->flatten($value, $messages, $nodePath);
             } else {
                 $messages[$nodePath] = $value;
             }
         }
-
         return $messages;
     }
 }

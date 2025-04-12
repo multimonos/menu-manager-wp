@@ -1,70 +1,62 @@
 <?php
 
-namespace Illuminate\Bus;
+namespace MenuManager\Vendor\Illuminate\Bus;
 
-use Illuminate\Container\Container;
-use Illuminate\Contracts\Bus\Dispatcher;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Collection;
+use MenuManager\Vendor\Illuminate\Container\Container;
+use MenuManager\Vendor\Illuminate\Contracts\Bus\Dispatcher;
+use MenuManager\Vendor\Illuminate\Contracts\Queue\ShouldQueue;
+use MenuManager\Vendor\Illuminate\Foundation\Bus\Dispatchable;
+use MenuManager\Vendor\Illuminate\Queue\InteractsWithQueue;
+use MenuManager\Vendor\Illuminate\Support\Collection;
 use Throwable;
-
 class ChainedBatch implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable;
-
+    use \MenuManager\Vendor\Illuminate\Bus\Batchable, Dispatchable, InteractsWithQueue, \MenuManager\Vendor\Illuminate\Bus\Queueable;
     /**
      * The collection of batched jobs.
      *
      * @var \Illuminate\Support\Collection
      */
     public Collection $jobs;
-
     /**
      * The name of the batch.
      *
      * @var string
      */
     public string $name;
-
     /**
      * The batch options.
      *
      * @var array
      */
     public array $options;
-
     /**
      * Create a new chained batch instance.
      *
      * @param  \Illuminate\Bus\PendingBatch  $batch
      * @return void
      */
-    public function __construct(PendingBatch $batch)
+    public function __construct(\MenuManager\Vendor\Illuminate\Bus\PendingBatch $batch)
     {
         $this->jobs = static::prepareNestedBatches($batch->jobs);
-
         $this->name = $batch->name;
         $this->options = $batch->options;
     }
-
     /**
      * Prepare any nested batches within the given collection of jobs.
      *
      * @param  \Illuminate\Support\Collection  $jobs
      * @return \Illuminate\Support\Collection
      */
-    public static function prepareNestedBatches(Collection $jobs): Collection
+    public static function prepareNestedBatches(Collection $jobs) : Collection
     {
-        return $jobs->map(fn ($job) => match (true) {
-            is_array($job) => static::prepareNestedBatches(collect($job))->all(),
+        return $jobs->map(fn($job) => match (\true) {
+            \is_array($job) => static::prepareNestedBatches(collect($job))->all(),
             $job instanceof Collection => static::prepareNestedBatches($job),
-            $job instanceof PendingBatch => new ChainedBatch($job),
+            $job instanceof \MenuManager\Vendor\Illuminate\Bus\PendingBatch => new \MenuManager\Vendor\Illuminate\Bus\ChainedBatch($job),
             default => $job,
         });
     }
-
     /**
      * Handle the job.
      *
@@ -72,11 +64,8 @@ class ChainedBatch implements ShouldQueue
      */
     public function handle()
     {
-        $this->attachRemainderOfChainToEndOfBatch(
-            $this->toPendingBatch()
-        )->dispatch();
+        $this->attachRemainderOfChainToEndOfBatch($this->toPendingBatch())->dispatch();
     }
-
     /**
      * Convert the chained batch instance into a pending batch.
      *
@@ -85,58 +74,46 @@ class ChainedBatch implements ShouldQueue
     public function toPendingBatch()
     {
         $batch = Container::getInstance()->make(Dispatcher::class)->batch($this->jobs);
-
         $batch->name = $this->name;
         $batch->options = $this->options;
-
         if ($this->queue) {
             $batch->onQueue($this->queue);
         }
-
         if ($this->connection) {
             $batch->onConnection($this->connection);
         }
-
         foreach ($this->chainCatchCallbacks ?? [] as $callback) {
-            $batch->catch(function (Batch $batch, ?Throwable $exception) use ($callback) {
-                if (! $batch->allowsFailures()) {
+            $batch->catch(function (\MenuManager\Vendor\Illuminate\Bus\Batch $batch, ?Throwable $exception) use($callback) {
+                if (!$batch->allowsFailures()) {
                     $callback($exception);
                 }
             });
         }
-
         return $batch;
     }
-
     /**
      * Move the remainder of the chain to a "finally" batch callback.
      *
      * @param  \Illuminate\Bus\PendingBatch  $batch
      * @return \Illuminate\Bus\PendingBatch
      */
-    protected function attachRemainderOfChainToEndOfBatch(PendingBatch $batch)
+    protected function attachRemainderOfChainToEndOfBatch(\MenuManager\Vendor\Illuminate\Bus\PendingBatch $batch)
     {
-        if (! empty($this->chained)) {
-            $next = unserialize(array_shift($this->chained));
-
+        if (!empty($this->chained)) {
+            $next = \unserialize(\array_shift($this->chained));
             $next->chained = $this->chained;
-
             $next->onConnection($next->connection ?: $this->chainConnection);
             $next->onQueue($next->queue ?: $this->chainQueue);
-
             $next->chainConnection = $this->chainConnection;
             $next->chainQueue = $this->chainQueue;
             $next->chainCatchCallbacks = $this->chainCatchCallbacks;
-
-            $batch->finally(function (Batch $batch) use ($next) {
-                if (! $batch->cancelled()) {
+            $batch->finally(function (\MenuManager\Vendor\Illuminate\Bus\Batch $batch) use($next) {
+                if (!$batch->cancelled()) {
                     Container::getInstance()->make(Dispatcher::class)->dispatch($next);
                 }
             });
-
             $this->chained = [];
         }
-
         return $batch;
     }
 }

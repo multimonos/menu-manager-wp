@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Bus\Events;
+namespace MenuManager\Vendor\Illuminate\Bus\Events;
 
-use Illuminate\Bus\Batch;
-
+use MenuManager\Vendor\Illuminate\Bus\Batch;
 class BatchDispatched
 {
     /**
@@ -12,7 +11,6 @@ class BatchDispatched
      * @var \Illuminate\Bus\Batch
      */
     public $batch;
-
     /**
      * Create a new event instance.
      *

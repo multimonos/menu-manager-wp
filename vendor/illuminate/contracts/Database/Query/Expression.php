@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Contracts\Database\Query;
+namespace MenuManager\Vendor\Illuminate\Contracts\Database\Query;
 
-use Illuminate\Database\Grammar;
-
+use MenuManager\Vendor\Illuminate\Database\Grammar;
 interface Expression
 {
     /**

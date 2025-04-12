@@ -1,11 +1,10 @@
 <?php
 
-namespace Illuminate\Database\Eloquent\Casts;
+namespace MenuManager\Vendor\Illuminate\Database\Eloquent\Casts;
 
 use ArrayObject as BaseArrayObject;
-use Illuminate\Contracts\Support\Arrayable;
+use MenuManager\Vendor\Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
-
 /**
  * @template TKey of array-key
  * @template TItem
@@ -23,7 +22,6 @@ class ArrayObject extends BaseArrayObject implements Arrayable, JsonSerializable
     {
         return collect($this->getArrayCopy());
     }
-
     /**
      * Get the instance as an array.
      *
@@ -33,13 +31,12 @@ class ArrayObject extends BaseArrayObject implements Arrayable, JsonSerializable
     {
         return $this->getArrayCopy();
     }
-
     /**
      * Get the array that should be JSON serialized.
      *
      * @return array
      */
-    public function jsonSerialize(): array
+    public function jsonSerialize() : array
     {
         return $this->getArrayCopy();
     }

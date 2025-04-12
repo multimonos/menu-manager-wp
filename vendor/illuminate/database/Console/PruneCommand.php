@@ -1,19 +1,18 @@
 <?php
 
-namespace Illuminate\Database\Console;
+namespace MenuManager\Vendor\Illuminate\Database\Console;
 
-use Illuminate\Console\Command;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Prunable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Events\ModelPruningFinished;
-use Illuminate\Database\Events\ModelPruningStarting;
-use Illuminate\Database\Events\ModelsPruned;
-use Illuminate\Support\Str;
+use MenuManager\Vendor\Illuminate\Console\Command;
+use MenuManager\Vendor\Illuminate\Contracts\Events\Dispatcher;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\MassPrunable;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Prunable;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\SoftDeletes;
+use MenuManager\Vendor\Illuminate\Database\Events\ModelPruningFinished;
+use MenuManager\Vendor\Illuminate\Database\Events\ModelPruningStarting;
+use MenuManager\Vendor\Illuminate\Database\Events\ModelsPruned;
+use MenuManager\Vendor\Illuminate\Support\Str;
 use InvalidArgumentException;
-use Symfony\Component\Finder\Finder;
-
+use MenuManager\Vendor\Symfony\Component\Finder\Finder;
 class PruneCommand extends Command
 {
     /**
@@ -27,14 +26,12 @@ class PruneCommand extends Command
                                 {--path=* : Absolute path(s) to directories where models are located}
                                 {--chunk=1000 : The number of models to retrieve per chunk of models to be deleted}
                                 {--pretend : Display the number of prunable records found instead of deleting them}';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Prune models that are no longer needed';
-
     /**
      * Execute the console command.
      *
@@ -44,46 +41,32 @@ class PruneCommand extends Command
     public function handle(Dispatcher $events)
     {
         $models = $this->models();
-
         if ($models->isEmpty()) {
             $this->components->info('No prunable models found.');
-
             return;
         }
-
         if ($this->option('pretend')) {
             $models->each(function ($model) {
                 $this->pretendToPrune($model);
             });
-
             return;
         }
-
         $pruning = [];
-
-        $events->listen(ModelsPruned::class, function ($event) use (&$pruning) {
-            if (! in_array($event->model, $pruning)) {
+        $events->listen(ModelsPruned::class, function ($event) use(&$pruning) {
+            if (!\in_array($event->model, $pruning)) {
                 $pruning[] = $event->model;
-
                 $this->newLine();
-
-                $this->components->info(sprintf('Pruning [%s] records.', $event->model));
+                $this->components->info(\sprintf('Pruning [%s] records.', $event->model));
             }
-
             $this->components->twoColumnDetail($event->model, "{$event->count} records");
         });
-
         $events->dispatch(new ModelPruningStarting($models->all()));
-
         $models->each(function ($model) {
             $this->pruneModel($model);
         });
-
         $events->dispatch(new ModelPruningFinished($models->all()));
-
         $events->forget(ModelsPruned::class);
     }
-
     /**
      * Prune the given model.
      *
@@ -92,21 +75,13 @@ class PruneCommand extends Command
      */
     protected function pruneModel(string $model)
     {
-        $instance = new $model;
-
-        $chunkSize = property_exists($instance, 'prunableChunkSize')
-            ? $instance->prunableChunkSize
-            : $this->option('chunk');
-
-        $total = $this->isPrunable($model)
-            ? $instance->pruneAll($chunkSize)
-            : 0;
-
+        $instance = new $model();
+        $chunkSize = \property_exists($instance, 'prunableChunkSize') ? $instance->prunableChunkSize : $this->option('chunk');
+        $total = $this->isPrunable($model) ? $instance->pruneAll($chunkSize) : 0;
         if ($total == 0) {
-            $this->components->info("No prunable [$model] records found.");
+            $this->components->info("No prunable [{$model}] records found.");
         }
     }
-
     /**
      * Determine the models that should be pruned.
      *
@@ -114,38 +89,28 @@ class PruneCommand extends Command
      */
     protected function models()
     {
-        if (! empty($models = $this->option('model'))) {
+        if (!empty($models = $this->option('model'))) {
             return collect($models)->filter(function ($model) {
-                return class_exists($model);
+                return \class_exists($model);
             })->values();
         }
-
         $except = $this->option('except');
-
-        if (! empty($models) && ! empty($except)) {
+        if (!empty($models) && !empty($except)) {
             throw new InvalidArgumentException('The --models and --except options cannot be combined.');
         }
-
-        return collect(Finder::create()->in($this->getPath())->files()->name('*.php'))
-            ->map(function ($model) {
-                $namespace = $this->laravel->getNamespace();
-
-                return $namespace.str_replace(
-                    ['/', '.php'],
-                    ['\\', ''],
-                    Str::after($model->getRealPath(), realpath(app_path()).DIRECTORY_SEPARATOR)
-                );
-            })->when(! empty($except), function ($models) use ($except) {
-                return $models->reject(function ($model) use ($except) {
-                    return in_array($model, $except);
-                });
-            })->filter(function ($model) {
-                return class_exists($model);
-            })->filter(function ($model) {
-                return $this->isPrunable($model);
-            })->values();
+        return collect(Finder::create()->in($this->getPath())->files()->name('*.php'))->map(function ($model) {
+            $namespace = $this->laravel->getNamespace();
+            return $namespace . \str_replace(['/', '.php'], ['\\', ''], Str::after($model->getRealPath(), \realpath(app_path()) . \DIRECTORY_SEPARATOR));
+        })->when(!empty($except), function ($models) use($except) {
+            return $models->reject(function ($model) use($except) {
+                return \in_array($model, $except);
+            });
+        })->filter(function ($model) {
+            return \class_exists($model);
+        })->filter(function ($model) {
+            return $this->isPrunable($model);
+        })->values();
     }
-
     /**
      * Get the path where models are located.
      *
@@ -153,15 +118,13 @@ class PruneCommand extends Command
      */
     protected function getPath()
     {
-        if (! empty($path = $this->option('path'))) {
+        if (!empty($path = $this->option('path'))) {
             return collect($path)->map(function ($path) {
                 return base_path($path);
             })->all();
         }
-
         return app_path('Models');
     }
-
     /**
      * Determine if the given model class is prunable.
      *
@@ -171,10 +134,8 @@ class PruneCommand extends Command
     protected function isPrunable($model)
     {
         $uses = class_uses_recursive($model);
-
-        return in_array(Prunable::class, $uses) || in_array(MassPrunable::class, $uses);
+        return \in_array(Prunable::class, $uses) || \in_array(MassPrunable::class, $uses);
     }
-
     /**
      * Display how many models will be pruned.
      *
@@ -183,15 +144,12 @@ class PruneCommand extends Command
      */
     protected function pretendToPrune($model)
     {
-        $instance = new $model;
-
-        $count = $instance->prunable()
-            ->when(in_array(SoftDeletes::class, class_uses_recursive(get_class($instance))), function ($query) {
-                $query->withTrashed();
-            })->count();
-
+        $instance = new $model();
+        $count = $instance->prunable()->when(\in_array(SoftDeletes::class, class_uses_recursive(\get_class($instance))), function ($query) {
+            $query->withTrashed();
+        })->count();
         if ($count === 0) {
-            $this->components->info("No prunable [$model] records found.");
+            $this->components->info("No prunable [{$model}] records found.");
         } else {
             $this->components->info("{$count} [{$model}] records will be pruned.");
         }

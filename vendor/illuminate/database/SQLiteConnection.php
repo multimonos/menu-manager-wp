@@ -1,17 +1,16 @@
 <?php
 
-namespace Illuminate\Database;
+namespace MenuManager\Vendor\Illuminate\Database;
 
 use Exception;
-use Illuminate\Database\PDO\SQLiteDriver;
-use Illuminate\Database\Query\Grammars\SQLiteGrammar as QueryGrammar;
-use Illuminate\Database\Query\Processors\SQLiteProcessor;
-use Illuminate\Database\Schema\Grammars\SQLiteGrammar as SchemaGrammar;
-use Illuminate\Database\Schema\SQLiteBuilder;
-use Illuminate\Database\Schema\SqliteSchemaState;
-use Illuminate\Filesystem\Filesystem;
-
-class SQLiteConnection extends Connection
+use MenuManager\Vendor\Illuminate\Database\PDO\SQLiteDriver;
+use MenuManager\Vendor\Illuminate\Database\Query\Grammars\SQLiteGrammar as QueryGrammar;
+use MenuManager\Vendor\Illuminate\Database\Query\Processors\SQLiteProcessor;
+use MenuManager\Vendor\Illuminate\Database\Schema\Grammars\SQLiteGrammar as SchemaGrammar;
+use MenuManager\Vendor\Illuminate\Database\Schema\SQLiteBuilder;
+use MenuManager\Vendor\Illuminate\Database\Schema\SqliteSchemaState;
+use MenuManager\Vendor\Illuminate\Filesystem\Filesystem;
+class SQLiteConnection extends \MenuManager\Vendor\Illuminate\Database\Connection
 {
     /**
      * Create a new database connection instance.
@@ -25,18 +24,12 @@ class SQLiteConnection extends Connection
     public function __construct($pdo, $database = '', $tablePrefix = '', array $config = [])
     {
         parent::__construct($pdo, $database, $tablePrefix, $config);
-
         $enableForeignKeyConstraints = $this->getForeignKeyConstraintsConfigurationValue();
-
         if ($enableForeignKeyConstraints === null) {
             return;
         }
-
-        $enableForeignKeyConstraints
-            ? $this->getSchemaBuilder()->enableForeignKeyConstraints()
-            : $this->getSchemaBuilder()->disableForeignKeyConstraints();
+        $enableForeignKeyConstraints ? $this->getSchemaBuilder()->enableForeignKeyConstraints() : $this->getSchemaBuilder()->disableForeignKeyConstraints();
     }
-
     /**
      * Escape a binary value for safe SQL embedding.
      *
@@ -45,11 +38,9 @@ class SQLiteConnection extends Connection
      */
     protected function escapeBinary($value)
     {
-        $hex = bin2hex($value);
-
+        $hex = \bin2hex($value);
         return "x'{$hex}'";
     }
-
     /**
      * Determine if the given database exception was caused by a unique constraint violation.
      *
@@ -58,9 +49,8 @@ class SQLiteConnection extends Connection
      */
     protected function isUniqueConstraintError(Exception $exception)
     {
-        return boolval(preg_match('#(column(s)? .* (is|are) not unique|UNIQUE constraint failed: .*)#i', $exception->getMessage()));
+        return \boolval(\preg_match('#(column(s)? .* (is|are) not unique|UNIQUE constraint failed: .*)#i', $exception->getMessage()));
     }
-
     /**
      * Get the default query grammar instance.
      *
@@ -68,11 +58,9 @@ class SQLiteConnection extends Connection
      */
     protected function getDefaultQueryGrammar()
     {
-        ($grammar = new QueryGrammar)->setConnection($this);
-
+        ($grammar = new QueryGrammar())->setConnection($this);
         return $this->withTablePrefix($grammar);
     }
-
     /**
      * Get a schema builder instance for the connection.
      *
@@ -80,13 +68,11 @@ class SQLiteConnection extends Connection
      */
     public function getSchemaBuilder()
     {
-        if (is_null($this->schemaGrammar)) {
+        if (\is_null($this->schemaGrammar)) {
             $this->useDefaultSchemaGrammar();
         }
-
         return new SQLiteBuilder($this);
     }
-
     /**
      * Get the default schema grammar instance.
      *
@@ -94,11 +80,9 @@ class SQLiteConnection extends Connection
      */
     protected function getDefaultSchemaGrammar()
     {
-        ($grammar = new SchemaGrammar)->setConnection($this);
-
+        ($grammar = new SchemaGrammar())->setConnection($this);
         return $this->withTablePrefix($grammar);
     }
-
     /**
      * Get the schema state for the connection.
      *
@@ -111,7 +95,6 @@ class SQLiteConnection extends Connection
     {
         return new SqliteSchemaState($this, $files, $processFactory);
     }
-
     /**
      * Get the default post processor instance.
      *
@@ -119,9 +102,8 @@ class SQLiteConnection extends Connection
      */
     protected function getDefaultPostProcessor()
     {
-        return new SQLiteProcessor;
+        return new SQLiteProcessor();
     }
-
     /**
      * Get the Doctrine DBAL driver.
      *
@@ -129,9 +111,8 @@ class SQLiteConnection extends Connection
      */
     protected function getDoctrineDriver()
     {
-        return new SQLiteDriver;
+        return new SQLiteDriver();
     }
-
     /**
      * Get the database connection foreign key constraints configuration option.
      *

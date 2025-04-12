@@ -1,8 +1,8 @@
 <?php
 
-namespace Illuminate\Database\Events;
+namespace MenuManager\Vendor\Illuminate\Database\Events;
 
-class MigrationsEnded extends MigrationsEvent
+class MigrationsEnded extends \MenuManager\Vendor\Illuminate\Database\Events\MigrationsEvent
 {
     //
 }

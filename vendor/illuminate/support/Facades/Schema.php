@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static void defaultStringLength(int $length)
@@ -49,15 +49,14 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\Database\Schema\Builder
  */
-class Schema extends Facade
+class Schema extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Indicates if the resolved facade should be cached.
      *
      * @var bool
      */
-    protected static $cached = false;
-
+    protected static $cached = \false;
     /**
      * Get a schema builder instance for a connection.
      *
@@ -68,7 +67,6 @@ class Schema extends Facade
     {
         return static::$app['db']->connection($name)->getSchemaBuilder();
     }
-
     /**
      * Get the registered name of the component.
      *

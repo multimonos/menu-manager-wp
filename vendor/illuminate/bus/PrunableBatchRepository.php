@@ -1,10 +1,9 @@
 <?php
 
-namespace Illuminate\Bus;
+namespace MenuManager\Vendor\Illuminate\Bus;
 
 use DateTimeInterface;
-
-interface PrunableBatchRepository extends BatchRepository
+interface PrunableBatchRepository extends \MenuManager\Vendor\Illuminate\Bus\BatchRepository
 {
     /**
      * Prune all of the entries older than the given date.

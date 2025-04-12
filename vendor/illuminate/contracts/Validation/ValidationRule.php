@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Contracts\Validation;
+namespace MenuManager\Vendor\Illuminate\Contracts\Validation;
 
 use Closure;
-
 interface ValidationRule
 {
     /**
@@ -14,5 +13,5 @@ interface ValidationRule
      * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
      * @return void
      */
-    public function validate(string $attribute, mixed $value, Closure $fail): void;
+    public function validate(string $attribute, mixed $value, Closure $fail) : void;
 }

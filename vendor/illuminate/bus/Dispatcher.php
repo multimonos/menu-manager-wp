@@ -1,19 +1,18 @@
 <?php
 
-namespace Illuminate\Bus;
+namespace MenuManager\Vendor\Illuminate\Bus;
 
 use Closure;
-use Illuminate\Contracts\Bus\QueueingDispatcher;
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Queue\Queue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\PendingChain;
-use Illuminate\Pipeline\Pipeline;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Jobs\SyncJob;
-use Illuminate\Support\Collection;
+use MenuManager\Vendor\Illuminate\Contracts\Bus\QueueingDispatcher;
+use MenuManager\Vendor\Illuminate\Contracts\Container\Container;
+use MenuManager\Vendor\Illuminate\Contracts\Queue\Queue;
+use MenuManager\Vendor\Illuminate\Contracts\Queue\ShouldQueue;
+use MenuManager\Vendor\Illuminate\Foundation\Bus\PendingChain;
+use MenuManager\Vendor\Illuminate\Pipeline\Pipeline;
+use MenuManager\Vendor\Illuminate\Queue\InteractsWithQueue;
+use MenuManager\Vendor\Illuminate\Queue\Jobs\SyncJob;
+use MenuManager\Vendor\Illuminate\Support\Collection;
 use RuntimeException;
-
 class Dispatcher implements QueueingDispatcher
 {
     /**
@@ -22,35 +21,30 @@ class Dispatcher implements QueueingDispatcher
      * @var \Illuminate\Contracts\Container\Container
      */
     protected $container;
-
     /**
      * The pipeline instance for the bus.
      *
      * @var \Illuminate\Pipeline\Pipeline
      */
     protected $pipeline;
-
     /**
      * The pipes to send commands through before dispatching.
      *
      * @var array
      */
     protected $pipes = [];
-
     /**
      * The command to handler mapping for non-self-handling events.
      *
      * @var array
      */
     protected $handlers = [];
-
     /**
      * The queue resolver callback.
      *
      * @var \Closure|null
      */
     protected $queueResolver;
-
     /**
      * Create a new command dispatcher instance.
      *
@@ -64,7 +58,6 @@ class Dispatcher implements QueueingDispatcher
         $this->queueResolver = $queueResolver;
         $this->pipeline = new Pipeline($container);
     }
-
     /**
      * Dispatch a command to its appropriate handler.
      *
@@ -73,11 +66,8 @@ class Dispatcher implements QueueingDispatcher
      */
     public function dispatch($command)
     {
-        return $this->queueResolver && $this->commandShouldBeQueued($command)
-                        ? $this->dispatchToQueue($command)
-                        : $this->dispatchNow($command);
+        return $this->queueResolver && $this->commandShouldBeQueued($command) ? $this->dispatchToQueue($command) : $this->dispatchNow($command);
     }
-
     /**
      * Dispatch a command to its appropriate handler in the current process.
      *
@@ -89,15 +79,11 @@ class Dispatcher implements QueueingDispatcher
      */
     public function dispatchSync($command, $handler = null)
     {
-        if ($this->queueResolver &&
-            $this->commandShouldBeQueued($command) &&
-            method_exists($command, 'onConnection')) {
+        if ($this->queueResolver && $this->commandShouldBeQueued($command) && \method_exists($command, 'onConnection')) {
             return $this->dispatchToQueue($command->onConnection('sync'));
         }
-
         return $this->dispatchNow($command, $handler);
     }
-
     /**
      * Dispatch a command to its appropriate handler in the current process without using the synchronous queue.
      *
@@ -108,30 +94,22 @@ class Dispatcher implements QueueingDispatcher
     public function dispatchNow($command, $handler = null)
     {
         $uses = class_uses_recursive($command);
-
-        if (in_array(InteractsWithQueue::class, $uses) &&
-            in_array(Queueable::class, $uses) &&
-            ! $command->job) {
-            $command->setJob(new SyncJob($this->container, json_encode([]), 'sync', 'sync'));
+        if (\in_array(InteractsWithQueue::class, $uses) && \in_array(\MenuManager\Vendor\Illuminate\Bus\Queueable::class, $uses) && !$command->job) {
+            $command->setJob(new SyncJob($this->container, \json_encode([]), 'sync', 'sync'));
         }
-
-        if ($handler || $handler = $this->getCommandHandler($command)) {
-            $callback = function ($command) use ($handler) {
-                $method = method_exists($handler, 'handle') ? 'handle' : '__invoke';
-
+        if ($handler || ($handler = $this->getCommandHandler($command))) {
+            $callback = function ($command) use($handler) {
+                $method = \method_exists($handler, 'handle') ? 'handle' : '__invoke';
                 return $handler->{$method}($command);
             };
         } else {
             $callback = function ($command) {
-                $method = method_exists($command, 'handle') ? 'handle' : '__invoke';
-
+                $method = \method_exists($command, 'handle') ? 'handle' : '__invoke';
                 return $this->container->call([$command, $method]);
             };
         }
-
         return $this->pipeline->send($command)->through($this->pipes)->then($callback);
     }
-
     /**
      * Attempt to find the batch with the given ID.
      *
@@ -140,9 +118,8 @@ class Dispatcher implements QueueingDispatcher
      */
     public function findBatch(string $batchId)
     {
-        return $this->container->make(BatchRepository::class)->find($batchId);
+        return $this->container->make(\MenuManager\Vendor\Illuminate\Bus\BatchRepository::class)->find($batchId);
     }
-
     /**
      * Create a new batch of queueable jobs.
      *
@@ -151,9 +128,8 @@ class Dispatcher implements QueueingDispatcher
      */
     public function batch($jobs)
     {
-        return new PendingBatch($this->container, Collection::wrap($jobs));
+        return new \MenuManager\Vendor\Illuminate\Bus\PendingBatch($this->container, Collection::wrap($jobs));
     }
-
     /**
      * Create a new chain of queueable jobs.
      *
@@ -163,11 +139,9 @@ class Dispatcher implements QueueingDispatcher
     public function chain($jobs)
     {
         $jobs = Collection::wrap($jobs);
-        $jobs = ChainedBatch::prepareNestedBatches($jobs);
-
+        $jobs = \MenuManager\Vendor\Illuminate\Bus\ChainedBatch::prepareNestedBatches($jobs);
         return new PendingChain($jobs->shift(), $jobs->toArray());
     }
-
     /**
      * Determine if the given command has a handler.
      *
@@ -176,9 +150,8 @@ class Dispatcher implements QueueingDispatcher
      */
     public function hasCommandHandler($command)
     {
-        return array_key_exists(get_class($command), $this->handlers);
+        return \array_key_exists(\get_class($command), $this->handlers);
     }
-
     /**
      * Retrieve the handler for a command.
      *
@@ -188,12 +161,10 @@ class Dispatcher implements QueueingDispatcher
     public function getCommandHandler($command)
     {
         if ($this->hasCommandHandler($command)) {
-            return $this->container->make($this->handlers[get_class($command)]);
+            return $this->container->make($this->handlers[\get_class($command)]);
         }
-
-        return false;
+        return \false;
     }
-
     /**
      * Determine if the given command should be queued.
      *
@@ -204,7 +175,6 @@ class Dispatcher implements QueueingDispatcher
     {
         return $command instanceof ShouldQueue;
     }
-
     /**
      * Dispatch a command to its appropriate handler behind a queue.
      *
@@ -216,20 +186,15 @@ class Dispatcher implements QueueingDispatcher
     public function dispatchToQueue($command)
     {
         $connection = $command->connection ?? null;
-
-        $queue = call_user_func($this->queueResolver, $connection);
-
-        if (! $queue instanceof Queue) {
+        $queue = \call_user_func($this->queueResolver, $connection);
+        if (!$queue instanceof Queue) {
             throw new RuntimeException('Queue resolver did not return a Queue implementation.');
         }
-
-        if (method_exists($command, 'queue')) {
+        if (\method_exists($command, 'queue')) {
             return $command->queue($queue, $command);
         }
-
         return $this->pushCommandToQueue($queue, $command);
     }
-
     /**
      * Push the command onto the given queue instance.
      *
@@ -242,18 +207,14 @@ class Dispatcher implements QueueingDispatcher
         if (isset($command->queue, $command->delay)) {
             return $queue->laterOn($command->queue, $command->delay, $command);
         }
-
         if (isset($command->queue)) {
             return $queue->pushOn($command->queue, $command);
         }
-
         if (isset($command->delay)) {
             return $queue->later($command->delay, $command);
         }
-
         return $queue->push($command);
     }
-
     /**
      * Dispatch a command to its appropriate handler after the current process.
      *
@@ -263,11 +224,10 @@ class Dispatcher implements QueueingDispatcher
      */
     public function dispatchAfterResponse($command, $handler = null)
     {
-        $this->container->terminating(function () use ($command, $handler) {
+        $this->container->terminating(function () use($command, $handler) {
             $this->dispatchSync($command, $handler);
         });
     }
-
     /**
      * Set the pipes through which commands should be piped before dispatching.
      *
@@ -277,10 +237,8 @@ class Dispatcher implements QueueingDispatcher
     public function pipeThrough(array $pipes)
     {
         $this->pipes = $pipes;
-
         return $this;
     }
-
     /**
      * Map a command to a handler.
      *
@@ -289,8 +247,7 @@ class Dispatcher implements QueueingDispatcher
      */
     public function map(array $map)
     {
-        $this->handlers = array_merge($this->handlers, $map);
-
+        $this->handlers = \array_merge($this->handlers, $map);
         return $this;
     }
 }

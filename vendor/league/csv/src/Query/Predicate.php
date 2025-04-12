@@ -8,13 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
-
-namespace League\Csv\Query;
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv\Query;
 
 use Iterator;
-
 /**
  * Enable filtering a record based on its value and/or its offset.
  *
@@ -32,12 +29,11 @@ interface Predicate
      * Evaluates each element of an iterable structure based on its value and its offset.
      * The method must return true if the predicate is satisfied, false otherwise.
      */
-    public function __invoke(mixed $value, string|int $key): bool;
-
+    public function __invoke(mixed $value, string|int $key) : bool;
     /**
      * Filters elements of an iterable structure using the class predicate method.
      *
      * @see Predicate::__invoke
      */
-    public function filter(iterable $value): Iterator;
+    public function filter(iterable $value) : Iterator;
 }

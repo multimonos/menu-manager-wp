@@ -1,10 +1,9 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 use Closure;
-use Illuminate\Process\Factory;
-
+use MenuManager\Vendor\Illuminate\Process\Factory;
 /**
  * @method static \Illuminate\Process\PendingProcess command(array|string $command)
  * @method static \Illuminate\Process\PendingProcess path(string $path)
@@ -47,7 +46,7 @@ use Illuminate\Process\Factory;
  * @see \Illuminate\Process\PendingProcess
  * @see \Illuminate\Process\Factory
  */
-class Process extends Facade
+class Process extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.
@@ -58,7 +57,6 @@ class Process extends Facade
     {
         return Factory::class;
     }
-
     /**
      * Indicate that the process factory should fake processes.
      *
@@ -67,7 +65,7 @@ class Process extends Facade
      */
     public static function fake(Closure|array|null $callback = null)
     {
-        return tap(static::getFacadeRoot(), function ($fake) use ($callback) {
+        return tap(static::getFacadeRoot(), function ($fake) use($callback) {
             static::swap($fake->fake($callback));
         });
     }

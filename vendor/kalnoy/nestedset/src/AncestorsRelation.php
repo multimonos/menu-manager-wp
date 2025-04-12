@@ -1,10 +1,9 @@
 <?php
 
-namespace Kalnoy\Nestedset;
+namespace MenuManager\Vendor\Kalnoy\Nestedset;
 
-use Illuminate\Database\Eloquent\Model;
-
-class AncestorsRelation extends BaseRelation
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
+class AncestorsRelation extends \MenuManager\Vendor\Kalnoy\Nestedset\BaseRelation
 {
     /**
      * Set the base constraints on the relation query.
@@ -13,12 +12,11 @@ class AncestorsRelation extends BaseRelation
      */
     public function addConstraints()
     {
-        if ( ! static::$constraints) return;
-
-        $this->query->whereAncestorOf($this->parent)
-            ->applyNestedSetScope();
+        if (!static::$constraints) {
+            return;
+        }
+        $this->query->whereAncestorOf($this->parent)->applyNestedSetScope();
     }
-
     /**
      * @param Model $model
      * @param $related
@@ -29,7 +27,6 @@ class AncestorsRelation extends BaseRelation
     {
         return $related->isAncestorOf($model);
     }
-
     /**
      * @param QueryBuilder $query
      * @param Model $model
@@ -40,7 +37,6 @@ class AncestorsRelation extends BaseRelation
     {
         $query->orWhereAncestorOf($model);
     }
-
     /**
      * @param $hash
      * @param $table
@@ -52,7 +48,6 @@ class AncestorsRelation extends BaseRelation
     protected function relationExistenceCondition($hash, $table, $lft, $rgt)
     {
         $key = $this->getBaseQuery()->getGrammar()->wrap($this->parent->getKeyName());
-
-        return "{$table}.{$rgt} between {$hash}.{$lft} and {$hash}.{$rgt} and $table.$key <> $hash.$key";
+        return "{$table}.{$rgt} between {$hash}.{$lft} and {$hash}.{$rgt} and {$table}.{$key} <> {$hash}.{$key}";
     }
 }

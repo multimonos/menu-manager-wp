@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static void resolveOptionsUsing(\Closure|null $resolver)
@@ -20,7 +20,7 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\Testing\ParallelTesting
  */
-class ParallelTesting extends Facade
+class ParallelTesting extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.
@@ -29,6 +29,6 @@ class ParallelTesting extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return \Illuminate\Testing\ParallelTesting::class;
+        return \MenuManager\Vendor\Illuminate\Testing\ParallelTesting::class;
     }
 }

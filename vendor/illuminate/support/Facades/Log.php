@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static \Psr\Log\LoggerInterface build(array $config)
@@ -36,7 +36,7 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\Log\LogManager
  */
-class Log extends Facade
+class Log extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.

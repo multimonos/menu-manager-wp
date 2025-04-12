@@ -1,10 +1,9 @@
 <?php
 
-namespace Illuminate\Database\Eloquent\Factories;
+namespace MenuManager\Vendor\Illuminate\Database\Eloquent\Factories;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
-
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
+use MenuManager\Vendor\Illuminate\Support\Collection;
 class BelongsToManyRelationship
 {
     /**
@@ -13,21 +12,18 @@ class BelongsToManyRelationship
      * @var \Illuminate\Database\Eloquent\Factories\Factory|\Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array
      */
     protected $factory;
-
     /**
      * The pivot attributes / attribute resolver.
      *
      * @var callable|array
      */
     protected $pivot;
-
     /**
      * The relationship name.
      *
      * @var string
      */
     protected $relationship;
-
     /**
      * Create a new attached relationship definition.
      *
@@ -42,7 +38,6 @@ class BelongsToManyRelationship
         $this->pivot = $pivot;
         $this->relationship = $relationship;
     }
-
     /**
      * Create the attached relationship for the given model.
      *
@@ -51,14 +46,10 @@ class BelongsToManyRelationship
      */
     public function createFor(Model $model)
     {
-        Collection::wrap($this->factory instanceof Factory ? $this->factory->create([], $model) : $this->factory)->each(function ($attachable) use ($model) {
-            $model->{$this->relationship}()->attach(
-                $attachable,
-                is_callable($this->pivot) ? call_user_func($this->pivot, $model) : $this->pivot
-            );
+        Collection::wrap($this->factory instanceof \MenuManager\Vendor\Illuminate\Database\Eloquent\Factories\Factory ? $this->factory->create([], $model) : $this->factory)->each(function ($attachable) use($model) {
+            $model->{$this->relationship}()->attach($attachable, \is_callable($this->pivot) ? \call_user_func($this->pivot, $model) : $this->pivot);
         });
     }
-
     /**
      * Specify the model instances to always use when creating relationships.
      *
@@ -67,10 +58,9 @@ class BelongsToManyRelationship
      */
     public function recycle($recycle)
     {
-        if ($this->factory instanceof Factory) {
+        if ($this->factory instanceof \MenuManager\Vendor\Illuminate\Database\Eloquent\Factories\Factory) {
             $this->factory = $this->factory->recycle($recycle);
         }
-
         return $this;
     }
 }

@@ -8,18 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv;
 
-declare(strict_types=1);
-
-namespace League\Csv;
-
-use Deprecated;
+use MenuManager\Vendor\Deprecated;
 use Throwable;
-
 /**
  * StreamFilterSupportMissing Exception.
  */
-class UnavailableFeature extends Exception
+class UnavailableFeature extends \MenuManager\Vendor\League\Csv\Exception
 {
     /**
      * DEPRECATION WARNING! This class will be removed in the next major point release.
@@ -30,13 +27,11 @@ class UnavailableFeature extends Exception
     {
         parent::__construct($message, $code, $previous);
     }
-
-    public static function dueToUnsupportedStreamFilterApi(string $className): self
+    public static function dueToUnsupportedStreamFilterApi(string $className) : self
     {
-        return new self('The stream filter API can not be used with a '.$className.' instance.');
+        return new self('The stream filter API can not be used with a ' . $className . ' instance.');
     }
-
-    public static function dueToMissingStreamSeekability(): self
+    public static function dueToMissingStreamSeekability() : self
     {
         return new self('stream does not support seeking.');
     }

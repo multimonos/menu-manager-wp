@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 /**
  * This file is part of the Carbon package.
  *
@@ -10,11 +9,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MenuManager\Vendor\Carbon\PHPStan;
 
-namespace Carbon\PHPStan;
-
-if (!class_exists(LazyMacro::class, false)) {
-    abstract class LazyMacro extends AbstractReflectionMacro
+if (!\class_exists(\MenuManager\Vendor\Carbon\PHPStan\LazyMacro::class, \false)) {
+    abstract class LazyMacro extends \MenuManager\Vendor\Carbon\PHPStan\AbstractReflectionMacro
     {
         /**
          * {@inheritdoc}
@@ -24,10 +22,8 @@ if (!class_exists(LazyMacro::class, false)) {
         public function getFileName()
         {
             $file = $this->reflectionFunction->getFileName();
-
-            return (($file ? realpath($file) : null) ?: $file) ?: null;
+            return (($file ? \realpath($file) : null) ?: $file) ?: null;
         }
-
         /**
          * {@inheritdoc}
          *
@@ -37,7 +33,6 @@ if (!class_exists(LazyMacro::class, false)) {
         {
             return $this->reflectionFunction->getStartLine();
         }
-
         /**
          * {@inheritdoc}
          *

@@ -1,8 +1,8 @@
 <?php
 
-namespace Illuminate\Database\Query;
+namespace MenuManager\Vendor\Illuminate\Database\Query;
 
-class JoinLateralClause extends JoinClause
+class JoinLateralClause extends \MenuManager\Vendor\Illuminate\Database\Query\JoinClause
 {
     //
 }

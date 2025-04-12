@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
-use Illuminate\Http\Client\Factory;
-
+use MenuManager\Vendor\Illuminate\Http\Client\Factory;
 /**
  * @method static \Illuminate\Http\Client\Factory globalMiddleware(callable $middleware)
  * @method static \Illuminate\Http\Client\Factory globalRequestMiddleware(callable $middleware)
@@ -92,7 +91,7 @@ use Illuminate\Http\Client\Factory;
  *
  * @see \Illuminate\Http\Client\Factory
  */
-class Http extends Facade
+class Http extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.
@@ -103,7 +102,6 @@ class Http extends Facade
     {
         return Factory::class;
     }
-
     /**
      * Register a stub callable that will intercept requests and be able to return stub responses.
      *
@@ -112,11 +110,10 @@ class Http extends Facade
      */
     public static function fake($callback = null)
     {
-        return tap(static::getFacadeRoot(), function ($fake) use ($callback) {
+        return tap(static::getFacadeRoot(), function ($fake) use($callback) {
             static::swap($fake->fake($callback));
         });
     }
-
     /**
      * Register a response sequence for the given URL pattern.
      *
@@ -128,10 +125,8 @@ class Http extends Facade
         $fake = tap(static::getFacadeRoot(), function ($fake) {
             static::swap($fake);
         });
-
         return $fake->fakeSequence($urlPattern);
     }
-
     /**
      * Indicate that an exception should be thrown if any request is not faked.
      *
@@ -143,7 +138,6 @@ class Http extends Facade
             static::swap($fake->preventStrayRequests());
         });
     }
-
     /**
      * Stub the given URL using the given callback.
      *
@@ -153,7 +147,7 @@ class Http extends Facade
      */
     public static function stubUrl($url, $callback)
     {
-        return tap(static::getFacadeRoot(), function ($fake) use ($url, $callback) {
+        return tap(static::getFacadeRoot(), function ($fake) use($url, $callback) {
             static::swap($fake->stubUrl($url, $callback));
         });
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static void compile(string|null $path = null)
@@ -47,7 +47,7 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\View\Compilers\BladeCompiler
  */
-class Blade extends Facade
+class Blade extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.

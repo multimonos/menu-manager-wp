@@ -1,10 +1,9 @@
 <?php
 
-namespace Illuminate\Container;
+namespace MenuManager\Vendor\Illuminate\Container;
 
 use Exception;
-use Psr\Container\NotFoundExceptionInterface;
-
+use MenuManager\Vendor\Psr\Container\NotFoundExceptionInterface;
 class EntryNotFoundException extends Exception implements NotFoundExceptionInterface
 {
     //

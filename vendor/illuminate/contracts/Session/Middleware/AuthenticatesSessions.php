@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Session\Middleware;
+namespace MenuManager\Vendor\Illuminate\Contracts\Session\Middleware;
 
 interface AuthenticatesSessions
 {

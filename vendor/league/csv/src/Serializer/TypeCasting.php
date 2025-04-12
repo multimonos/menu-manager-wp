@@ -8,10 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
-
-namespace League\Csv\Serializer;
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv\Serializer;
 
 /**
  * @template TValue
@@ -25,8 +23,7 @@ interface TypeCasting
      *
      * @return TValue
      */
-    public function toVariable(mixed $value): mixed;
-
+    public function toVariable(mixed $value) : mixed;
     /**
      * Accepts additional parameters to configure the class
      * Parameters should be scalar value, null or array containing
@@ -34,5 +31,5 @@ interface TypeCasting
      *
      * @throws MappingFailed
      */
-    public function setOptions(): void;
+    public function setOptions() : void;
 }

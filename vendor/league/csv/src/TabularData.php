@@ -8,13 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
-
-namespace League\Csv;
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv;
 
 use Iterator;
-
 /**
  * @method array nth(int $nth) returns the nth record from the tabular data.
  * @method object|null nthAsObject(int $nth, string $className, array $header = []) returns the nth record from the tabular data as an instance of the defined class name.
@@ -31,8 +28,7 @@ interface TabularData
      *
      * @return array<string>
      */
-    public function getHeader(): array;
-
+    public function getHeader() : array;
     /**
      * Returns the tabular data records as an iterator object.
      *
@@ -49,8 +45,7 @@ interface TabularData
      *
      * @return Iterator<array-key, array<array-key, mixed>>
      */
-    public function getRecords(array $header = []): Iterator;
-
+    public function getRecords(array $header = []) : Iterator;
     /**
      * Returns a single column from the next record of the tabular data.
      *
@@ -62,5 +57,5 @@ interface TabularData
      *
      * @return Iterator<int, mixed>
      */
-    public function fetchColumn(string|int $index = 0): Iterator;
+    public function fetchColumn(string|int $index = 0) : Iterator;
 }

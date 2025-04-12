@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static \Symfony\Component\HttpFoundation\Cookie make(string $name, string $value, int $minutes = 0, string|null $path = null, string|null $domain = null, bool|null $secure = null, bool $httpOnly = true, bool $raw = false, string|null $sameSite = null)
@@ -21,7 +21,7 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\Cookie\CookieJar
  */
-class Cookie extends Facade
+class Cookie extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Determine if a cookie exists on the request.
@@ -31,9 +31,8 @@ class Cookie extends Facade
      */
     public static function has($key)
     {
-        return ! is_null(static::$app['request']->cookie($key, null));
+        return !\is_null(static::$app['request']->cookie($key, null));
     }
-
     /**
      * Retrieve a cookie from the request.
      *
@@ -45,7 +44,6 @@ class Cookie extends Facade
     {
         return static::$app['request']->cookie($key, $default);
     }
-
     /**
      * Get the registered name of the component.
      *

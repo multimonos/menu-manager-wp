@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database\Events;
+namespace MenuManager\Vendor\Illuminate\Database\Events;
 
 class ModelPruningFinished
 {
@@ -10,7 +10,6 @@ class ModelPruningFinished
      * @var array<class-string>
      */
     public $models;
-
     /**
      * Create a new event instance.
      *

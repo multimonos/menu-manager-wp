@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Events;
+namespace MenuManager\Vendor\Illuminate\Contracts\Events;
 
 interface ShouldHandleEventsAfterCommit
 {

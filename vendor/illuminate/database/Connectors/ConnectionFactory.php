@@ -1,17 +1,16 @@
 <?php
 
-namespace Illuminate\Database\Connectors;
+namespace MenuManager\Vendor\Illuminate\Database\Connectors;
 
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Database\Connection;
-use Illuminate\Database\MySqlConnection;
-use Illuminate\Database\PostgresConnection;
-use Illuminate\Database\SQLiteConnection;
-use Illuminate\Database\SqlServerConnection;
-use Illuminate\Support\Arr;
+use MenuManager\Vendor\Illuminate\Contracts\Container\Container;
+use MenuManager\Vendor\Illuminate\Database\Connection;
+use MenuManager\Vendor\Illuminate\Database\MySqlConnection;
+use MenuManager\Vendor\Illuminate\Database\PostgresConnection;
+use MenuManager\Vendor\Illuminate\Database\SQLiteConnection;
+use MenuManager\Vendor\Illuminate\Database\SqlServerConnection;
+use MenuManager\Vendor\Illuminate\Support\Arr;
 use InvalidArgumentException;
 use PDOException;
-
 class ConnectionFactory
 {
     /**
@@ -20,7 +19,6 @@ class ConnectionFactory
      * @var \Illuminate\Contracts\Container\Container
      */
     protected $container;
-
     /**
      * Create a new connection factory instance.
      *
@@ -31,7 +29,6 @@ class ConnectionFactory
     {
         $this->container = $container;
     }
-
     /**
      * Establish a PDO connection based on the configuration.
      *
@@ -42,14 +39,11 @@ class ConnectionFactory
     public function make(array $config, $name = null)
     {
         $config = $this->parseConfig($config, $name);
-
         if (isset($config['read'])) {
             return $this->createReadWriteConnection($config);
         }
-
         return $this->createSingleConnection($config);
     }
-
     /**
      * Parse and prepare the database configuration.
      *
@@ -61,7 +55,6 @@ class ConnectionFactory
     {
         return Arr::add(Arr::add($config, 'prefix', ''), 'name', $name);
     }
-
     /**
      * Create a single database connection instance.
      *
@@ -71,12 +64,8 @@ class ConnectionFactory
     protected function createSingleConnection(array $config)
     {
         $pdo = $this->createPdoResolver($config);
-
-        return $this->createConnection(
-            $config['driver'], $pdo, $config['database'], $config['prefix'], $config
-        );
+        return $this->createConnection($config['driver'], $pdo, $config['database'], $config['prefix'], $config);
     }
-
     /**
      * Create a read / write database connection instance.
      *
@@ -86,10 +75,8 @@ class ConnectionFactory
     protected function createReadWriteConnection(array $config)
     {
         $connection = $this->createSingleConnection($this->getWriteConfig($config));
-
         return $connection->setReadPdo($this->createReadPdo($config));
     }
-
     /**
      * Create a new PDO instance for reading.
      *
@@ -100,7 +87,6 @@ class ConnectionFactory
     {
         return $this->createPdoResolver($this->getReadConfig($config));
     }
-
     /**
      * Get the read configuration for a read / write connection.
      *
@@ -109,11 +95,8 @@ class ConnectionFactory
      */
     protected function getReadConfig(array $config)
     {
-        return $this->mergeReadWriteConfig(
-            $config, $this->getReadWriteConfig($config, 'read')
-        );
+        return $this->mergeReadWriteConfig($config, $this->getReadWriteConfig($config, 'read'));
     }
-
     /**
      * Get the write configuration for a read / write connection.
      *
@@ -122,11 +105,8 @@ class ConnectionFactory
      */
     protected function getWriteConfig(array $config)
     {
-        return $this->mergeReadWriteConfig(
-            $config, $this->getReadWriteConfig($config, 'write')
-        );
+        return $this->mergeReadWriteConfig($config, $this->getReadWriteConfig($config, 'write'));
     }
-
     /**
      * Get a read / write level configuration.
      *
@@ -136,11 +116,8 @@ class ConnectionFactory
      */
     protected function getReadWriteConfig(array $config, $type)
     {
-        return isset($config[$type][0])
-                        ? Arr::random($config[$type])
-                        : $config[$type];
+        return isset($config[$type][0]) ? Arr::random($config[$type]) : $config[$type];
     }
-
     /**
      * Merge a configuration for a read / write connection.
      *
@@ -150,9 +127,8 @@ class ConnectionFactory
      */
     protected function mergeReadWriteConfig(array $config, array $merge)
     {
-        return Arr::except(array_merge($config, $merge), ['read', 'write']);
+        return Arr::except(\array_merge($config, $merge), ['read', 'write']);
     }
-
     /**
      * Create a new Closure that resolves to a PDO instance.
      *
@@ -161,11 +137,8 @@ class ConnectionFactory
      */
     protected function createPdoResolver(array $config)
     {
-        return array_key_exists('host', $config)
-                            ? $this->createPdoResolverWithHosts($config)
-                            : $this->createPdoResolverWithoutHosts($config);
+        return \array_key_exists('host', $config) ? $this->createPdoResolverWithHosts($config) : $this->createPdoResolverWithoutHosts($config);
     }
-
     /**
      * Create a new Closure that resolves to a PDO instance with a specific host or an array of hosts.
      *
@@ -176,21 +149,18 @@ class ConnectionFactory
      */
     protected function createPdoResolverWithHosts(array $config)
     {
-        return function () use ($config) {
+        return function () use($config) {
             foreach (Arr::shuffle($this->parseHosts($config)) as $host) {
                 $config['host'] = $host;
-
                 try {
                     return $this->createConnector($config)->connect($config);
                 } catch (PDOException $e) {
                     continue;
                 }
             }
-
             throw $e;
         };
     }
-
     /**
      * Parse the hosts configuration item into an array.
      *
@@ -202,14 +172,11 @@ class ConnectionFactory
     protected function parseHosts(array $config)
     {
         $hosts = Arr::wrap($config['host']);
-
         if (empty($hosts)) {
             throw new InvalidArgumentException('Database hosts array is empty.');
         }
-
         return $hosts;
     }
-
     /**
      * Create a new Closure that resolves to a PDO instance where there is no configured host.
      *
@@ -218,9 +185,8 @@ class ConnectionFactory
      */
     protected function createPdoResolverWithoutHosts(array $config)
     {
-        return fn () => $this->createConnector($config)->connect($config);
+        return fn() => $this->createConnector($config)->connect($config);
     }
-
     /**
      * Create a connector instance based on the configuration.
      *
@@ -231,23 +197,20 @@ class ConnectionFactory
      */
     public function createConnector(array $config)
     {
-        if (! isset($config['driver'])) {
+        if (!isset($config['driver'])) {
             throw new InvalidArgumentException('A driver must be specified.');
         }
-
         if ($this->container->bound($key = "db.connector.{$config['driver']}")) {
             return $this->container->make($key);
         }
-
         return match ($config['driver']) {
-            'mysql' => new MySqlConnector,
-            'pgsql' => new PostgresConnector,
-            'sqlite' => new SQLiteConnector,
-            'sqlsrv' => new SqlServerConnector,
+            'mysql' => new \MenuManager\Vendor\Illuminate\Database\Connectors\MySqlConnector(),
+            'pgsql' => new \MenuManager\Vendor\Illuminate\Database\Connectors\PostgresConnector(),
+            'sqlite' => new \MenuManager\Vendor\Illuminate\Database\Connectors\SQLiteConnector(),
+            'sqlsrv' => new \MenuManager\Vendor\Illuminate\Database\Connectors\SqlServerConnector(),
             default => throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]."),
         };
     }
-
     /**
      * Create a new connection instance.
      *
@@ -265,7 +228,6 @@ class ConnectionFactory
         if ($resolver = Connection::getResolver($driver)) {
             return $resolver($connection, $database, $prefix, $config);
         }
-
         return match ($driver) {
             'mysql' => new MySqlConnection($connection, $database, $prefix, $config),
             'pgsql' => new PostgresConnection($connection, $database, $prefix, $config),

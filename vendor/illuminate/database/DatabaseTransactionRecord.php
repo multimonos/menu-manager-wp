@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database;
+namespace MenuManager\Vendor\Illuminate\Database;
 
 class DatabaseTransactionRecord
 {
@@ -10,28 +10,24 @@ class DatabaseTransactionRecord
      * @var string
      */
     public $connection;
-
     /**
      * The transaction level.
      *
      * @var int
      */
     public $level;
-
     /**
      * The parent instance of this transaction.
      *
      * @var \Illuminate\Database\DatabaseTransactionRecord
      */
     public $parent;
-
     /**
      * The callbacks that should be executed after committing.
      *
      * @var array
      */
     protected $callbacks = [];
-
     /**
      * Create a new database transaction record instance.
      *
@@ -40,13 +36,12 @@ class DatabaseTransactionRecord
      * @param  \Illuminate\Database\DatabaseTransactionRecord|null  $parent
      * @return void
      */
-    public function __construct($connection, $level, ?DatabaseTransactionRecord $parent = null)
+    public function __construct($connection, $level, ?\MenuManager\Vendor\Illuminate\Database\DatabaseTransactionRecord $parent = null)
     {
         $this->connection = $connection;
         $this->level = $level;
         $this->parent = $parent;
     }
-
     /**
      * Register a callback to be executed after committing.
      *
@@ -57,7 +52,6 @@ class DatabaseTransactionRecord
     {
         $this->callbacks[] = $callback;
     }
-
     /**
      * Execute all of the callbacks.
      *
@@ -69,7 +63,6 @@ class DatabaseTransactionRecord
             $callback();
         }
     }
-
     /**
      * Get all of the callbacks.
      *

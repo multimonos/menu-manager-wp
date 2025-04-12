@@ -8,13 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
-
-namespace League\Csv\Query;
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv\Query;
 
 use Iterator;
-
 /**
  * Enable sorting a record based on its value.
  *
@@ -34,10 +31,9 @@ interface Sort
      * if the first argument is considered to be respectively less than, equal to,
      * or greater than the second.
      */
-    public function __invoke(mixed $valueA, mixed $valueB): int;
-
+    public function __invoke(mixed $valueA, mixed $valueB) : int;
     /**
      * Sort an iterable structure with the class comparison method and maintain index association.
      */
-    public function sort(iterable $value): Iterator;
+    public function sort(iterable $value) : Iterator;
 }

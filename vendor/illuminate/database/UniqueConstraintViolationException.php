@@ -1,7 +1,7 @@
 <?php
 
-namespace Illuminate\Database;
+namespace MenuManager\Vendor\Illuminate\Database;
 
-class UniqueConstraintViolationException extends QueryException
+class UniqueConstraintViolationException extends \MenuManager\Vendor\Illuminate\Database\QueryException
 {
 }

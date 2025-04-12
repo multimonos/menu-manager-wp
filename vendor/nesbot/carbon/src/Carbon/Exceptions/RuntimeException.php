@@ -8,10 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MenuManager\Vendor\Carbon\Exceptions;
 
-namespace Carbon\Exceptions;
-
-interface RuntimeException extends Exception
+interface RuntimeException extends \MenuManager\Vendor\Carbon\Exceptions\Exception
 {
     //
 }

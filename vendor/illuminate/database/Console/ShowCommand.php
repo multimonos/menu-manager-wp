@@ -1,17 +1,16 @@
 <?php
 
-namespace Illuminate\Database\Console;
+namespace MenuManager\Vendor\Illuminate\Database\Console;
 
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Schema\View;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\ConnectionResolverInterface;
-use Illuminate\Support\Arr;
-use Symfony\Component\Console\Attribute\AsCommand;
-
-#[AsCommand(name: 'db:show')]
-class ShowCommand extends DatabaseInspectionCommand
+use MenuManager\Vendor\Doctrine\DBAL\Schema\AbstractSchemaManager;
+use MenuManager\Vendor\Doctrine\DBAL\Schema\Table;
+use MenuManager\Vendor\Doctrine\DBAL\Schema\View;
+use MenuManager\Vendor\Illuminate\Database\ConnectionInterface;
+use MenuManager\Vendor\Illuminate\Database\ConnectionResolverInterface;
+use MenuManager\Vendor\Illuminate\Support\Arr;
+use MenuManager\Vendor\Symfony\Component\Console\Attribute\AsCommand;
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'db:show')]
+class ShowCommand extends \MenuManager\Vendor\Illuminate\Database\Console\DatabaseInspectionCommand
 {
     /**
      * The name and signature of the console command.
@@ -22,14 +21,12 @@ class ShowCommand extends DatabaseInspectionCommand
                 {--json : Output the database information as JSON}
                 {--counts : Show the table row count <bg=red;options=bold> Note: This can be slow on large databases </>};
                 {--views : Show the database views <bg=red;options=bold> Note: This can be slow on large databases </>}';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Display information about the given database';
-
     /**
      * Execute the console command.
      *
@@ -38,35 +35,20 @@ class ShowCommand extends DatabaseInspectionCommand
      */
     public function handle(ConnectionResolverInterface $connections)
     {
-        if (! $this->ensureDependenciesExist()) {
+        if (!$this->ensureDependenciesExist()) {
             return 1;
         }
-
         $connection = $connections->connection($database = $this->input->getOption('database'));
-
         $doctrineConnection = $connection->getDoctrineConnection();
         $schema = $connection->getDoctrineSchemaManager();
-
         $this->registerTypeMappings($doctrineConnection->getDatabasePlatform());
-
-        $data = [
-            'platform' => [
-                'config' => $this->getConfigFromDatabase($database),
-                'name' => $this->getPlatformName($doctrineConnection->getDatabasePlatform(), $database),
-                'open_connections' => $this->getConnectionCount($connection),
-            ],
-            'tables' => $this->tables($connection, $schema),
-        ];
-
+        $data = ['platform' => ['config' => $this->getConfigFromDatabase($database), 'name' => $this->getPlatformName($doctrineConnection->getDatabasePlatform(), $database), 'open_connections' => $this->getConnectionCount($connection)], 'tables' => $this->tables($connection, $schema)];
         if ($this->option('views')) {
             $data['views'] = $this->collectViews($connection, $schema);
         }
-
         $this->display($data);
-
         return 0;
     }
-
     /**
      * Get information regarding the tables within the database.
      *
@@ -76,15 +58,8 @@ class ShowCommand extends DatabaseInspectionCommand
      */
     protected function tables(ConnectionInterface $connection, AbstractSchemaManager $schema)
     {
-        return collect($schema->listTables())->map(fn (Table $table, $index) => [
-            'table' => $table->getName(),
-            'size' => $this->getTableSize($connection, $table->getName()),
-            'rows' => $this->option('counts') ? $connection->table($table->getName())->count() : null,
-            'engine' => rescue(fn () => $table->getOption('engine'), null, false),
-            'comment' => $table->getComment(),
-        ]);
+        return collect($schema->listTables())->map(fn(Table $table, $index) => ['table' => $table->getName(), 'size' => $this->getTableSize($connection, $table->getName()), 'rows' => $this->option('counts') ? $connection->table($table->getName())->count() : null, 'engine' => rescue(fn() => $table->getOption('engine'), null, \false), 'comment' => $table->getComment()]);
     }
-
     /**
      * Get information regarding the views within the database.
      *
@@ -94,15 +69,8 @@ class ShowCommand extends DatabaseInspectionCommand
      */
     protected function collectViews(ConnectionInterface $connection, AbstractSchemaManager $schema)
     {
-        return collect($schema->listViews())
-            ->reject(fn (View $view) => str($view->getName())
-                ->startsWith(['pg_catalog', 'information_schema', 'spt_']))
-            ->map(fn (View $view) => [
-                'view' => $view->getName(),
-                'rows' => $connection->table($view->getName())->count(),
-            ]);
+        return collect($schema->listViews())->reject(fn(View $view) => str($view->getName())->startsWith(['pg_catalog', 'information_schema', 'spt_']))->map(fn(View $view) => ['view' => $view->getName(), 'rows' => $connection->table($view->getName())->count()]);
     }
-
     /**
      * Render the database information.
      *
@@ -113,7 +81,6 @@ class ShowCommand extends DatabaseInspectionCommand
     {
         $this->option('json') ? $this->displayJson($data) : $this->displayForCli($data);
     }
-
     /**
      * Render the database information as JSON.
      *
@@ -122,9 +89,8 @@ class ShowCommand extends DatabaseInspectionCommand
      */
     protected function displayJson(array $data)
     {
-        $this->output->writeln(json_encode($data));
+        $this->output->writeln(\json_encode($data));
     }
-
     /**
      * Render the database information formatted for the CLI.
      *
@@ -136,10 +102,8 @@ class ShowCommand extends DatabaseInspectionCommand
         $platform = $data['platform'];
         $tables = $data['tables'];
         $views = $data['views'] ?? null;
-
         $this->newLine();
-
-        $this->components->twoColumnDetail('<fg=green;options=bold>'.$platform['name'].'</>');
+        $this->components->twoColumnDetail('<fg=green;options=bold>' . $platform['name'] . '</>');
         $this->components->twoColumnDetail('Database', Arr::get($platform['config'], 'database'));
         $this->components->twoColumnDetail('Host', Arr::get($platform['config'], 'host'));
         $this->components->twoColumnDetail('Port', Arr::get($platform['config'], 'port'));
@@ -147,43 +111,28 @@ class ShowCommand extends DatabaseInspectionCommand
         $this->components->twoColumnDetail('URL', Arr::get($platform['config'], 'url'));
         $this->components->twoColumnDetail('Open Connections', $platform['open_connections']);
         $this->components->twoColumnDetail('Tables', $tables->count());
-
         if ($tableSizeSum = $tables->sum('size')) {
-            $this->components->twoColumnDetail('Total Size', number_format($tableSizeSum / 1024 / 1024, 2).'MiB');
+            $this->components->twoColumnDetail('Total Size', \number_format($tableSizeSum / 1024 / 1024, 2) . 'MiB');
         }
-
         $this->newLine();
-
         if ($tables->isNotEmpty()) {
-            $this->components->twoColumnDetail('<fg=green;options=bold>Table</>', 'Size (MiB)'.($this->option('counts') ? ' <fg=gray;options=bold>/</> <fg=yellow;options=bold>Rows</>' : ''));
-
+            $this->components->twoColumnDetail('<fg=green;options=bold>Table</>', 'Size (MiB)' . ($this->option('counts') ? ' <fg=gray;options=bold>/</> <fg=yellow;options=bold>Rows</>' : ''));
             $tables->each(function ($table) {
                 if ($tableSize = $table['size']) {
-                    $tableSize = number_format($tableSize / 1024 / 1024, 2);
+                    $tableSize = \number_format($tableSize / 1024 / 1024, 2);
                 }
-
-                $this->components->twoColumnDetail(
-                    $table['table'].($this->output->isVerbose() ? ' <fg=gray>'.$table['engine'].'</>' : null),
-                    ($tableSize ? $tableSize : '—').($this->option('counts') ? ' <fg=gray;options=bold>/</> <fg=yellow;options=bold>'.number_format($table['rows']).'</>' : '')
-                );
-
+                $this->components->twoColumnDetail($table['table'] . ($this->output->isVerbose() ? ' <fg=gray>' . $table['engine'] . '</>' : null), ($tableSize ? $tableSize : '—') . ($this->option('counts') ? ' <fg=gray;options=bold>/</> <fg=yellow;options=bold>' . \number_format($table['rows']) . '</>' : ''));
                 if ($this->output->isVerbose()) {
                     if ($table['comment']) {
-                        $this->components->bulletList([
-                            $table['comment'],
-                        ]);
+                        $this->components->bulletList([$table['comment']]);
                     }
                 }
             });
-
             $this->newLine();
         }
-
         if ($views && $views->isNotEmpty()) {
             $this->components->twoColumnDetail('<fg=green;options=bold>View</>', '<fg=green;options=bold>Rows</>');
-
-            $views->each(fn ($view) => $this->components->twoColumnDetail($view['view'], number_format($view['rows'])));
-
+            $views->each(fn($view) => $this->components->twoColumnDetail($view['view'], \number_format($view['rows'])));
             $this->newLine();
         }
     }

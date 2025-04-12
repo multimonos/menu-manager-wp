@@ -1,7 +1,7 @@
 <?php
 
-namespace Illuminate\Contracts\Database\Query;
+namespace MenuManager\Vendor\Illuminate\Contracts\Database\Query;
 
-interface ConditionExpression extends Expression
+interface ConditionExpression extends \MenuManager\Vendor\Illuminate\Contracts\Database\Query\Expression
 {
 }

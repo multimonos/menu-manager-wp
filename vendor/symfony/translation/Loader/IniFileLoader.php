@@ -8,18 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\Translation\Loader;
+namespace MenuManager\Vendor\Symfony\Component\Translation\Loader;
 
 /**
  * IniFileLoader loads translations from an ini file.
  *
  * @author stealth35
  */
-class IniFileLoader extends FileLoader
+class IniFileLoader extends \MenuManager\Vendor\Symfony\Component\Translation\Loader\FileLoader
 {
-    protected function loadResource(string $resource): array
+    protected function loadResource(string $resource) : array
     {
-        return parse_ini_file($resource, true);
+        return \parse_ini_file($resource, \true);
     }
 }

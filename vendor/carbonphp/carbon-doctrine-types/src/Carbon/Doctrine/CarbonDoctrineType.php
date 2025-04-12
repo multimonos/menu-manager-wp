@@ -1,14 +1,11 @@
 <?php
 
-namespace Carbon\Doctrine;
+namespace MenuManager\Vendor\Carbon\Doctrine;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
-
+use MenuManager\Vendor\Doctrine\DBAL\Platforms\AbstractPlatform;
 interface CarbonDoctrineType
 {
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform);
-
     public function convertToPHPValue($value, AbstractPlatform $platform);
-
     public function convertToDatabaseValue($value, AbstractPlatform $platform);
 }

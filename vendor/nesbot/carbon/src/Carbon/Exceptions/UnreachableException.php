@@ -8,12 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Carbon\Exceptions;
+namespace MenuManager\Vendor\Carbon\Exceptions;
 
 use RuntimeException as BaseRuntimeException;
-
-class UnreachableException extends BaseRuntimeException implements RuntimeException
+class UnreachableException extends BaseRuntimeException implements \MenuManager\Vendor\Carbon\Exceptions\RuntimeException
 {
     //
 }

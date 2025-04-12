@@ -1,60 +1,52 @@
 <?php
 
-namespace Illuminate\Database\Schema;
+namespace MenuManager\Vendor\Illuminate\Database\Schema;
 
 use Closure;
-use Illuminate\Container\Container;
-use Illuminate\Database\Connection;
-use Illuminate\Support\Traits\Macroable;
+use MenuManager\Vendor\Illuminate\Container\Container;
+use MenuManager\Vendor\Illuminate\Database\Connection;
+use MenuManager\Vendor\Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
 use LogicException;
-
 class Builder
 {
     use Macroable;
-
     /**
      * The database connection instance.
      *
      * @var \Illuminate\Database\Connection
      */
     protected $connection;
-
     /**
      * The schema grammar instance.
      *
      * @var \Illuminate\Database\Schema\Grammars\Grammar
      */
     protected $grammar;
-
     /**
      * The Blueprint resolver callback.
      *
      * @var \Closure
      */
     protected $resolver;
-
     /**
      * The default string length for migrations.
      *
      * @var int|null
      */
     public static $defaultStringLength = 255;
-
     /**
      * The default relationship morph key type.
      *
      * @var string
      */
     public static $defaultMorphKeyType = 'int';
-
     /**
      * Indicates whether Doctrine DBAL usage will be prevented if possible when dropping, renaming, and modifying columns.
      *
      * @var bool
      */
-    public static $alwaysUsesNativeSchemaOperationsIfPossible = false;
-
+    public static $alwaysUsesNativeSchemaOperationsIfPossible = \false;
     /**
      * Create a new database Schema manager.
      *
@@ -66,7 +58,6 @@ class Builder
         $this->connection = $connection;
         $this->grammar = $connection->getSchemaGrammar();
     }
-
     /**
      * Set the default string length for migrations.
      *
@@ -77,7 +68,6 @@ class Builder
     {
         static::$defaultStringLength = $length;
     }
-
     /**
      * Set the default morph key type for migrations.
      *
@@ -88,13 +78,11 @@ class Builder
      */
     public static function defaultMorphKeyType(string $type)
     {
-        if (! in_array($type, ['int', 'uuid', 'ulid'])) {
+        if (!\in_array($type, ['int', 'uuid', 'ulid'])) {
             throw new InvalidArgumentException("Morph key type must be 'int', 'uuid', or 'ulid'.");
         }
-
         static::$defaultMorphKeyType = $type;
     }
-
     /**
      * Set the default morph key type for migrations to UUIDs.
      *
@@ -104,7 +92,6 @@ class Builder
     {
         return static::defaultMorphKeyType('uuid');
     }
-
     /**
      * Set the default morph key type for migrations to ULIDs.
      *
@@ -114,18 +101,16 @@ class Builder
     {
         return static::defaultMorphKeyType('ulid');
     }
-
     /**
      * Attempt to use native schema operations for dropping, renaming, and modifying columns, even if Doctrine DBAL is installed.
      *
      * @param  bool  $value
      * @return void
      */
-    public static function useNativeSchemaOperationsIfPossible(bool $value = true)
+    public static function useNativeSchemaOperationsIfPossible(bool $value = \true)
     {
         static::$alwaysUsesNativeSchemaOperationsIfPossible = $value;
     }
-
     /**
      * Create a database in the schema.
      *
@@ -138,7 +123,6 @@ class Builder
     {
         throw new LogicException('This database driver does not support creating databases.');
     }
-
     /**
      * Drop a database from the schema if the database exists.
      *
@@ -151,7 +135,6 @@ class Builder
     {
         throw new LogicException('This database driver does not support dropping databases.');
     }
-
     /**
      * Determine if the given table exists.
      *
@@ -160,17 +143,14 @@ class Builder
      */
     public function hasTable($table)
     {
-        $table = $this->connection->getTablePrefix().$table;
-
-        foreach ($this->getTables(false) as $value) {
-            if (strtolower($table) === strtolower($value['name'])) {
-                return true;
+        $table = $this->connection->getTablePrefix() . $table;
+        foreach ($this->getTables(\false) as $value) {
+            if (\strtolower($table) === \strtolower($value['name'])) {
+                return \true;
             }
         }
-
-        return false;
+        return \false;
     }
-
     /**
      * Determine if the given view exists.
      *
@@ -179,17 +159,14 @@ class Builder
      */
     public function hasView($view)
     {
-        $view = $this->connection->getTablePrefix().$view;
-
+        $view = $this->connection->getTablePrefix() . $view;
         foreach ($this->getViews() as $value) {
-            if (strtolower($view) === strtolower($value['name'])) {
-                return true;
+            if (\strtolower($view) === \strtolower($value['name'])) {
+                return \true;
             }
         }
-
-        return false;
+        return \false;
     }
-
     /**
      * Get the tables that belong to the database.
      *
@@ -197,11 +174,8 @@ class Builder
      */
     public function getTables()
     {
-        return $this->connection->getPostProcessor()->processTables(
-            $this->connection->selectFromWriteConnection($this->grammar->compileTables())
-        );
+        return $this->connection->getPostProcessor()->processTables($this->connection->selectFromWriteConnection($this->grammar->compileTables()));
     }
-
     /**
      * Get the names of the tables that belong to the database.
      *
@@ -209,9 +183,8 @@ class Builder
      */
     public function getTableListing()
     {
-        return array_column($this->getTables(), 'name');
+        return \array_column($this->getTables(), 'name');
     }
-
     /**
      * Get the views that belong to the database.
      *
@@ -219,11 +192,8 @@ class Builder
      */
     public function getViews()
     {
-        return $this->connection->getPostProcessor()->processViews(
-            $this->connection->selectFromWriteConnection($this->grammar->compileViews())
-        );
+        return $this->connection->getPostProcessor()->processViews($this->connection->selectFromWriteConnection($this->grammar->compileViews()));
     }
-
     /**
      * Get the user-defined types that belong to the database.
      *
@@ -233,7 +203,6 @@ class Builder
     {
         throw new LogicException('This database driver does not support user-defined types.');
     }
-
     /**
      * Get all of the table names for the database.
      *
@@ -247,7 +216,6 @@ class Builder
     {
         throw new LogicException('This database driver does not support getting all tables.');
     }
-
     /**
      * Determine if the given table has a given column.
      *
@@ -257,11 +225,8 @@ class Builder
      */
     public function hasColumn($table, $column)
     {
-        return in_array(
-            strtolower($column), array_map('strtolower', $this->getColumnListing($table))
-        );
+        return \in_array(\strtolower($column), \array_map('strtolower', $this->getColumnListing($table)));
     }
-
     /**
      * Determine if the given table has given columns.
      *
@@ -271,17 +236,14 @@ class Builder
      */
     public function hasColumns($table, array $columns)
     {
-        $tableColumns = array_map('strtolower', $this->getColumnListing($table));
-
+        $tableColumns = \array_map('strtolower', $this->getColumnListing($table));
         foreach ($columns as $column) {
-            if (! in_array(strtolower($column), $tableColumns)) {
-                return false;
+            if (!\in_array(\strtolower($column), $tableColumns)) {
+                return \false;
             }
         }
-
-        return true;
+        return \true;
     }
-
     /**
      * Execute a table builder callback if the given table has a given column.
      *
@@ -293,10 +255,9 @@ class Builder
     public function whenTableHasColumn(string $table, string $column, Closure $callback)
     {
         if ($this->hasColumn($table, $column)) {
-            $this->table($table, fn (Blueprint $table) => $callback($table));
+            $this->table($table, fn(\MenuManager\Vendor\Illuminate\Database\Schema\Blueprint $table) => $callback($table));
         }
     }
-
     /**
      * Execute a table builder callback if the given table doesn't have a given column.
      *
@@ -307,11 +268,10 @@ class Builder
      */
     public function whenTableDoesntHaveColumn(string $table, string $column, Closure $callback)
     {
-        if (! $this->hasColumn($table, $column)) {
-            $this->table($table, fn (Blueprint $table) => $callback($table));
+        if (!$this->hasColumn($table, $column)) {
+            $this->table($table, fn(\MenuManager\Vendor\Illuminate\Database\Schema\Blueprint $table) => $callback($table));
         }
     }
-
     /**
      * Get the data type for the given column name.
      *
@@ -320,25 +280,20 @@ class Builder
      * @param  bool  $fullDefinition
      * @return string
      */
-    public function getColumnType($table, $column, $fullDefinition = false)
+    public function getColumnType($table, $column, $fullDefinition = \false)
     {
-        if (! $this->connection->usingNativeSchemaOperations()) {
-            $table = $this->connection->getTablePrefix().$table;
-
+        if (!$this->connection->usingNativeSchemaOperations()) {
+            $table = $this->connection->getTablePrefix() . $table;
             return $this->connection->getDoctrineColumn($table, $column)->getType()->getName();
         }
-
         $columns = $this->getColumns($table);
-
         foreach ($columns as $value) {
-            if (strtolower($value['name']) === $column) {
+            if (\strtolower($value['name']) === $column) {
                 return $fullDefinition ? $value['type'] : $value['type_name'];
             }
         }
-
-        throw new InvalidArgumentException("There is no column with name '$column' on table '$table'.");
+        throw new InvalidArgumentException("There is no column with name '{$column}' on table '{$table}'.");
     }
-
     /**
      * Get the column listing for a given table.
      *
@@ -347,9 +302,8 @@ class Builder
      */
     public function getColumnListing($table)
     {
-        return array_column($this->getColumns($table), 'name');
+        return \array_column($this->getColumns($table), 'name');
     }
-
     /**
      * Get the columns for a given table.
      *
@@ -358,13 +312,9 @@ class Builder
      */
     public function getColumns($table)
     {
-        $table = $this->connection->getTablePrefix().$table;
-
-        return $this->connection->getPostProcessor()->processColumns(
-            $this->connection->selectFromWriteConnection($this->grammar->compileColumns($table))
-        );
+        $table = $this->connection->getTablePrefix() . $table;
+        return $this->connection->getPostProcessor()->processColumns($this->connection->selectFromWriteConnection($this->grammar->compileColumns($table)));
     }
-
     /**
      * Get the indexes for a given table.
      *
@@ -373,13 +323,9 @@ class Builder
      */
     public function getIndexes($table)
     {
-        $table = $this->connection->getTablePrefix().$table;
-
-        return $this->connection->getPostProcessor()->processIndexes(
-            $this->connection->selectFromWriteConnection($this->grammar->compileIndexes($table))
-        );
+        $table = $this->connection->getTablePrefix() . $table;
+        return $this->connection->getPostProcessor()->processIndexes($this->connection->selectFromWriteConnection($this->grammar->compileIndexes($table)));
     }
-
     /**
      * Get the names of the indexes for a given table.
      *
@@ -388,9 +334,8 @@ class Builder
      */
     public function getIndexListing($table)
     {
-        return array_column($this->getIndexes($table), 'name');
+        return \array_column($this->getIndexes($table), 'name');
     }
-
     /**
      * Determine if the given table has a given index.
      *
@@ -401,22 +346,15 @@ class Builder
      */
     public function hasIndex($table, $index, $type = null)
     {
-        $type = is_null($type) ? $type : strtolower($type);
-
+        $type = \is_null($type) ? $type : \strtolower($type);
         foreach ($this->getIndexes($table) as $value) {
-            $typeMatches = is_null($type)
-                || ($type === 'primary' && $value['primary'])
-                || ($type === 'unique' && $value['unique'])
-                || $type === $value['type'];
-
+            $typeMatches = \is_null($type) || $type === 'primary' && $value['primary'] || $type === 'unique' && $value['unique'] || $type === $value['type'];
             if (($value['name'] === $index || $value['columns'] === $index) && $typeMatches) {
-                return true;
+                return \true;
             }
         }
-
-        return false;
+        return \false;
     }
-
     /**
      * Get the foreign keys for a given table.
      *
@@ -425,13 +363,9 @@ class Builder
      */
     public function getForeignKeys($table)
     {
-        $table = $this->connection->getTablePrefix().$table;
-
-        return $this->connection->getPostProcessor()->processForeignKeys(
-            $this->connection->selectFromWriteConnection($this->grammar->compileForeignKeys($table))
-        );
+        $table = $this->connection->getTablePrefix() . $table;
+        return $this->connection->getPostProcessor()->processForeignKeys($this->connection->selectFromWriteConnection($this->grammar->compileForeignKeys($table)));
     }
-
     /**
      * Modify a table on the schema.
      *
@@ -443,7 +377,6 @@ class Builder
     {
         $this->build($this->createBlueprint($table, $callback));
     }
-
     /**
      * Create a new table on the schema.
      *
@@ -453,13 +386,11 @@ class Builder
      */
     public function create($table, Closure $callback)
     {
-        $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($callback) {
+        $this->build(tap($this->createBlueprint($table), function ($blueprint) use($callback) {
             $blueprint->create();
-
             $callback($blueprint);
         }));
     }
-
     /**
      * Drop a table from the schema.
      *
@@ -472,7 +403,6 @@ class Builder
             $blueprint->drop();
         }));
     }
-
     /**
      * Drop a table from the schema if it exists.
      *
@@ -485,7 +415,6 @@ class Builder
             $blueprint->dropIfExists();
         }));
     }
-
     /**
      * Drop columns from a table schema.
      *
@@ -495,11 +424,10 @@ class Builder
      */
     public function dropColumns($table, $columns)
     {
-        $this->table($table, function (Blueprint $blueprint) use ($columns) {
+        $this->table($table, function (\MenuManager\Vendor\Illuminate\Database\Schema\Blueprint $blueprint) use($columns) {
             $blueprint->dropColumn($columns);
         });
     }
-
     /**
      * Drop all tables from the database.
      *
@@ -511,7 +439,6 @@ class Builder
     {
         throw new LogicException('This database driver does not support dropping all tables.');
     }
-
     /**
      * Drop all views from the database.
      *
@@ -523,7 +450,6 @@ class Builder
     {
         throw new LogicException('This database driver does not support dropping all views.');
     }
-
     /**
      * Drop all types from the database.
      *
@@ -535,7 +461,6 @@ class Builder
     {
         throw new LogicException('This database driver does not support dropping all types.');
     }
-
     /**
      * Rename a table on the schema.
      *
@@ -545,11 +470,10 @@ class Builder
      */
     public function rename($from, $to)
     {
-        $this->build(tap($this->createBlueprint($from), function ($blueprint) use ($to) {
+        $this->build(tap($this->createBlueprint($from), function ($blueprint) use($to) {
             $blueprint->rename($to);
         }));
     }
-
     /**
      * Enable foreign key constraints.
      *
@@ -557,11 +481,8 @@ class Builder
      */
     public function enableForeignKeyConstraints()
     {
-        return $this->connection->statement(
-            $this->grammar->compileEnableForeignKeyConstraints()
-        );
+        return $this->connection->statement($this->grammar->compileEnableForeignKeyConstraints());
     }
-
     /**
      * Disable foreign key constraints.
      *
@@ -569,11 +490,8 @@ class Builder
      */
     public function disableForeignKeyConstraints()
     {
-        return $this->connection->statement(
-            $this->grammar->compileDisableForeignKeyConstraints()
-        );
+        return $this->connection->statement($this->grammar->compileDisableForeignKeyConstraints());
     }
-
     /**
      * Disable foreign key constraints during the execution of a callback.
      *
@@ -583,25 +501,22 @@ class Builder
     public function withoutForeignKeyConstraints(Closure $callback)
     {
         $this->disableForeignKeyConstraints();
-
         try {
             return $callback();
         } finally {
             $this->enableForeignKeyConstraints();
         }
     }
-
     /**
      * Execute the blueprint to build / modify the table.
      *
      * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
      * @return void
      */
-    protected function build(Blueprint $blueprint)
+    protected function build(\MenuManager\Vendor\Illuminate\Database\Schema\Blueprint $blueprint)
     {
         $blueprint->build($this->connection, $this->grammar);
     }
-
     /**
      * Create a new command set with a Closure.
      *
@@ -611,17 +526,12 @@ class Builder
      */
     protected function createBlueprint($table, ?Closure $callback = null)
     {
-        $prefix = $this->connection->getConfig('prefix_indexes')
-                    ? $this->connection->getConfig('prefix')
-                    : '';
-
+        $prefix = $this->connection->getConfig('prefix_indexes') ? $this->connection->getConfig('prefix') : '';
         if (isset($this->resolver)) {
-            return call_user_func($this->resolver, $table, $callback, $prefix);
+            return \call_user_func($this->resolver, $table, $callback, $prefix);
         }
-
-        return Container::getInstance()->make(Blueprint::class, compact('table', 'callback', 'prefix'));
+        return Container::getInstance()->make(\MenuManager\Vendor\Illuminate\Database\Schema\Blueprint::class, \compact('table', 'callback', 'prefix'));
     }
-
     /**
      * Get the database connection instance.
      *
@@ -631,7 +541,6 @@ class Builder
     {
         return $this->connection;
     }
-
     /**
      * Set the database connection instance.
      *
@@ -641,10 +550,8 @@ class Builder
     public function setConnection(Connection $connection)
     {
         $this->connection = $connection;
-
         return $this;
     }
-
     /**
      * Set the Schema Blueprint resolver callback.
      *

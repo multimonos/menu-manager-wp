@@ -1,12 +1,11 @@
 <?php
 
-namespace Illuminate\Database\Eloquent\Casts;
+namespace MenuManager\Vendor\Illuminate\Database\Eloquent\Casts;
 
-use Illuminate\Contracts\Database\Eloquent\Castable;
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-use Illuminate\Support\Collection;
+use MenuManager\Vendor\Illuminate\Contracts\Database\Eloquent\Castable;
+use MenuManager\Vendor\Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use MenuManager\Vendor\Illuminate\Support\Collection;
 use InvalidArgumentException;
-
 class AsCollection implements Castable
 {
     /**
@@ -22,27 +21,21 @@ class AsCollection implements Castable
             public function __construct(protected array $arguments)
             {
             }
-
             public function get($model, $key, $value, $attributes)
             {
-                if (! isset($attributes[$key])) {
+                if (!isset($attributes[$key])) {
                     return;
                 }
-
-                $data = Json::decode($attributes[$key]);
-
+                $data = \MenuManager\Vendor\Illuminate\Database\Eloquent\Casts\Json::decode($attributes[$key]);
                 $collectionClass = $this->arguments[0] ?? Collection::class;
-
-                if (! is_a($collectionClass, Collection::class, true)) {
-                    throw new InvalidArgumentException('The provided class must extend ['.Collection::class.'].');
+                if (!\is_a($collectionClass, Collection::class, \true)) {
+                    throw new InvalidArgumentException('The provided class must extend [' . Collection::class . '].');
                 }
-
-                return is_array($data) ? new $collectionClass($data) : null;
+                return \is_array($data) ? new $collectionClass($data) : null;
             }
-
             public function set($model, $key, $value, $attributes)
             {
-                return [$key => Json::encode($value)];
+                return [$key => \MenuManager\Vendor\Illuminate\Database\Eloquent\Casts\Json::encode($value)];
             }
         };
     }

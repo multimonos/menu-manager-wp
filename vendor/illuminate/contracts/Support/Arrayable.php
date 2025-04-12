@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Support;
+namespace MenuManager\Vendor\Illuminate\Contracts\Support;
 
 /**
  * @template TKey of array-key

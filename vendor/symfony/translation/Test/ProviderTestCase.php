@@ -8,19 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MenuManager\Vendor\Symfony\Component\Translation\Test;
 
-namespace Symfony\Component\Translation\Test;
-
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpClient\MockHttpClient;
-use Symfony\Component\Translation\Dumper\XliffFileDumper;
-use Symfony\Component\Translation\Loader\LoaderInterface;
-use Symfony\Component\Translation\Provider\ProviderInterface;
-use Symfony\Component\Translation\TranslatorBagInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-
+use MenuManager\Vendor\PHPUnit\Framework\MockObject\MockObject;
+use MenuManager\Vendor\PHPUnit\Framework\TestCase;
+use MenuManager\Vendor\Psr\Log\LoggerInterface;
+use MenuManager\Vendor\Symfony\Component\HttpClient\MockHttpClient;
+use MenuManager\Vendor\Symfony\Component\Translation\Dumper\XliffFileDumper;
+use MenuManager\Vendor\Symfony\Component\Translation\Loader\LoaderInterface;
+use MenuManager\Vendor\Symfony\Component\Translation\Provider\ProviderInterface;
+use MenuManager\Vendor\Symfony\Component\Translation\TranslatorBagInterface;
+use MenuManager\Vendor\Symfony\Contracts\HttpClient\HttpClientInterface;
 /**
  * A test case to ease testing a translation provider.
  *
@@ -34,14 +32,11 @@ abstract class ProviderTestCase extends TestCase
     protected LoaderInterface|MockObject $loader;
     protected XliffFileDumper|MockObject $xliffFileDumper;
     protected TranslatorBagInterface|MockObject $translatorBag;
-
-    abstract public static function createProvider(HttpClientInterface $client, LoaderInterface $loader, LoggerInterface $logger, string $defaultLocale, string $endpoint): ProviderInterface;
-
+    public static abstract function createProvider(HttpClientInterface $client, LoaderInterface $loader, LoggerInterface $logger, string $defaultLocale, string $endpoint) : ProviderInterface;
     /**
      * @return iterable<array{0: ProviderInterface, 1: string}>
      */
-    abstract public static function toStringProvider(): iterable;
-
+    public static abstract function toStringProvider() : iterable;
     /**
      * @dataProvider toStringProvider
      */
@@ -49,33 +44,27 @@ abstract class ProviderTestCase extends TestCase
     {
         $this->assertSame($expected, (string) $provider);
     }
-
-    protected function getClient(): MockHttpClient
+    protected function getClient() : MockHttpClient
     {
         return $this->client ??= new MockHttpClient();
     }
-
-    protected function getLoader(): LoaderInterface
+    protected function getLoader() : LoaderInterface
     {
         return $this->loader ??= $this->createMock(LoaderInterface::class);
     }
-
-    protected function getLogger(): LoggerInterface
+    protected function getLogger() : LoggerInterface
     {
         return $this->logger ??= $this->createMock(LoggerInterface::class);
     }
-
-    protected function getDefaultLocale(): string
+    protected function getDefaultLocale() : string
     {
         return $this->defaultLocale ??= 'en';
     }
-
-    protected function getXliffFileDumper(): XliffFileDumper
+    protected function getXliffFileDumper() : XliffFileDumper
     {
         return $this->xliffFileDumper ??= $this->createMock(XliffFileDumper::class);
     }
-
-    protected function getTranslatorBag(): TranslatorBagInterface
+    protected function getTranslatorBag() : TranslatorBagInterface
     {
         return $this->translatorBag ??= $this->createMock(TranslatorBagInterface::class);
     }

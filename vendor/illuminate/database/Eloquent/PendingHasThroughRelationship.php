@@ -1,11 +1,10 @@
 <?php
 
-namespace Illuminate\Database\Eloquent;
+namespace MenuManager\Vendor\Illuminate\Database\Eloquent;
 
 use BadMethodCallException;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
-
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Relations\HasMany;
+use MenuManager\Vendor\Illuminate\Support\Str;
 class PendingHasThroughRelationship
 {
     /**
@@ -14,14 +13,12 @@ class PendingHasThroughRelationship
      * @var \Illuminate\Database\Eloquent\Model
      */
     protected $rootModel;
-
     /**
      * The local relationship.
      *
      * @var \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Relations\HasOne
      */
     protected $localRelationship;
-
     /**
      * Create a pending has-many-through or has-one-through relationship.
      *
@@ -31,10 +28,8 @@ class PendingHasThroughRelationship
     public function __construct($rootModel, $localRelationship)
     {
         $this->rootModel = $rootModel;
-
         $this->localRelationship = $localRelationship;
     }
-
     /**
      * Define the distant relationship that this model has.
      *
@@ -43,33 +38,15 @@ class PendingHasThroughRelationship
      */
     public function has($callback)
     {
-        if (is_string($callback)) {
-            $callback = fn () => $this->localRelationship->getRelated()->{$callback}();
+        if (\is_string($callback)) {
+            $callback = fn() => $this->localRelationship->getRelated()->{$callback}();
         }
-
         $distantRelation = $callback($this->localRelationship->getRelated());
-
         if ($distantRelation instanceof HasMany) {
-            return $this->rootModel->hasManyThrough(
-                $distantRelation->getRelated()::class,
-                $this->localRelationship->getRelated()::class,
-                $this->localRelationship->getForeignKeyName(),
-                $distantRelation->getForeignKeyName(),
-                $this->localRelationship->getLocalKeyName(),
-                $distantRelation->getLocalKeyName(),
-            );
+            return $this->rootModel->hasManyThrough($distantRelation->getRelated()::class, $this->localRelationship->getRelated()::class, $this->localRelationship->getForeignKeyName(), $distantRelation->getForeignKeyName(), $this->localRelationship->getLocalKeyName(), $distantRelation->getLocalKeyName());
         }
-
-        return $this->rootModel->hasOneThrough(
-            $distantRelation->getRelated()::class,
-            $this->localRelationship->getRelated()::class,
-            $this->localRelationship->getForeignKeyName(),
-            $distantRelation->getForeignKeyName(),
-            $this->localRelationship->getLocalKeyName(),
-            $distantRelation->getLocalKeyName(),
-        );
+        return $this->rootModel->hasOneThrough($distantRelation->getRelated()::class, $this->localRelationship->getRelated()::class, $this->localRelationship->getForeignKeyName(), $distantRelation->getForeignKeyName(), $this->localRelationship->getLocalKeyName(), $distantRelation->getLocalKeyName());
     }
-
     /**
      * Handle dynamic method calls into the model.
      *
@@ -82,9 +59,6 @@ class PendingHasThroughRelationship
         if (Str::startsWith($method, 'has')) {
             return $this->has(Str::of($method)->after('has')->lcfirst()->toString());
         }
-
-        throw new BadMethodCallException(sprintf(
-            'Call to undefined method %s::%s()', static::class, $method
-        ));
+        throw new BadMethodCallException(\sprintf('Call to undefined method %s::%s()', static::class, $method));
     }
 }

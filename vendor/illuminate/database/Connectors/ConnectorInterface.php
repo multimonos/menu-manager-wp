@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database\Connectors;
+namespace MenuManager\Vendor\Illuminate\Database\Connectors;
 
 interface ConnectorInterface
 {

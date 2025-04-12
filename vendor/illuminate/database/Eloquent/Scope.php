@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database\Eloquent;
+namespace MenuManager\Vendor\Illuminate\Database\Eloquent;
 
 interface Scope
 {
@@ -11,5 +11,5 @@ interface Scope
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return void
      */
-    public function apply(Builder $builder, Model $model);
+    public function apply(\MenuManager\Vendor\Illuminate\Database\Eloquent\Builder $builder, \MenuManager\Vendor\Illuminate\Database\Eloquent\Model $model);
 }

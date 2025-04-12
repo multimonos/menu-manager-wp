@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
-use Illuminate\Filesystem\Filesystem;
-
+use MenuManager\Vendor\Illuminate\Filesystem\Filesystem;
 /**
  * @method static \Illuminate\Contracts\Filesystem\Filesystem drive(string|null $name = null)
  * @method static \Illuminate\Contracts\Filesystem\Filesystem disk(string|null $name = null)
@@ -82,7 +81,7 @@ use Illuminate\Filesystem\Filesystem;
  *
  * @see \Illuminate\Filesystem\FilesystemManager
  */
-class Storage extends Facade
+class Storage extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Replace the given disk with a local testing disk.
@@ -94,24 +93,16 @@ class Storage extends Facade
     public static function fake($disk = null, array $config = [])
     {
         $disk = $disk ?: static::$app['config']->get('filesystems.default');
-
-        $root = storage_path('framework/testing/disks/'.$disk);
-
-        if ($token = ParallelTesting::token()) {
+        $root = storage_path('framework/testing/disks/' . $disk);
+        if ($token = \MenuManager\Vendor\Illuminate\Support\Facades\ParallelTesting::token()) {
             $root = "{$root}_test_{$token}";
         }
-
-        (new Filesystem)->cleanDirectory($root);
-
-        static::set($disk, $fake = static::createLocalDriver(array_merge($config, [
-            'root' => $root,
-        ])));
-
+        (new Filesystem())->cleanDirectory($root);
+        static::set($disk, $fake = static::createLocalDriver(\array_merge($config, ['root' => $root])));
         return tap($fake)->buildTemporaryUrlsUsing(function ($path, $expiration) {
-            return URL::to($path.'?expiration='.$expiration->getTimestamp());
+            return \MenuManager\Vendor\Illuminate\Support\Facades\URL::to($path . '?expiration=' . $expiration->getTimestamp());
         });
     }
-
     /**
      * Replace the given disk with a persistent local testing disk.
      *
@@ -122,14 +113,9 @@ class Storage extends Facade
     public static function persistentFake($disk = null, array $config = [])
     {
         $disk = $disk ?: static::$app['config']->get('filesystems.default');
-
-        static::set($disk, $fake = static::createLocalDriver(array_merge($config, [
-            'root' => storage_path('framework/testing/disks/'.$disk),
-        ])));
-
+        static::set($disk, $fake = static::createLocalDriver(\array_merge($config, ['root' => storage_path('framework/testing/disks/' . $disk)])));
         return $fake;
     }
-
     /**
      * Get the registered name of the component.
      *

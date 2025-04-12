@@ -8,15 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MenuManager\Vendor\Carbon;
 
-namespace Carbon;
-
-use Carbon\Traits\Date;
-use Carbon\Traits\DeprecatedProperties;
+use MenuManager\Vendor\Carbon\Traits\Date;
+use MenuManager\Vendor\Carbon\Traits\DeprecatedProperties;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
-
 /**
  * A simple API extension for DateTime.
  *
@@ -507,10 +505,9 @@ use DateTimeZone;
  *
  * </autodoc>
  */
-class Carbon extends DateTime implements CarbonInterface
+class Carbon extends DateTime implements \MenuManager\Vendor\Carbon\CarbonInterface
 {
     use Date;
-
     /**
      * Returns true if the current class/instance is mutable.
      *
@@ -518,6 +515,6 @@ class Carbon extends DateTime implements CarbonInterface
      */
     public static function isMutable()
     {
-        return true;
+        return \true;
     }
 }

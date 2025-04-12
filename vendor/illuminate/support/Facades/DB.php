@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static \Illuminate\Database\Connection connection(string|null $name = null)
@@ -112,7 +112,7 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\Database\DatabaseManager
  */
-class DB extends Facade
+class DB extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Mail;
+namespace MenuManager\Vendor\Illuminate\Contracts\Mail;
 
 interface Factory
 {

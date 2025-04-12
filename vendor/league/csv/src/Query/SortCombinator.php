@@ -8,18 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
-
-namespace League\Csv\Query;
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv\Query;
 
 use Closure;
-
 /**
  * @phpstan-type Ordering Sort|Closure(mixed, mixed): int
  * @phpstan-type OrderingExtended Sort|Closure(mixed, mixed): int|callable(mixed, mixed): int
  */
-interface SortCombinator extends Sort
+interface SortCombinator extends \MenuManager\Vendor\League\Csv\Query\Sort
 {
     /**
      * Return an instance with the specified sorting algorithm
@@ -30,8 +27,7 @@ interface SortCombinator extends Sort
      *
      * @param Ordering ...$sorts
      */
-    public function append(Sort|Closure ...$sorts): self;
-
+    public function append(\MenuManager\Vendor\League\Csv\Query\Sort|Closure ...$sorts) : self;
     /**
      * Return an instance with the specified sorting algorithm
      * added before the currently registered sorting algorithms.
@@ -41,5 +37,5 @@ interface SortCombinator extends Sort
      *
      * @param Ordering ...$sorts
      */
-    public function prepend(Sort|Closure ...$sorts): self;
+    public function prepend(\MenuManager\Vendor\League\Csv\Query\Sort|Closure ...$sorts) : self;
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Console;
+namespace MenuManager\Vendor\Illuminate\Contracts\Console;
 
 interface PromptsForMissingInput
 {

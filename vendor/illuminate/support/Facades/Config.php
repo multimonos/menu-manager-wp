@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static bool has(string $key)
@@ -17,7 +17,7 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\Config\Repository
  */
-class Config extends Facade
+class Config extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.

@@ -1,8 +1,7 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Brick\Math;
+declare (strict_types=1);
+namespace MenuManager\Vendor\Brick\Math;
 
 /**
  * Specifies a rounding behavior for numerical operations capable of discarding precision.
@@ -22,7 +21,6 @@ enum RoundingMode
      * cannot be represented at the requested scale, a RoundingNecessaryException is thrown.
      */
     case UNNECESSARY;
-
     /**
      * Rounds away from zero.
      *
@@ -30,7 +28,6 @@ enum RoundingMode
      * Note that this rounding mode never decreases the magnitude of the calculated value.
      */
     case UP;
-
     /**
      * Rounds towards zero.
      *
@@ -38,7 +35,6 @@ enum RoundingMode
      * Note that this rounding mode never increases the magnitude of the calculated value.
      */
     case DOWN;
-
     /**
      * Rounds towards positive infinity.
      *
@@ -46,7 +42,6 @@ enum RoundingMode
      * Note that this rounding mode never decreases the calculated value.
      */
     case CEILING;
-
     /**
      * Rounds towards negative infinity.
      *
@@ -54,7 +49,6 @@ enum RoundingMode
      * Note that this rounding mode never increases the calculated value.
      */
     case FLOOR;
-
     /**
      * Rounds towards "nearest neighbor" unless both neighbors are equidistant, in which case round up.
      *
@@ -62,28 +56,24 @@ enum RoundingMode
      * Note that this is the rounding mode commonly taught at school.
      */
     case HALF_UP;
-
     /**
      * Rounds towards "nearest neighbor" unless both neighbors are equidistant, in which case round down.
      *
      * Behaves as for UP if the discarded fraction is > 0.5; otherwise, behaves as for DOWN.
      */
     case HALF_DOWN;
-
     /**
      * Rounds towards "nearest neighbor" unless both neighbors are equidistant, in which case round towards positive infinity.
      *
      * If the result is positive, behaves as for HALF_UP; if negative, behaves as for HALF_DOWN.
      */
     case HALF_CEILING;
-
     /**
      * Rounds towards "nearest neighbor" unless both neighbors are equidistant, in which case round towards negative infinity.
      *
      * If the result is positive, behaves as for HALF_DOWN; if negative, behaves as for HALF_UP.
      */
     case HALF_FLOOR;
-
     /**
      * Rounds towards the "nearest neighbor" unless both neighbors are equidistant, in which case rounds towards the even neighbor.
      *

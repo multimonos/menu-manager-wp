@@ -8,23 +8,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv;
 
-declare(strict_types=1);
-
-namespace League\Csv;
-
-use Deprecated;
-
+use MenuManager\Vendor\Deprecated;
 use function array_fill_keys;
 use function array_filter;
 use function array_reduce;
 use function array_unique;
 use function count;
 use function strlen;
-
 use const COUNT_RECURSIVE;
-
-final class Info implements ByteSequence
+final class Info implements \MenuManager\Vendor\League\Csv\ByteSequence
 {
     /**
      * Returns the BOM sequence found at the start of the string.
@@ -35,12 +30,11 @@ final class Info implements ByteSequence
      * @see Bom::tryFromSequence()
      * @codeCoverageIgnore
      */
-    #[Deprecated(message:'use League\Csv\Bom::tryFromSequence() instead', since:'league/csv:9.16.0')]
-    public static function fetchBOMSequence(string $str): ?string
+    #[\Deprecated(message: 'use League\\Csv\\Bom::tryFromSequence() instead', since: 'league/csv:9.16.0')]
+    public static function fetchBOMSequence(string $str) : ?string
     {
-        return Bom::tryFromSequence($str)?->value;
+        return \MenuManager\Vendor\League\Csv\Bom::tryFromSequence($str)?->value;
     }
-
     /**
      * Detect Delimiters usage in a {@link Reader} object.
      *
@@ -53,29 +47,13 @@ final class Info implements ByteSequence
      *
      * @return array<string, int>
      */
-    public static function getDelimiterStats(Reader $csv, array $delimiters, int $limit = 1): array
+    public static function getDelimiterStats(\MenuManager\Vendor\League\Csv\Reader $csv, array $delimiters, int $limit = 1) : array
     {
         $currentHeaderOffset = $csv->getHeaderOffset();
         $currentDelimiter = $csv->getDelimiter();
-
-        $stats = array_reduce(
-            array_unique(array_filter($delimiters, fn (string $value): bool => 1 === strlen($value))),
-            fn (array $stats, string $delimiter): array => [
-                ...$stats,
-                ...[$delimiter => count([
-                    ...$csv
-                        ->setHeaderOffset(null)
-                        ->setDelimiter($delimiter)
-                        ->slice(0, $limit)
-                        ->filter(fn (array $record, int|string $key): bool => 1 < count($record)),
-                ], COUNT_RECURSIVE)],
-            ],
-            array_fill_keys($delimiters, 0)
-        );
-
+        $stats = array_reduce(array_unique(array_filter($delimiters, fn(string $value): bool => 1 === strlen($value))), fn(array $stats, string $delimiter): array => [...$stats, ...[$delimiter => count([...$csv->setHeaderOffset(null)->setDelimiter($delimiter)->slice(0, $limit)->filter(fn(array $record, int|string $key): bool => 1 < count($record))], COUNT_RECURSIVE)]], array_fill_keys($delimiters, 0));
         $csv->setHeaderOffset($currentHeaderOffset);
         $csv->setDelimiter($currentDelimiter);
-
         return $stats;
     }
 }

@@ -1,10 +1,9 @@
 <?php
 
-namespace Illuminate\Database\Eloquent;
+namespace MenuManager\Vendor\Illuminate\Database\Eloquent;
 
-use Illuminate\Database\RecordsNotFoundException;
-use Illuminate\Support\Arr;
-
+use MenuManager\Vendor\Illuminate\Database\RecordsNotFoundException;
+use MenuManager\Vendor\Illuminate\Support\Arr;
 /**
  * @template TModel of \Illuminate\Database\Eloquent\Model
  */
@@ -16,14 +15,12 @@ class ModelNotFoundException extends RecordsNotFoundException
      * @var class-string<TModel>
      */
     protected $model;
-
     /**
      * The affected model IDs.
      *
      * @var array<int, int|string>
      */
     protected $ids;
-
     /**
      * Set the affected Eloquent model and instance ids.
      *
@@ -35,18 +32,14 @@ class ModelNotFoundException extends RecordsNotFoundException
     {
         $this->model = $model;
         $this->ids = Arr::wrap($ids);
-
         $this->message = "No query results for model [{$model}]";
-
-        if (count($this->ids) > 0) {
-            $this->message .= ' '.implode(', ', $this->ids);
+        if (\count($this->ids) > 0) {
+            $this->message .= ' ' . \implode(', ', $this->ids);
         } else {
             $this->message .= '.';
         }
-
         return $this;
     }
-
     /**
      * Get the affected Eloquent model.
      *
@@ -56,7 +49,6 @@ class ModelNotFoundException extends RecordsNotFoundException
     {
         return $this->model;
     }
-
     /**
      * Get the affected Eloquent model IDs.
      *

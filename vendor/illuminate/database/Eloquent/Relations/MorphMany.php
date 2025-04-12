@@ -1,11 +1,10 @@
 <?php
 
-namespace Illuminate\Database\Eloquent\Relations;
+namespace MenuManager\Vendor\Illuminate\Database\Eloquent\Relations;
 
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-
-class MorphMany extends MorphOneOrMany
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
+class MorphMany extends \MenuManager\Vendor\Illuminate\Database\Eloquent\Relations\MorphOneOrMany
 {
     /**
      * Convert the relationship to a "morph one" relationship.
@@ -14,15 +13,8 @@ class MorphMany extends MorphOneOrMany
      */
     public function one()
     {
-        return MorphOne::noConstraints(fn () => new MorphOne(
-            $this->getQuery(),
-            $this->getParent(),
-            $this->morphType,
-            $this->foreignKey,
-            $this->localKey
-        ));
+        return \MenuManager\Vendor\Illuminate\Database\Eloquent\Relations\MorphOne::noConstraints(fn() => new \MenuManager\Vendor\Illuminate\Database\Eloquent\Relations\MorphOne($this->getQuery(), $this->getParent(), $this->morphType, $this->foreignKey, $this->localKey));
     }
-
     /**
      * Get the results of the relationship.
      *
@@ -30,11 +22,8 @@ class MorphMany extends MorphOneOrMany
      */
     public function getResults()
     {
-        return ! is_null($this->getParentKey())
-                ? $this->query->get()
-                : $this->related->newCollection();
+        return !\is_null($this->getParentKey()) ? $this->query->get() : $this->related->newCollection();
     }
-
     /**
      * Initialize the relation on a set of models.
      *
@@ -47,10 +36,8 @@ class MorphMany extends MorphOneOrMany
         foreach ($models as $model) {
             $model->setRelation($relation, $this->related->newCollection());
         }
-
         return $models;
     }
-
     /**
      * Match the eagerly loaded results to their parents.
      *
@@ -63,7 +50,6 @@ class MorphMany extends MorphOneOrMany
     {
         return $this->matchMany($models, $results, $relation);
     }
-
     /**
      * Create a new instance of the related model. Allow mass-assignment.
      *
@@ -73,10 +59,8 @@ class MorphMany extends MorphOneOrMany
     public function forceCreate(array $attributes = [])
     {
         $attributes[$this->getMorphType()] = $this->morphClass;
-
         return parent::forceCreate($attributes);
     }
-
     /**
      * Create a new instance of the related model with mass assignment without raising model events.
      *
@@ -85,6 +69,6 @@ class MorphMany extends MorphOneOrMany
      */
     public function forceCreateQuietly(array $attributes = [])
     {
-        return Model::withoutEvents(fn () => $this->forceCreate($attributes));
+        return Model::withoutEvents(fn() => $this->forceCreate($attributes));
     }
 }

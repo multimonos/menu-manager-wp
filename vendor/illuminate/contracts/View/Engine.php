@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\View;
+namespace MenuManager\Vendor\Illuminate\Contracts\View;
 
 interface Engine
 {

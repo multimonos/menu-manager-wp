@@ -1,10 +1,9 @@
 <?php
 
-namespace Illuminate\Database\Query;
+namespace MenuManager\Vendor\Illuminate\Database\Query;
 
-use Illuminate\Contracts\Database\Query\Expression as ExpressionContract;
-use Illuminate\Database\Grammar;
-
+use MenuManager\Vendor\Illuminate\Contracts\Database\Query\Expression as ExpressionContract;
+use MenuManager\Vendor\Illuminate\Database\Grammar;
 class Expression implements ExpressionContract
 {
     /**
@@ -13,7 +12,6 @@ class Expression implements ExpressionContract
      * @var string|int|float
      */
     protected $value;
-
     /**
      * Create a new raw query expression.
      *
@@ -24,7 +22,6 @@ class Expression implements ExpressionContract
     {
         $this->value = $value;
     }
-
     /**
      * Get the value of the expression.
      *

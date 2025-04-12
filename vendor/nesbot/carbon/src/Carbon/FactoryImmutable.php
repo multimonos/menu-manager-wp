@@ -8,14 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Carbon;
+namespace MenuManager\Vendor\Carbon;
 
 use Closure;
 use DateTimeImmutable;
 use DateTimeZone;
-use Psr\Clock\ClockInterface;
-
+use MenuManager\Vendor\Psr\Clock\ClockInterface;
 /**
  * A factory to generate CarbonImmutable instances with common settings.
  *
@@ -239,10 +237,9 @@ use Psr\Clock\ClockInterface;
  *
  * </autodoc>
  */
-class FactoryImmutable extends Factory implements ClockInterface
+class FactoryImmutable extends \MenuManager\Vendor\Carbon\Factory implements ClockInterface
 {
-    protected $className = CarbonImmutable::class;
-
+    protected $className = \MenuManager\Vendor\Carbon\CarbonImmutable::class;
     /**
      * Get a Carbon instance for the current date and time.
      *
@@ -250,10 +247,9 @@ class FactoryImmutable extends Factory implements ClockInterface
      *
      * @return CarbonImmutable
      */
-    public function now($tz = null): DateTimeImmutable
+    public function now($tz = null) : DateTimeImmutable
     {
         $className = $this->className;
-
         return new $className(null, $tz);
     }
 }

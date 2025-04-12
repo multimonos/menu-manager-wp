@@ -1,10 +1,9 @@
 <?php
 
-namespace Illuminate\Database\Schema;
+namespace MenuManager\Vendor\Illuminate\Database\Schema;
 
-use Illuminate\Support\Str;
-
-class ForeignIdColumnDefinition extends ColumnDefinition
+use MenuManager\Vendor\Illuminate\Support\Str;
+class ForeignIdColumnDefinition extends \MenuManager\Vendor\Illuminate\Database\Schema\ColumnDefinition
 {
     /**
      * The schema builder blueprint instance.
@@ -12,7 +11,6 @@ class ForeignIdColumnDefinition extends ColumnDefinition
      * @var \Illuminate\Database\Schema\Blueprint
      */
     protected $blueprint;
-
     /**
      * Create a new foreign ID column definition.
      *
@@ -20,13 +18,11 @@ class ForeignIdColumnDefinition extends ColumnDefinition
      * @param  array  $attributes
      * @return void
      */
-    public function __construct(Blueprint $blueprint, $attributes = [])
+    public function __construct(\MenuManager\Vendor\Illuminate\Database\Schema\Blueprint $blueprint, $attributes = [])
     {
         parent::__construct($attributes);
-
         $this->blueprint = $blueprint;
     }
-
     /**
      * Create a foreign key constraint on this column referencing the "id" column of the conventionally related table.
      *
@@ -37,9 +33,8 @@ class ForeignIdColumnDefinition extends ColumnDefinition
      */
     public function constrained($table = null, $column = 'id', $indexName = null)
     {
-        return $this->references($column, $indexName)->on($table ?? Str::of($this->name)->beforeLast('_'.$column)->plural());
+        return $this->references($column, $indexName)->on($table ?? Str::of($this->name)->beforeLast('_' . $column)->plural());
     }
-
     /**
      * Specify which column this foreign ID references on another table.
      *

@@ -1,8 +1,8 @@
 <?php
 
-namespace Illuminate\Contracts\Broadcasting;
+namespace MenuManager\Vendor\Illuminate\Contracts\Broadcasting;
 
-interface ShouldBroadcastNow extends ShouldBroadcast
+interface ShouldBroadcastNow extends \MenuManager\Vendor\Illuminate\Contracts\Broadcasting\ShouldBroadcast
 {
     //
 }

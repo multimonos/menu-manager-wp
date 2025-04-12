@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static bool exists(string $path)
@@ -58,7 +58,7 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\Filesystem\Filesystem
  */
-class File extends Facade
+class File extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.

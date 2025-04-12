@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Validation;
+namespace MenuManager\Vendor\Illuminate\Contracts\Validation;
 
 /**
  * @deprecated see ValidationRule
@@ -15,7 +15,6 @@ interface Rule
      * @return bool
      */
     public function passes($attribute, $value);
-
     /**
      * Get the validation error message.
      *

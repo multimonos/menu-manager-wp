@@ -1,14 +1,13 @@
 <?php
 
-namespace Illuminate\Database\PDO;
+namespace MenuManager\Vendor\Illuminate\Database\PDO;
 
-use Doctrine\DBAL\Driver\PDO\SQLSrv\Statement;
-use Doctrine\DBAL\Driver\Result;
-use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
-use Doctrine\DBAL\Driver\Statement as StatementInterface;
-use Doctrine\DBAL\ParameterType;
+use MenuManager\Vendor\Doctrine\DBAL\Driver\PDO\SQLSrv\Statement;
+use MenuManager\Vendor\Doctrine\DBAL\Driver\Result;
+use MenuManager\Vendor\Doctrine\DBAL\Driver\ServerInfoAwareConnection;
+use MenuManager\Vendor\Doctrine\DBAL\Driver\Statement as StatementInterface;
+use MenuManager\Vendor\Doctrine\DBAL\ParameterType;
 use PDO;
-
 class SqlServerConnection implements ServerInfoAwareConnection
 {
     /**
@@ -17,53 +16,46 @@ class SqlServerConnection implements ServerInfoAwareConnection
      * @var \Illuminate\Database\PDO\Connection
      */
     protected $connection;
-
     /**
      * Create a new SQL Server connection instance.
      *
      * @param  \Illuminate\Database\PDO\Connection  $connection
      * @return void
      */
-    public function __construct(Connection $connection)
+    public function __construct(\MenuManager\Vendor\Illuminate\Database\PDO\Connection $connection)
     {
         $this->connection = $connection;
     }
-
     /**
      * Prepare a new SQL statement.
      *
      * @param  string  $sql
      * @return \Doctrine\DBAL\Driver\Statement
      */
-    public function prepare(string $sql): StatementInterface
+    public function prepare(string $sql) : StatementInterface
     {
-        return new Statement(
-            $this->connection->prepare($sql)
-        );
+        return new Statement($this->connection->prepare($sql));
     }
-
     /**
      * Execute a new query against the connection.
      *
      * @param  string  $sql
      * @return \Doctrine\DBAL\Driver\Result
      */
-    public function query(string $sql): Result
+    public function query(string $sql) : Result
     {
         return $this->connection->query($sql);
     }
-
     /**
      * Execute an SQL statement.
      *
      * @param  string  $statement
      * @return int
      */
-    public function exec(string $statement): int
+    public function exec(string $statement) : int
     {
         return $this->connection->exec($statement);
     }
-
     /**
      * Get the last insert ID.
      *
@@ -75,12 +67,8 @@ class SqlServerConnection implements ServerInfoAwareConnection
         if ($name === null) {
             return $this->connection->lastInsertId($name);
         }
-
-        return $this->prepare('SELECT CONVERT(VARCHAR(MAX), current_value) FROM sys.sequences WHERE name = ?')
-            ->execute([$name])
-            ->fetchOne();
+        return $this->prepare('SELECT CONVERT(VARCHAR(MAX), current_value) FROM sys.sequences WHERE name = ?')->execute([$name])->fetchOne();
     }
-
     /**
      * Begin a new database transaction.
      *
@@ -90,7 +78,6 @@ class SqlServerConnection implements ServerInfoAwareConnection
     {
         return $this->connection->beginTransaction();
     }
-
     /**
      * Commit a database transaction.
      *
@@ -100,7 +87,6 @@ class SqlServerConnection implements ServerInfoAwareConnection
     {
         return $this->connection->commit();
     }
-
     /**
      * Rollback a database transaction.
      *
@@ -110,7 +96,6 @@ class SqlServerConnection implements ServerInfoAwareConnection
     {
         return $this->connection->rollBack();
     }
-
     /**
      * Wrap quotes around the given input.
      *
@@ -121,15 +106,12 @@ class SqlServerConnection implements ServerInfoAwareConnection
     public function quote($value, $type = ParameterType::STRING)
     {
         $val = $this->connection->quote($value, $type);
-
         // Fix for a driver version terminating all values with null byte...
-        if (\is_string($val) && str_contains($val, "\0")) {
+        if (\is_string($val) && \str_contains($val, "\x00")) {
             $val = \substr($val, 0, -1);
         }
-
         return $val;
     }
-
     /**
      * Get the server version for the connection.
      *
@@ -139,13 +121,12 @@ class SqlServerConnection implements ServerInfoAwareConnection
     {
         return $this->connection->getServerVersion();
     }
-
     /**
      * Get the wrapped PDO connection.
      *
      * @return \PDO
      */
-    public function getWrappedConnection(): PDO
+    public function getWrappedConnection() : PDO
     {
         return $this->connection->getWrappedConnection();
     }

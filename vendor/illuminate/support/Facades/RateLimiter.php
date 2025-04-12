@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static \Illuminate\Cache\RateLimiter for(string $name, \Closure $callback)
@@ -19,7 +19,7 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\Cache\RateLimiter
  */
-class RateLimiter extends Facade
+class RateLimiter extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.
@@ -28,6 +28,6 @@ class RateLimiter extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return \Illuminate\Cache\RateLimiter::class;
+        return \MenuManager\Vendor\Illuminate\Cache\RateLimiter::class;
     }
 }

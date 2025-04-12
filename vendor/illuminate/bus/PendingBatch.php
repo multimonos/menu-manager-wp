@@ -1,49 +1,43 @@
 <?php
 
-namespace Illuminate\Bus;
+namespace MenuManager\Vendor\Illuminate\Bus;
 
 use Closure;
-use Illuminate\Bus\Events\BatchDispatched;
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Traits\Conditionable;
-use Laravel\SerializableClosure\SerializableClosure;
+use MenuManager\Vendor\Illuminate\Bus\Events\BatchDispatched;
+use MenuManager\Vendor\Illuminate\Contracts\Container\Container;
+use MenuManager\Vendor\Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
+use MenuManager\Vendor\Illuminate\Support\Arr;
+use MenuManager\Vendor\Illuminate\Support\Collection;
+use MenuManager\Vendor\Illuminate\Support\Traits\Conditionable;
+use MenuManager\Vendor\Laravel\SerializableClosure\SerializableClosure;
 use Throwable;
-
 class PendingBatch
 {
     use Conditionable;
-
     /**
      * The IoC container instance.
      *
      * @var \Illuminate\Contracts\Container\Container
      */
     protected $container;
-
     /**
      * The batch name.
      *
      * @var string
      */
     public $name = '';
-
     /**
      * The jobs that belong to the batch.
      *
      * @var \Illuminate\Support\Collection
      */
     public $jobs;
-
     /**
      * The batch options.
      *
      * @var array
      */
     public $options = [];
-
     /**
      * Create a new pending batch instance.
      *
@@ -56,7 +50,6 @@ class PendingBatch
         $this->container = $container;
         $this->jobs = $jobs;
     }
-
     /**
      * Add jobs to the batch.
      *
@@ -65,15 +58,12 @@ class PendingBatch
      */
     public function add($jobs)
     {
-        $jobs = is_iterable($jobs) ? $jobs : Arr::wrap($jobs);
-
+        $jobs = \is_iterable($jobs) ? $jobs : Arr::wrap($jobs);
         foreach ($jobs as $job) {
             $this->jobs->push($job);
         }
-
         return $this;
     }
-
     /**
      * Add a callback to be executed when the batch is stored.
      *
@@ -82,13 +72,9 @@ class PendingBatch
      */
     public function before($callback)
     {
-        $this->options['before'][] = $callback instanceof Closure
-            ? new SerializableClosure($callback)
-            : $callback;
-
+        $this->options['before'][] = $callback instanceof Closure ? new SerializableClosure($callback) : $callback;
         return $this;
     }
-
     /**
      * Get the "before" callbacks that have been registered with the pending batch.
      *
@@ -98,7 +84,6 @@ class PendingBatch
     {
         return $this->options['before'] ?? [];
     }
-
     /**
      * Add a callback to be executed after a job in the batch have executed successfully.
      *
@@ -107,13 +92,9 @@ class PendingBatch
      */
     public function progress($callback)
     {
-        $this->options['progress'][] = $callback instanceof Closure
-            ? new SerializableClosure($callback)
-            : $callback;
-
+        $this->options['progress'][] = $callback instanceof Closure ? new SerializableClosure($callback) : $callback;
         return $this;
     }
-
     /**
      * Get the "progress" callbacks that have been registered with the pending batch.
      *
@@ -123,7 +104,6 @@ class PendingBatch
     {
         return $this->options['progress'] ?? [];
     }
-
     /**
      * Add a callback to be executed after all jobs in the batch have executed successfully.
      *
@@ -132,13 +112,9 @@ class PendingBatch
      */
     public function then($callback)
     {
-        $this->options['then'][] = $callback instanceof Closure
-                        ? new SerializableClosure($callback)
-                        : $callback;
-
+        $this->options['then'][] = $callback instanceof Closure ? new SerializableClosure($callback) : $callback;
         return $this;
     }
-
     /**
      * Get the "then" callbacks that have been registered with the pending batch.
      *
@@ -148,7 +124,6 @@ class PendingBatch
     {
         return $this->options['then'] ?? [];
     }
-
     /**
      * Add a callback to be executed after the first failing job in the batch.
      *
@@ -157,13 +132,9 @@ class PendingBatch
      */
     public function catch($callback)
     {
-        $this->options['catch'][] = $callback instanceof Closure
-                    ? new SerializableClosure($callback)
-                    : $callback;
-
+        $this->options['catch'][] = $callback instanceof Closure ? new SerializableClosure($callback) : $callback;
         return $this;
     }
-
     /**
      * Get the "catch" callbacks that have been registered with the pending batch.
      *
@@ -173,7 +144,6 @@ class PendingBatch
     {
         return $this->options['catch'] ?? [];
     }
-
     /**
      * Add a callback to be executed after the batch has finished executing.
      *
@@ -182,13 +152,9 @@ class PendingBatch
      */
     public function finally($callback)
     {
-        $this->options['finally'][] = $callback instanceof Closure
-                    ? new SerializableClosure($callback)
-                    : $callback;
-
+        $this->options['finally'][] = $callback instanceof Closure ? new SerializableClosure($callback) : $callback;
         return $this;
     }
-
     /**
      * Get the "finally" callbacks that have been registered with the pending batch.
      *
@@ -198,20 +164,17 @@ class PendingBatch
     {
         return $this->options['finally'] ?? [];
     }
-
     /**
      * Indicate that the batch should not be cancelled when a job within the batch fails.
      *
      * @param  bool  $allowFailures
      * @return $this
      */
-    public function allowFailures($allowFailures = true)
+    public function allowFailures($allowFailures = \true)
     {
         $this->options['allowFailures'] = $allowFailures;
-
         return $this;
     }
-
     /**
      * Determine if the pending batch allows jobs to fail without cancelling the batch.
      *
@@ -219,9 +182,8 @@ class PendingBatch
      */
     public function allowsFailures()
     {
-        return Arr::get($this->options, 'allowFailures', false) === true;
+        return Arr::get($this->options, 'allowFailures', \false) === \true;
     }
-
     /**
      * Set the name for the batch.
      *
@@ -231,10 +193,8 @@ class PendingBatch
     public function name(string $name)
     {
         $this->name = $name;
-
         return $this;
     }
-
     /**
      * Specify the queue connection that the batched jobs should run on.
      *
@@ -244,10 +204,8 @@ class PendingBatch
     public function onConnection(string $connection)
     {
         $this->options['connection'] = $connection;
-
         return $this;
     }
-
     /**
      * Get the connection used by the pending batch.
      *
@@ -257,7 +215,6 @@ class PendingBatch
     {
         return $this->options['connection'] ?? null;
     }
-
     /**
      * Specify the queue that the batched jobs should run on.
      *
@@ -267,10 +224,8 @@ class PendingBatch
     public function onQueue(string $queue)
     {
         $this->options['queue'] = $queue;
-
         return $this;
     }
-
     /**
      * Get the queue used by the pending batch.
      *
@@ -280,7 +235,6 @@ class PendingBatch
     {
         return $this->options['queue'] ?? null;
     }
-
     /**
      * Add additional data into the batch's options array.
      *
@@ -291,10 +245,8 @@ class PendingBatch
     public function withOption(string $key, $value)
     {
         $this->options[$key] = $value;
-
         return $this;
     }
-
     /**
      * Dispatch the batch.
      *
@@ -304,27 +256,19 @@ class PendingBatch
      */
     public function dispatch()
     {
-        $repository = $this->container->make(BatchRepository::class);
-
+        $repository = $this->container->make(\MenuManager\Vendor\Illuminate\Bus\BatchRepository::class);
         try {
             $batch = $this->store($repository);
-
             $batch = $batch->add($this->jobs);
         } catch (Throwable $e) {
             if (isset($batch)) {
                 $repository->delete($batch->id);
             }
-
             throw $e;
         }
-
-        $this->container->make(EventDispatcher::class)->dispatch(
-            new BatchDispatched($batch)
-        );
-
+        $this->container->make(EventDispatcher::class)->dispatch(new BatchDispatched($batch));
         return $batch;
     }
-
     /**
      * Dispatch the batch after the response is sent to the browser.
      *
@@ -332,19 +276,15 @@ class PendingBatch
      */
     public function dispatchAfterResponse()
     {
-        $repository = $this->container->make(BatchRepository::class);
-
+        $repository = $this->container->make(\MenuManager\Vendor\Illuminate\Bus\BatchRepository::class);
         $batch = $this->store($repository);
-
         if ($batch) {
-            $this->container->terminating(function () use ($batch) {
+            $this->container->terminating(function () use($batch) {
                 $this->dispatchExistingBatch($batch);
             });
         }
-
         return $batch;
     }
-
     /**
      * Dispatch an existing batch.
      *
@@ -361,15 +301,10 @@ class PendingBatch
             if (isset($batch)) {
                 $batch->delete();
             }
-
             throw $e;
         }
-
-        $this->container->make(EventDispatcher::class)->dispatch(
-            new BatchDispatched($batch)
-        );
+        $this->container->make(EventDispatcher::class)->dispatch(new BatchDispatched($batch));
     }
-
     /**
      * Dispatch the batch if the given truth test passes.
      *
@@ -380,7 +315,6 @@ class PendingBatch
     {
         return value($boolean) ? $this->dispatch() : null;
     }
-
     /**
      * Dispatch the batch unless the given truth test passes.
      *
@@ -389,9 +323,8 @@ class PendingBatch
      */
     public function dispatchUnless($boolean)
     {
-        return ! value($boolean) ? $this->dispatch() : null;
+        return !value($boolean) ? $this->dispatch() : null;
     }
-
     /**
      * Store the batch using the given repository.
      *
@@ -401,17 +334,15 @@ class PendingBatch
     protected function store($repository)
     {
         $batch = $repository->store($this);
-
-        collect($this->beforeCallbacks())->each(function ($handler) use ($batch) {
+        collect($this->beforeCallbacks())->each(function ($handler) use($batch) {
             try {
                 return $handler($batch);
             } catch (Throwable $e) {
-                if (function_exists('report')) {
+                if (\function_exists('MenuManager\\Vendor\\report')) {
                     report($e);
                 }
             }
         });
-
         return $batch;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Broadcasting;
+namespace MenuManager\Vendor\Illuminate\Contracts\Broadcasting;
 
 interface ShouldBroadcast
 {

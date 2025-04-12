@@ -1,8 +1,8 @@
 <?php
 
-namespace Illuminate\Contracts\Queue;
+namespace MenuManager\Vendor\Illuminate\Contracts\Queue;
 
-interface ShouldQueueAfterCommit extends ShouldQueue
+interface ShouldQueueAfterCommit extends \MenuManager\Vendor\Illuminate\Contracts\Queue\ShouldQueue
 {
     //
 }

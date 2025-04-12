@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Support;
+namespace MenuManager\Vendor\Illuminate\Support;
 
 use RuntimeException;
-
 class MultipleItemsFoundException extends RuntimeException
 {
     /**
@@ -12,7 +11,6 @@ class MultipleItemsFoundException extends RuntimeException
      * @var int
      */
     public $count;
-
     /**
      * Create a new exception instance.
      *
@@ -24,10 +22,8 @@ class MultipleItemsFoundException extends RuntimeException
     public function __construct($count, $code = 0, $previous = null)
     {
         $this->count = $count;
-
-        parent::__construct("$count items were found.", $code, $previous);
+        parent::__construct("{$count} items were found.", $code, $previous);
     }
-
     /**
      * Get the number of items found.
      *

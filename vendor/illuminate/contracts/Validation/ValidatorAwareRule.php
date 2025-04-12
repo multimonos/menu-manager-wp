@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Contracts\Validation;
+namespace MenuManager\Vendor\Illuminate\Contracts\Validation;
 
-use Illuminate\Validation\Validator;
-
+use MenuManager\Vendor\Illuminate\Validation\Validator;
 interface ValidatorAwareRule
 {
     /**

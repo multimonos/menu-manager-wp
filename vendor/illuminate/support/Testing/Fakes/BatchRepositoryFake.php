@@ -1,14 +1,13 @@
 <?php
 
-namespace Illuminate\Support\Testing\Fakes;
+namespace MenuManager\Vendor\Illuminate\Support\Testing\Fakes;
 
-use Carbon\CarbonImmutable;
+use MenuManager\Vendor\Carbon\CarbonImmutable;
 use Closure;
-use Illuminate\Bus\BatchRepository;
-use Illuminate\Bus\PendingBatch;
-use Illuminate\Bus\UpdatedBatchJobCounts;
-use Illuminate\Support\Str;
-
+use MenuManager\Vendor\Illuminate\Bus\BatchRepository;
+use MenuManager\Vendor\Illuminate\Bus\PendingBatch;
+use MenuManager\Vendor\Illuminate\Bus\UpdatedBatchJobCounts;
+use MenuManager\Vendor\Illuminate\Support\Str;
 class BatchRepositoryFake implements BatchRepository
 {
     /**
@@ -17,7 +16,6 @@ class BatchRepositoryFake implements BatchRepository
      * @var \Illuminate\Bus\Batch[]
      */
     protected $batches = [];
-
     /**
      * Retrieve a list of batches.
      *
@@ -29,7 +27,6 @@ class BatchRepositoryFake implements BatchRepository
     {
         return $this->batches;
     }
-
     /**
      * Retrieve information about an existing batch.
      *
@@ -40,7 +37,6 @@ class BatchRepositoryFake implements BatchRepository
     {
         return $this->batches[$batchId] ?? null;
     }
-
     /**
      * Store a new pending batch.
      *
@@ -50,23 +46,9 @@ class BatchRepositoryFake implements BatchRepository
     public function store(PendingBatch $batch)
     {
         $id = (string) Str::orderedUuid();
-
-        $this->batches[$id] = new BatchFake(
-            $id,
-            $batch->name,
-            count($batch->jobs),
-            count($batch->jobs),
-            0,
-            [],
-            $batch->options,
-            CarbonImmutable::now(),
-            null,
-            null
-        );
-
+        $this->batches[$id] = new \MenuManager\Vendor\Illuminate\Support\Testing\Fakes\BatchFake($id, $batch->name, \count($batch->jobs), \count($batch->jobs), 0, [], $batch->options, CarbonImmutable::now(), null, null);
         return $this->batches[$id];
     }
-
     /**
      * Increment the total number of jobs within the batch.
      *
@@ -78,7 +60,6 @@ class BatchRepositoryFake implements BatchRepository
     {
         //
     }
-
     /**
      * Decrement the total number of pending jobs for the batch.
      *
@@ -88,9 +69,8 @@ class BatchRepositoryFake implements BatchRepository
      */
     public function decrementPendingJobs(string $batchId, string $jobId)
     {
-        return new UpdatedBatchJobCounts;
+        return new UpdatedBatchJobCounts();
     }
-
     /**
      * Increment the total number of failed jobs for the batch.
      *
@@ -100,9 +80,8 @@ class BatchRepositoryFake implements BatchRepository
      */
     public function incrementFailedJobs(string $batchId, string $jobId)
     {
-        return new UpdatedBatchJobCounts;
+        return new UpdatedBatchJobCounts();
     }
-
     /**
      * Mark the batch that has the given ID as finished.
      *
@@ -115,7 +94,6 @@ class BatchRepositoryFake implements BatchRepository
             $this->batches[$batchId]->finishedAt = now();
         }
     }
-
     /**
      * Cancel the batch that has the given ID.
      *
@@ -128,7 +106,6 @@ class BatchRepositoryFake implements BatchRepository
             $this->batches[$batchId]->cancel();
         }
     }
-
     /**
      * Delete the batch that has the given ID.
      *
@@ -139,7 +116,6 @@ class BatchRepositoryFake implements BatchRepository
     {
         unset($this->batches[$batchId]);
     }
-
     /**
      * Execute the given Closure within a storage specific transaction.
      *

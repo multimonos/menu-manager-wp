@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database\Query;
+namespace MenuManager\Vendor\Illuminate\Database\Query;
 
 class IndexHint
 {
@@ -10,14 +10,12 @@ class IndexHint
      * @var string
      */
     public $type;
-
     /**
      * The name of the index.
      *
      * @var string
      */
     public $index;
-
     /**
      * Create a new index hint instance.
      *

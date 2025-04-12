@@ -1,12 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace MenuManager\Vendor\Doctrine\Inflector;
 
-namespace Doctrine\Inflector;
-
-class NoopWordInflector implements WordInflector
+class NoopWordInflector implements \MenuManager\Vendor\Doctrine\Inflector\WordInflector
 {
-    public function inflect(string $word): string
+    public function inflect(string $word) : string
     {
         return $word;
     }

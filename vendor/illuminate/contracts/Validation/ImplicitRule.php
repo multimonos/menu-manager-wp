@@ -1,11 +1,11 @@
 <?php
 
-namespace Illuminate\Contracts\Validation;
+namespace MenuManager\Vendor\Illuminate\Contracts\Validation;
 
 /**
  * @deprecated see ValidationRule
  */
-interface ImplicitRule extends Rule
+interface ImplicitRule extends \MenuManager\Vendor\Illuminate\Contracts\Validation\Rule
 {
     //
 }

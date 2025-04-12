@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Foundation;
+namespace MenuManager\Vendor\Illuminate\Contracts\Foundation;
 
 interface ExceptionRenderer
 {

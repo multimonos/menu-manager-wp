@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static \Illuminate\Hashing\BcryptHasher createBcryptDriver()
@@ -22,7 +22,7 @@ namespace Illuminate\Support\Facades;
  * @see \Illuminate\Hashing\HashManager
  * @see \Illuminate\Hashing\AbstractHasher
  */
-class Hash extends Facade
+class Hash extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.

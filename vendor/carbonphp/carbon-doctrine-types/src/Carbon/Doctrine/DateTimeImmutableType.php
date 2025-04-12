@@ -1,19 +1,17 @@
 <?php
 
-namespace Carbon\Doctrine;
+namespace MenuManager\Vendor\Carbon\Doctrine;
 
-use Carbon\CarbonImmutable;
-use Doctrine\DBAL\Types\VarDateTimeImmutableType;
-
-class DateTimeImmutableType extends VarDateTimeImmutableType implements CarbonDoctrineType
+use MenuManager\Vendor\Carbon\CarbonImmutable;
+use MenuManager\Vendor\Doctrine\DBAL\Types\VarDateTimeImmutableType;
+class DateTimeImmutableType extends VarDateTimeImmutableType implements \MenuManager\Vendor\Carbon\Doctrine\CarbonDoctrineType
 {
     /** @use CarbonTypeConverter<CarbonImmutable> */
-    use CarbonTypeConverter;
-
+    use \MenuManager\Vendor\Carbon\Doctrine\CarbonTypeConverter;
     /**
      * @return class-string<CarbonImmutable>
      */
-    protected function getCarbonClassName(): string
+    protected function getCarbonClassName() : string
     {
         return CarbonImmutable::class;
     }

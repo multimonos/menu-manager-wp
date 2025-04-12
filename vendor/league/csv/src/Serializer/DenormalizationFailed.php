@@ -8,18 +8,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
-
-namespace League\Csv\Serializer;
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv\Serializer;
 
 use ReflectionProperty;
 use RuntimeException;
-
-final class DenormalizationFailed extends RuntimeException implements SerializationFailed
+final class DenormalizationFailed extends RuntimeException implements \MenuManager\Vendor\League\Csv\Serializer\SerializationFailed
 {
-    public static function dueToUninitializedProperty(ReflectionProperty $reflectionProperty): self
+    public static function dueToUninitializedProperty(ReflectionProperty $reflectionProperty) : self
     {
-        return new self('The property '.$reflectionProperty->getDeclaringClass()->getName().'::'.$reflectionProperty->getName().' is not initialized; its value is missing from the source data.');
+        return new self('The property ' . $reflectionProperty->getDeclaringClass()->getName() . '::' . $reflectionProperty->getName() . ' is not initialized; its value is missing from the source data.');
     }
 }

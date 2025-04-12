@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Support\Testing\Fakes;
+namespace MenuManager\Vendor\Illuminate\Support\Testing\Fakes;
 
 use Closure;
-
 class ChainedBatchTruthTest
 {
     /**
@@ -12,7 +11,6 @@ class ChainedBatchTruthTest
      * @var \Closure
      */
     protected $callback;
-
     /**
      * Create a new truth test instance.
      *
@@ -23,7 +21,6 @@ class ChainedBatchTruthTest
     {
         $this->callback = $callback;
     }
-
     /**
      * Invoke the truth test with the given pending batch.
      *
@@ -32,6 +29,6 @@ class ChainedBatchTruthTest
      */
     public function __invoke($pendingBatch)
     {
-        return call_user_func($this->callback, $pendingBatch);
+        return \call_user_func($this->callback, $pendingBatch);
     }
 }

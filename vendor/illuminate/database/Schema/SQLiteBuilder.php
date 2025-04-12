@@ -1,11 +1,10 @@
 <?php
 
-namespace Illuminate\Database\Schema;
+namespace MenuManager\Vendor\Illuminate\Database\Schema;
 
-use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\File;
-
-class SQLiteBuilder extends Builder
+use MenuManager\Vendor\Illuminate\Database\QueryException;
+use MenuManager\Vendor\Illuminate\Support\Facades\File;
+class SQLiteBuilder extends \MenuManager\Vendor\Illuminate\Database\Schema\Builder
 {
     /**
      * Create a database in the schema.
@@ -15,9 +14,8 @@ class SQLiteBuilder extends Builder
      */
     public function createDatabase($name)
     {
-        return File::put($name, '') !== false;
+        return File::put($name, '') !== \false;
     }
-
     /**
      * Drop a database from the schema if the database exists.
      *
@@ -26,32 +24,25 @@ class SQLiteBuilder extends Builder
      */
     public function dropDatabaseIfExists($name)
     {
-        return File::exists($name)
-            ? File::delete($name)
-            : true;
+        return File::exists($name) ? File::delete($name) : \true;
     }
-
     /**
      * Get the tables for the database.
      *
      * @param  bool  $withSize
      * @return array
      */
-    public function getTables($withSize = true)
+    public function getTables($withSize = \true)
     {
         if ($withSize) {
             try {
                 $withSize = $this->connection->scalar($this->grammar->compileDbstatExists());
             } catch (QueryException $e) {
-                $withSize = false;
+                $withSize = \false;
             }
         }
-
-        return $this->connection->getPostProcessor()->processTables(
-            $this->connection->selectFromWriteConnection($this->grammar->compileTables($withSize))
-        );
+        return $this->connection->getPostProcessor()->processTables($this->connection->selectFromWriteConnection($this->grammar->compileTables($withSize)));
     }
-
     /**
      * Get all of the table names for the database.
      *
@@ -61,11 +52,8 @@ class SQLiteBuilder extends Builder
      */
     public function getAllTables()
     {
-        return $this->connection->select(
-            $this->grammar->compileGetAllTables()
-        );
+        return $this->connection->select($this->grammar->compileGetAllTables());
     }
-
     /**
      * Get all of the view names for the database.
      *
@@ -75,11 +63,8 @@ class SQLiteBuilder extends Builder
      */
     public function getAllViews()
     {
-        return $this->connection->select(
-            $this->grammar->compileGetAllViews()
-        );
+        return $this->connection->select($this->grammar->compileGetAllViews());
     }
-
     /**
      * Drop all tables from the database.
      *
@@ -90,16 +75,11 @@ class SQLiteBuilder extends Builder
         if ($this->connection->getDatabaseName() !== ':memory:') {
             return $this->refreshDatabaseFile();
         }
-
         $this->connection->select($this->grammar->compileEnableWriteableSchema());
-
         $this->connection->select($this->grammar->compileDropAllTables());
-
         $this->connection->select($this->grammar->compileDisableWriteableSchema());
-
         $this->connection->select($this->grammar->compileRebuild());
     }
-
     /**
      * Drop all views from the database.
      *
@@ -108,14 +88,10 @@ class SQLiteBuilder extends Builder
     public function dropAllViews()
     {
         $this->connection->select($this->grammar->compileEnableWriteableSchema());
-
         $this->connection->select($this->grammar->compileDropAllViews());
-
         $this->connection->select($this->grammar->compileDisableWriteableSchema());
-
         $this->connection->select($this->grammar->compileRebuild());
     }
-
     /**
      * Empty the database file.
      *
@@ -123,6 +99,6 @@ class SQLiteBuilder extends Builder
      */
     public function refreshDatabaseFile()
     {
-        file_put_contents($this->connection->getDatabaseName(), '');
+        \file_put_contents($this->connection->getDatabaseName(), '');
     }
 }

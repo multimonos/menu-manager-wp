@@ -8,19 +8,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MenuManager\Vendor\Symfony\Component\Translation\Provider;
 
-namespace Symfony\Component\Translation\Provider;
-
-use Symfony\Component\Translation\Exception\IncompleteDsnException;
-use Symfony\Component\Translation\Exception\UnsupportedSchemeException;
-
+use MenuManager\Vendor\Symfony\Component\Translation\Exception\IncompleteDsnException;
+use MenuManager\Vendor\Symfony\Component\Translation\Exception\UnsupportedSchemeException;
 interface ProviderFactoryInterface
 {
     /**
      * @throws UnsupportedSchemeException
      * @throws IncompleteDsnException
      */
-    public function create(Dsn $dsn): ProviderInterface;
-
-    public function supports(Dsn $dsn): bool;
+    public function create(\MenuManager\Vendor\Symfony\Component\Translation\Provider\Dsn $dsn) : \MenuManager\Vendor\Symfony\Component\Translation\Provider\ProviderInterface;
+    public function supports(\MenuManager\Vendor\Symfony\Component\Translation\Provider\Dsn $dsn) : bool;
 }

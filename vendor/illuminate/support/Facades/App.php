@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static string version()
@@ -132,7 +132,7 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\Foundation\Application
  */
-class App extends Facade
+class App extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.

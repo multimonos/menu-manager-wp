@@ -8,32 +8,27 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MenuManager\Vendor\Symfony\Component\Translation\Provider;
 
-namespace Symfony\Component\Translation\Provider;
-
-use Symfony\Component\Translation\TranslatorBag;
-use Symfony\Component\Translation\TranslatorBagInterface;
-
+use MenuManager\Vendor\Symfony\Component\Translation\TranslatorBag;
+use MenuManager\Vendor\Symfony\Component\Translation\TranslatorBagInterface;
 /**
  * @author Mathieu Santostefano <msantostefano@protonmail.com>
  */
-class NullProvider implements ProviderInterface
+class NullProvider implements \MenuManager\Vendor\Symfony\Component\Translation\Provider\ProviderInterface
 {
-    public function __toString(): string
+    public function __toString() : string
     {
         return 'null';
     }
-
-    public function write(TranslatorBagInterface $translatorBag, bool $override = false): void
+    public function write(TranslatorBagInterface $translatorBag, bool $override = \false) : void
     {
     }
-
-    public function read(array $domains, array $locales): TranslatorBag
+    public function read(array $domains, array $locales) : TranslatorBag
     {
         return new TranslatorBag();
     }
-
-    public function delete(TranslatorBagInterface $translatorBag): void
+    public function delete(TranslatorBagInterface $translatorBag) : void
     {
     }
 }

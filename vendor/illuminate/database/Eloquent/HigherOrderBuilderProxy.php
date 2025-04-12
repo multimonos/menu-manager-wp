@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database\Eloquent;
+namespace MenuManager\Vendor\Illuminate\Database\Eloquent;
 
 /**
  * @mixin \Illuminate\Database\Eloquent\Builder
@@ -13,14 +13,12 @@ class HigherOrderBuilderProxy
      * @var \Illuminate\Database\Eloquent\Builder
      */
     protected $builder;
-
     /**
      * The method being proxied.
      *
      * @var string
      */
     protected $method;
-
     /**
      * Create a new proxy instance.
      *
@@ -28,12 +26,11 @@ class HigherOrderBuilderProxy
      * @param  string  $method
      * @return void
      */
-    public function __construct(Builder $builder, $method)
+    public function __construct(\MenuManager\Vendor\Illuminate\Database\Eloquent\Builder $builder, $method)
     {
         $this->method = $method;
         $this->builder = $builder;
     }
-
     /**
      * Proxy a scope call onto the query builder.
      *
@@ -43,7 +40,7 @@ class HigherOrderBuilderProxy
      */
     public function __call($method, $parameters)
     {
-        return $this->builder->{$this->method}(function ($value) use ($method, $parameters) {
+        return $this->builder->{$this->method}(function ($value) use($method, $parameters) {
             return $value->{$method}(...$parameters);
         });
     }

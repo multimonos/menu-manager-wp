@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
-use Illuminate\Support\DateFactory;
-
+use MenuManager\Vendor\Illuminate\Support\DateFactory;
 /**
  * @see https://carbon.nesbot.com/docs/
  * @see https://github.com/briannesbitt/Carbon/blob/master/src/Carbon/Factory.php
@@ -87,10 +86,9 @@ use Illuminate\Support\DateFactory;
  *
  * @see \Illuminate\Support\DateFactory
  */
-class Date extends Facade
+class Date extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     const DEFAULT_FACADE = DateFactory::class;
-
     /**
      * Get the registered name of the component.
      *
@@ -102,7 +100,6 @@ class Date extends Facade
     {
         return 'date';
     }
-
     /**
      * Resolve the facade root instance from the container.
      *
@@ -111,12 +108,10 @@ class Date extends Facade
      */
     protected static function resolveFacadeInstance($name)
     {
-        if (! isset(static::$resolvedInstance[$name]) && ! isset(static::$app, static::$app[$name])) {
+        if (!isset(static::$resolvedInstance[$name]) && !isset(static::$app, static::$app[$name])) {
             $class = static::DEFAULT_FACADE;
-
-            static::swap(new $class);
+            static::swap(new $class());
         }
-
         return parent::resolveFacadeInstance($name);
     }
 }

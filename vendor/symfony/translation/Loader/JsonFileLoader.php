@@ -8,36 +8,31 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace MenuManager\Vendor\Symfony\Component\Translation\Loader;
 
-namespace Symfony\Component\Translation\Loader;
-
-use Symfony\Component\Translation\Exception\InvalidResourceException;
-
+use MenuManager\Vendor\Symfony\Component\Translation\Exception\InvalidResourceException;
 /**
  * JsonFileLoader loads translations from an json file.
  *
  * @author singles
  */
-class JsonFileLoader extends FileLoader
+class JsonFileLoader extends \MenuManager\Vendor\Symfony\Component\Translation\Loader\FileLoader
 {
-    protected function loadResource(string $resource): array
+    protected function loadResource(string $resource) : array
     {
         $messages = [];
-        if ($data = file_get_contents($resource)) {
-            $messages = json_decode($data, true);
-
-            if (0 < $errorCode = json_last_error()) {
-                throw new InvalidResourceException('Error parsing JSON: '.$this->getJSONErrorMessage($errorCode));
+        if ($data = \file_get_contents($resource)) {
+            $messages = \json_decode($data, \true);
+            if (0 < ($errorCode = \json_last_error())) {
+                throw new InvalidResourceException('Error parsing JSON: ' . $this->getJSONErrorMessage($errorCode));
             }
         }
-
         return $messages;
     }
-
     /**
      * Translates JSON_ERROR_* constant into meaningful message.
      */
-    private function getJSONErrorMessage(int $errorCode): string
+    private function getJSONErrorMessage(int $errorCode) : string
     {
         return match ($errorCode) {
             \JSON_ERROR_DEPTH => 'Maximum stack depth exceeded',

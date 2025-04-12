@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Contracts\Validation;
+namespace MenuManager\Vendor\Illuminate\Contracts\Validation;
 
 use Closure;
-
 /**
  * @deprecated see ValidationRule
  */

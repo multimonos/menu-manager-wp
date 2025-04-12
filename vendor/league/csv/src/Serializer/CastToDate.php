@@ -8,10 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
-
-namespace League\Csv\Serializer;
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv\Serializer;
 
 use DateTime;
 use DateTimeImmutable;
@@ -21,139 +19,113 @@ use ReflectionClass;
 use ReflectionParameter;
 use ReflectionProperty;
 use Throwable;
-
 use function class_exists;
 use function is_string;
-
 /**
  * @implements TypeCasting<DateTimeImmutable|DateTime|null>
  */
-final class CastToDate implements TypeCasting
+final class CastToDate implements \MenuManager\Vendor\League\Csv\Serializer\TypeCasting
 {
     /** @var class-string */
     private string $class;
     private readonly bool $isNullable;
     private DateTimeImmutable|DateTime|null $default = null;
-    private readonly Type $type;
-    private readonly TypeCastingInfo $info;
+    private readonly \MenuManager\Vendor\League\Csv\Serializer\Type $type;
+    private readonly \MenuManager\Vendor\League\Csv\Serializer\TypeCastingInfo $info;
     private ?DateTimeZone $timezone = null;
     private ?string $format = null;
-
     /**
      * @throws MappingFailed
      */
-    public function __construct(
-        ReflectionProperty|ReflectionParameter $reflectionProperty,
-    ) {
+    public function __construct(ReflectionProperty|ReflectionParameter $reflectionProperty)
+    {
         [$this->type, $this->class, $this->isNullable] = $this->init($reflectionProperty);
-        $this->info = TypeCastingInfo::fromAccessor($reflectionProperty);
+        $this->info = \MenuManager\Vendor\League\Csv\Serializer\TypeCastingInfo::fromAccessor($reflectionProperty);
     }
-
     /**
      * @param ?class-string $className
      *
      * @throws MappingFailed
      */
-    public function setOptions(
-        ?string $default = null,
-        ?string $format = null,
-        DateTimeZone|string|null $timezone = null,
-        ?string $className = null,
-    ): void {
-        $this->class = match (true) {
-            !interface_exists($this->class) && !Type::Mixed->equals($this->type) => $this->class,
+    public function setOptions(?string $default = null, ?string $format = null, DateTimeZone|string|null $timezone = null, ?string $className = null) : void
+    {
+        $this->class = match (\true) {
+            !\interface_exists($this->class) && !\MenuManager\Vendor\League\Csv\Serializer\Type::Mixed->equals($this->type) => $this->class,
             DateTimeInterface::class === $this->class && null === $className => DateTimeImmutable::class,
-            interface_exists($this->class) && null !== $className && class_exists($className) && (new ReflectionClass($className))->implementsInterface($this->class) => $className,
-            default => throw new MappingFailed('`'.$this->info->targetName.'` type is `'.($this->class ?? 'mixed').'` but the specified class via the `$className` argument is invalid or could not be found.'),
+            \interface_exists($this->class) && null !== $className && class_exists($className) && (new ReflectionClass($className))->implementsInterface($this->class) => $className,
+            default => throw new \MenuManager\Vendor\League\Csv\Serializer\MappingFailed('`' . $this->info->targetName . '` type is `' . ($this->class ?? 'mixed') . '` but the specified class via the `$className` argument is invalid or could not be found.'),
         };
-
         try {
             $this->format = $format;
             $this->timezone = is_string($timezone) ? new DateTimeZone($timezone) : $timezone;
-            $this->default = (null !== $default) ? $this->cast($default) : $default;
+            $this->default = null !== $default ? $this->cast($default) : $default;
         } catch (Throwable $exception) {
-            throw new MappingFailed('The `timezone` and/or `format` options used for `'.self::class.'` are invalud.', 0, $exception);
+            throw new \MenuManager\Vendor\League\Csv\Serializer\MappingFailed('The `timezone` and/or `format` options used for `' . self::class . '` are invalud.', 0, $exception);
         }
     }
-
-    public function info(): TypeCastingInfo
+    public function info() : \MenuManager\Vendor\League\Csv\Serializer\TypeCastingInfo
     {
         return $this->info;
     }
-
     /**
      * @throws TypeCastingFailed
      */
-    public function toVariable(mixed $value): DateTimeImmutable|DateTime|null
+    public function toVariable(mixed $value) : DateTimeImmutable|DateTime|null
     {
-        return match (true) {
+        return match (\true) {
             null !== $value && '' !== $value => $this->cast($value),
             $this->isNullable => $this->default,
-            default => throw TypeCastingFailed::dueToNotNullableType($this->class, info: $this->info),
+            default => throw \MenuManager\Vendor\League\Csv\Serializer\TypeCastingFailed::dueToNotNullableType($this->class, info: $this->info),
         };
     }
-
     /**
      * @throws TypeCastingFailed
      */
-    private function cast(mixed $value): DateTimeImmutable|DateTime
+    private function cast(mixed $value) : DateTimeImmutable|DateTime
     {
         if ($value instanceof DateTimeInterface) {
             if ($value instanceof $this->class) {
                 return $value;
             }
-
-            return ($this->class)::createFromInterface($value);
+            return $this->class::createFromInterface($value);
         }
-
-        is_string($value) || throw TypeCastingFailed::dueToInvalidValue($value, $this->class, info: $this->info);
-
+        is_string($value) || throw \MenuManager\Vendor\League\Csv\Serializer\TypeCastingFailed::dueToInvalidValue($value, $this->class, info: $this->info);
         try {
-            $date = null !== $this->format ?
-                ($this->class)::createFromFormat($this->format, $value, $this->timezone) :
-                new ($this->class)($value, $this->timezone);
-            if (false === $date) {
-                throw TypeCastingFailed::dueToInvalidValue($value, $this->class);
+            $date = null !== $this->format ? $this->class::createFromFormat($this->format, $value, $this->timezone) : new $this->class($value, $this->timezone);
+            if (\false === $date) {
+                throw \MenuManager\Vendor\League\Csv\Serializer\TypeCastingFailed::dueToInvalidValue($value, $this->class);
             }
         } catch (Throwable $exception) {
-            if ($exception instanceof TypeCastingFailed) {
+            if ($exception instanceof \MenuManager\Vendor\League\Csv\Serializer\TypeCastingFailed) {
                 throw $exception;
             }
-
-            throw TypeCastingFailed::dueToInvalidValue($value, $this->class, $exception, $this->info);
+            throw \MenuManager\Vendor\League\Csv\Serializer\TypeCastingFailed::dueToInvalidValue($value, $this->class, $exception, $this->info);
         }
-
         return $date;
     }
-
     /**
      * @throws MappingFailed
      *
      * @return array{0:Type, 1:class-string<DateTimeInterface>, 2:bool}
      */
-    private function init(ReflectionProperty|ReflectionParameter $reflectionProperty): array
+    private function init(ReflectionProperty|ReflectionParameter $reflectionProperty) : array
     {
         if (null === $reflectionProperty->getType()) {
-            return [Type::Mixed, DateTimeInterface::class, true];
+            return [\MenuManager\Vendor\League\Csv\Serializer\Type::Mixed, DateTimeInterface::class, \true];
         }
-
         $type = null;
-        $isNullable = false;
-        foreach (Type::list($reflectionProperty) as $found) {
+        $isNullable = \false;
+        foreach (\MenuManager\Vendor\League\Csv\Serializer\Type::list($reflectionProperty) as $found) {
             if (!$isNullable && $found[1]->allowsNull()) {
-                $isNullable = true;
+                $isNullable = \true;
             }
-
-            if (null === $type && $found[0]->isOneOf(Type::Mixed, Type::Date)) {
+            if (null === $type && $found[0]->isOneOf(\MenuManager\Vendor\League\Csv\Serializer\Type::Mixed, \MenuManager\Vendor\League\Csv\Serializer\Type::Date)) {
                 $type = $found;
             }
         }
-
-        null !== $type || throw throw MappingFailed::dueToTypeCastingUnsupportedType($reflectionProperty, $this, DateTimeInterface::class, 'mixed');
-
+        null !== $type || throw throw \MenuManager\Vendor\League\Csv\Serializer\MappingFailed::dueToTypeCastingUnsupportedType($reflectionProperty, $this, DateTimeInterface::class, 'mixed');
         /** @var class-string<DateTimeInterface> $className */
         $className = $type[1]->getName();
-
         return [$type[0], $className, $isNullable];
     }
 }

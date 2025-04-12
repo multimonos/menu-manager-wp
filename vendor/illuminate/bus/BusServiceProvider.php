@@ -1,15 +1,14 @@
 <?php
 
-namespace Illuminate\Bus;
+namespace MenuManager\Vendor\Illuminate\Bus;
 
-use Aws\DynamoDb\DynamoDbClient;
-use Illuminate\Contracts\Bus\Dispatcher as DispatcherContract;
-use Illuminate\Contracts\Bus\QueueingDispatcher as QueueingDispatcherContract;
-use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
-use Illuminate\Contracts\Support\DeferrableProvider;
-use Illuminate\Support\Arr;
-use Illuminate\Support\ServiceProvider;
-
+use MenuManager\Vendor\Aws\DynamoDb\DynamoDbClient;
+use MenuManager\Vendor\Illuminate\Contracts\Bus\Dispatcher as DispatcherContract;
+use MenuManager\Vendor\Illuminate\Contracts\Bus\QueueingDispatcher as QueueingDispatcherContract;
+use MenuManager\Vendor\Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
+use MenuManager\Vendor\Illuminate\Contracts\Support\DeferrableProvider;
+use MenuManager\Vendor\Illuminate\Support\Arr;
+use MenuManager\Vendor\Illuminate\Support\ServiceProvider;
 class BusServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
@@ -19,23 +18,15 @@ class BusServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     public function register()
     {
-        $this->app->singleton(Dispatcher::class, function ($app) {
-            return new Dispatcher($app, function ($connection = null) use ($app) {
+        $this->app->singleton(\MenuManager\Vendor\Illuminate\Bus\Dispatcher::class, function ($app) {
+            return new \MenuManager\Vendor\Illuminate\Bus\Dispatcher($app, function ($connection = null) use($app) {
                 return $app[QueueFactoryContract::class]->connection($connection);
             });
         });
-
         $this->registerBatchServices();
-
-        $this->app->alias(
-            Dispatcher::class, DispatcherContract::class
-        );
-
-        $this->app->alias(
-            Dispatcher::class, QueueingDispatcherContract::class
-        );
+        $this->app->alias(\MenuManager\Vendor\Illuminate\Bus\Dispatcher::class, DispatcherContract::class);
+        $this->app->alias(\MenuManager\Vendor\Illuminate\Bus\Dispatcher::class, QueueingDispatcherContract::class);
     }
-
     /**
      * Register the batch handling services.
      *
@@ -43,49 +34,22 @@ class BusServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerBatchServices()
     {
-        $this->app->singleton(BatchRepository::class, function ($app) {
+        $this->app->singleton(\MenuManager\Vendor\Illuminate\Bus\BatchRepository::class, function ($app) {
             $driver = $app->config->get('queue.batching.driver', 'database');
-
-            return $driver === 'dynamodb'
-                ? $app->make(DynamoBatchRepository::class)
-                : $app->make(DatabaseBatchRepository::class);
+            return $driver === 'dynamodb' ? $app->make(\MenuManager\Vendor\Illuminate\Bus\DynamoBatchRepository::class) : $app->make(\MenuManager\Vendor\Illuminate\Bus\DatabaseBatchRepository::class);
         });
-
-        $this->app->singleton(DatabaseBatchRepository::class, function ($app) {
-            return new DatabaseBatchRepository(
-                $app->make(BatchFactory::class),
-                $app->make('db')->connection($app->config->get('queue.batching.database')),
-                $app->config->get('queue.batching.table', 'job_batches')
-            );
+        $this->app->singleton(\MenuManager\Vendor\Illuminate\Bus\DatabaseBatchRepository::class, function ($app) {
+            return new \MenuManager\Vendor\Illuminate\Bus\DatabaseBatchRepository($app->make(\MenuManager\Vendor\Illuminate\Bus\BatchFactory::class), $app->make('db')->connection($app->config->get('queue.batching.database')), $app->config->get('queue.batching.table', 'job_batches'));
         });
-
-        $this->app->singleton(DynamoBatchRepository::class, function ($app) {
+        $this->app->singleton(\MenuManager\Vendor\Illuminate\Bus\DynamoBatchRepository::class, function ($app) {
             $config = $app->config->get('queue.batching');
-
-            $dynamoConfig = [
-                'region' => $config['region'],
-                'version' => 'latest',
-                'endpoint' => $config['endpoint'] ?? null,
-            ];
-
-            if (! empty($config['key']) && ! empty($config['secret'])) {
-                $dynamoConfig['credentials'] = Arr::only(
-                    $config,
-                    ['key', 'secret', 'token']
-                );
+            $dynamoConfig = ['region' => $config['region'], 'version' => 'latest', 'endpoint' => $config['endpoint'] ?? null];
+            if (!empty($config['key']) && !empty($config['secret'])) {
+                $dynamoConfig['credentials'] = Arr::only($config, ['key', 'secret', 'token']);
             }
-
-            return new DynamoBatchRepository(
-                $app->make(BatchFactory::class),
-                new DynamoDbClient($dynamoConfig),
-                $app->config->get('app.name'),
-                $app->config->get('queue.batching.table', 'job_batches'),
-                ttl: $app->config->get('queue.batching.ttl', null),
-                ttlAttribute: $app->config->get('queue.batching.ttl_attribute', 'ttl'),
-            );
+            return new \MenuManager\Vendor\Illuminate\Bus\DynamoBatchRepository($app->make(\MenuManager\Vendor\Illuminate\Bus\BatchFactory::class), new DynamoDbClient($dynamoConfig), $app->config->get('app.name'), $app->config->get('queue.batching.table', 'job_batches'), ttl: $app->config->get('queue.batching.ttl', null), ttlAttribute: $app->config->get('queue.batching.ttl_attribute', 'ttl'));
         });
     }
-
     /**
      * Get the services provided by the provider.
      *
@@ -93,12 +57,6 @@ class BusServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     public function provides()
     {
-        return [
-            Dispatcher::class,
-            DispatcherContract::class,
-            QueueingDispatcherContract::class,
-            BatchRepository::class,
-            DatabaseBatchRepository::class,
-        ];
+        return [\MenuManager\Vendor\Illuminate\Bus\Dispatcher::class, DispatcherContract::class, QueueingDispatcherContract::class, \MenuManager\Vendor\Illuminate\Bus\BatchRepository::class, \MenuManager\Vendor\Illuminate\Bus\DatabaseBatchRepository::class];
     }
 }

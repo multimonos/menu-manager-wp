@@ -8,20 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
-
-namespace League\Csv;
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv;
 
 use Closure;
-use Deprecated;
+use MenuManager\Vendor\Deprecated;
 use Generator;
 use InvalidArgumentException;
 use RuntimeException;
 use SplFileObject;
 use Stringable;
 use Throwable;
-
 use function filter_var;
 use function get_class;
 use function rawurlencode;
@@ -30,81 +27,71 @@ use function str_replace;
 use function str_split;
 use function strcspn;
 use function strlen;
-
 use const FILTER_FLAG_STRIP_HIGH;
 use const FILTER_FLAG_STRIP_LOW;
 use const FILTER_UNSAFE_RAW;
 use const STREAM_FILTER_READ;
 use const STREAM_FILTER_WRITE;
-
 /**
  * An abstract class to enable CSV document loading.
  */
-abstract class AbstractCsv implements ByteSequence
+abstract class AbstractCsv implements \MenuManager\Vendor\League\Csv\ByteSequence
 {
     protected const STREAM_FILTER_MODE = STREAM_FILTER_READ;
-
     /** @var array<string, bool> collection of stream filters. */
     protected array $stream_filters = [];
-    protected ?Bom $input_bom = null;
-    protected ?Bom $output_bom = null;
+    protected ?\MenuManager\Vendor\League\Csv\Bom $input_bom = null;
+    protected ?\MenuManager\Vendor\League\Csv\Bom $output_bom = null;
     protected string $delimiter = ',';
     protected string $enclosure = '"';
     protected string $escape = '\\';
-    protected bool $is_input_bom_included = false;
+    protected bool $is_input_bom_included = \false;
     /** @var array<Closure(array): array> collection of Closure to format the record before reading. */
     protected array $formatters = [];
-
     /**
      * @final This method should not be overwritten in child classes
      */
-    protected function __construct(protected readonly SplFileObject|Stream $document)
+    protected function __construct(protected readonly SplFileObject|\MenuManager\Vendor\League\Csv\Stream $document)
     {
         [$this->delimiter, $this->enclosure, $this->escape] = $this->document->getCsvControl();
         $this->resetProperties();
     }
-
     /**
      * Reset dynamic object properties to improve performance.
      */
-    protected function resetProperties(): void
+    protected function resetProperties() : void
     {
     }
-
     /**
      * @throws UnavailableStream
      */
     public function __clone()
     {
-        throw UnavailableStream::dueToForbiddenCloning(static::class);
+        throw \MenuManager\Vendor\League\Csv\UnavailableStream::dueToForbiddenCloning(static::class);
     }
-
     /**
      * Returns a new instance from a SplFileObject.
      */
-    public static function createFromFileObject(SplFileObject $file): static
+    public static function createFromFileObject(SplFileObject $file) : static
     {
         return new static($file);
     }
-
     /**
      * Returns a new instance from a PHP resource stream.
      *
      * @param resource $stream
      */
-    public static function createFromStream($stream): static
+    public static function createFromStream($stream) : static
     {
-        return new static(Stream::createFromResource($stream));
+        return new static(\MenuManager\Vendor\League\Csv\Stream::createFromResource($stream));
     }
-
     /**
      * Returns a new instance from a string.
      */
-    public static function createFromString(Stringable|string $content = ''): static
+    public static function createFromString(Stringable|string $content = '') : static
     {
-        return new static(Stream::createFromString((string) $content));
+        return new static(\MenuManager\Vendor\League\Csv\Stream::createFromString((string) $content));
     }
-
     /**
      * Returns a new instance from a file path.
      *
@@ -112,147 +99,125 @@ abstract class AbstractCsv implements ByteSequence
      *
      * @throws UnavailableStream
      */
-    public static function createFromPath(string $path, string $open_mode = 'r+', $context = null): static
+    public static function createFromPath(string $path, string $open_mode = 'r+', $context = null) : static
     {
-        return new static(Stream::createFromPath($path, $open_mode, $context));
+        return new static(\MenuManager\Vendor\League\Csv\Stream::createFromPath($path, $open_mode, $context));
     }
-
     /**
      * Returns the current field delimiter.
      */
-    public function getDelimiter(): string
+    public function getDelimiter() : string
     {
         return $this->delimiter;
     }
-
     /**
      * Returns the current field enclosure.
      */
-    public function getEnclosure(): string
+    public function getEnclosure() : string
     {
         return $this->enclosure;
     }
-
     /**
      * Returns the pathname of the underlying document.
      */
-    public function getPathname(): string
+    public function getPathname() : string
     {
         return $this->document->getPathname();
     }
-
     /**
      * Returns the current field escape character.
      */
-    public function getEscape(): string
+    public function getEscape() : string
     {
         return $this->escape;
     }
-
     /**
      * Returns the BOM sequence in use on Output methods.
      */
-    public function getOutputBOM(): string
+    public function getOutputBOM() : string
     {
         return $this->output_bom?->value ?? '';
     }
-
     /**
      * Returns the BOM sequence of the given CSV.
      */
-    public function getInputBOM(): string
+    public function getInputBOM() : string
     {
         if (null === $this->input_bom) {
             $this->document->setFlags(SplFileObject::READ_CSV);
-            $this->input_bom = Bom::tryFromSequence($this->document);
+            $this->input_bom = \MenuManager\Vendor\League\Csv\Bom::tryFromSequence($this->document);
         }
-
         return $this->input_bom?->value ?? '';
     }
-
     /**
      * Tells whether the stream filter read capabilities can be used.
      */
-    public function supportsStreamFilterOnRead(): bool
+    public function supportsStreamFilterOnRead() : bool
     {
-        if (!$this->document instanceof Stream) {
-            return false;
+        if (!$this->document instanceof \MenuManager\Vendor\League\Csv\Stream) {
+            return \false;
         }
-
         $mode = $this->document->getMode();
-
         return strcspn($mode, 'r+') !== strlen($mode);
     }
-
     /**
      * Tells whether the stream filter write capabilities can be used.
      */
-    public function supportsStreamFilterOnWrite(): bool
+    public function supportsStreamFilterOnWrite() : bool
     {
-        if (!$this->document instanceof Stream) {
-            return false;
+        if (!$this->document instanceof \MenuManager\Vendor\League\Csv\Stream) {
+            return \false;
         }
-
         $mode = $this->document->getMode();
-
         return strcspn($mode, 'wae+') !== strlen($mode);
     }
-
     /**
      * Tells whether the specified stream filter is attached to the current stream.
      */
-    public function hasStreamFilter(string $filtername): bool
+    public function hasStreamFilter(string $filtername) : bool
     {
-        return $this->stream_filters[$filtername] ?? false;
+        return $this->stream_filters[$filtername] ?? \false;
     }
-
     /**
      * Tells whether the BOM can be stripped if presents.
      */
-    public function isInputBOMIncluded(): bool
+    public function isInputBOMIncluded() : bool
     {
         return $this->is_input_bom_included;
     }
-
     /**
      * Returns the CSV document as a Generator of string chunk.
      *
      * @throws Exception if the number of bytes is less than 1
      */
-    public function chunk(int $length): Generator
+    public function chunk(int $length) : Generator
     {
         if ($length < 1) {
-            throw InvalidArgument::dueToInvalidChunkSize($length, __METHOD__);
+            throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidChunkSize($length, __METHOD__);
         }
-
         $this->document->rewind();
         $this->document->setFlags(0);
         if (-1 === $this->document->fseek(strlen($this->getInputBOM()))) {
             throw new RuntimeException('Unable to seek the document.');
         }
-
-        yield from str_split($this->getOutputBOM().$this->document->fread($length), $length);
-
+        yield from str_split($this->getOutputBOM() . $this->document->fread($length), $length);
         while ($this->document->valid()) {
-            yield $this->document->fread($length);
+            (yield $this->document->fread($length));
         }
     }
-
     /**
      * Retrieves the CSV content.
      *
      * @throws Exception If the string representation can not be returned
      */
-    public function toString(): string
+    public function toString() : string
     {
         $raw = '';
         foreach ($this->chunk(8192) as $chunk) {
             $raw .= $chunk;
         }
-
         return $raw;
     }
-
     /**
      * Outputs all data on the CSV file.
      *
@@ -260,217 +225,179 @@ abstract class AbstractCsv implements ByteSequence
      *
      * @throws InvalidArgumentException|Exception
      */
-    public function download(?string $filename = null): int
+    public function download(?string $filename = null) : int
     {
         if (null !== $filename) {
-            HttpHeaders::forFileDownload($filename, 'text/csv');
+            \MenuManager\Vendor\League\Csv\HttpHeaders::forFileDownload($filename, 'text/csv');
         }
-
         $this->document->rewind();
         $this->document->setFlags(0);
         if (!$this->is_input_bom_included && -1 === $this->document->fseek(strlen($this->getInputBOM()))) {
             throw new RuntimeException('Unable to seek the document.');
         }
-
-        $stream = Stream::createFromString($this->getOutputBOM());
+        $stream = \MenuManager\Vendor\League\Csv\Stream::createFromString($this->getOutputBOM());
         $stream->rewind();
         $res1 = $stream->fpassthru();
-        if (false === $res1) {
+        if (\false === $res1) {
             throw new RuntimeException('Unable to output the document.');
         }
-
         $res2 = $this->document->fpassthru();
-        if (false === $res2) {
+        if (\false === $res2) {
             throw new RuntimeException('Unable to output the document.');
         }
-
         return $res1 + $res2;
     }
-
     /**
      * Sets the field delimiter.
      *
      * @throws InvalidArgument If the Csv control character is not one character only.
      */
-    public function setDelimiter(string $delimiter): static
+    public function setDelimiter(string $delimiter) : static
     {
         if ($delimiter === $this->delimiter) {
             return $this;
         }
-
-        1 === strlen($delimiter) || throw InvalidArgument::dueToInvalidDelimiterCharacter($delimiter, __METHOD__);
-
+        1 === strlen($delimiter) || throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidDelimiterCharacter($delimiter, __METHOD__);
         $this->delimiter = $delimiter;
         $this->resetProperties();
-
         return $this;
     }
-
     /**
      * Sets the field enclosure.
      *
      * @throws InvalidArgument If the Csv control character is not one character only.
      */
-    public function setEnclosure(string $enclosure): static
+    public function setEnclosure(string $enclosure) : static
     {
         if ($enclosure === $this->enclosure) {
             return $this;
         }
-
-        1 === strlen($enclosure) || throw InvalidArgument::dueToInvalidEnclosureCharacter($enclosure, __METHOD__);
-
+        1 === strlen($enclosure) || throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidEnclosureCharacter($enclosure, __METHOD__);
         $this->enclosure = $enclosure;
         $this->resetProperties();
-
         return $this;
     }
-
     /**
      * Sets the field escape character.
      *
      * @throws InvalidArgument If the Csv control character is not one character only.
      */
-    public function setEscape(string $escape): static
+    public function setEscape(string $escape) : static
     {
         if ($escape === $this->escape) {
             return $this;
         }
-
         if ('' !== $escape && 1 !== strlen($escape)) {
-            throw InvalidArgument::dueToInvalidEscapeCharacter($escape, __METHOD__);
+            throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidEscapeCharacter($escape, __METHOD__);
         }
-
         $this->escape = $escape;
         $this->resetProperties();
-
         return $this;
     }
-
     /**
      * Adds a record formatter.
      *
      * @param callable(array): array $formatter
      */
-    public function addFormatter(callable $formatter): static
+    public function addFormatter(callable $formatter) : static
     {
         $this->formatters[] = !$formatter instanceof Closure ? $formatter(...) : $formatter;
-
         return $this;
     }
-
     /**
      * Enables BOM Stripping.
      */
-    public function skipInputBOM(): static
+    public function skipInputBOM() : static
     {
-        $this->is_input_bom_included = false;
-
+        $this->is_input_bom_included = \false;
         return $this;
     }
-
     /**
      * Disables skipping Input BOM.
      */
-    public function includeInputBOM(): static
+    public function includeInputBOM() : static
     {
-        $this->is_input_bom_included = true;
-
+        $this->is_input_bom_included = \true;
         return $this;
     }
-
     /**
      * Sets the BOM sequence to prepend the CSV on output.
      *
      * @throws InvalidArgument if the given non-empty string is not a valid BOM sequence
      */
-    public function setOutputBOM(Bom|string|null $str): static
+    public function setOutputBOM(\MenuManager\Vendor\League\Csv\Bom|string|null $str) : static
     {
         try {
-            $this->output_bom = match (true) {
-                $str instanceof Bom => $str,
-                null === $str,
-                '' === $str => null,
-                default => Bom::fromSequence($str),
+            $this->output_bom = match (\true) {
+                $str instanceof \MenuManager\Vendor\League\Csv\Bom => $str,
+                null === $str, '' === $str => null,
+                default => \MenuManager\Vendor\League\Csv\Bom::fromSequence($str),
             };
-
             return $this;
         } catch (Throwable $exception) {
-            throw InvalidArgument::dueToInvalidBOMCharacter(__METHOD__, $exception);
+            throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidBOMCharacter(__METHOD__, $exception);
         }
     }
-
     /**
      * Append a stream filter.
      *
      * @throws InvalidArgument If the stream filter API can not be appended
      * @throws UnavailableFeature If the stream filter API can not be used
      */
-    public function appendStreamFilterOnRead(string $filtername, mixed $params = null): static
+    public function appendStreamFilterOnRead(string $filtername, mixed $params = null) : static
     {
-        $this->document instanceof Stream || throw UnavailableFeature::dueToUnsupportedStreamFilterApi(get_class($this->document));
-
+        $this->document instanceof \MenuManager\Vendor\League\Csv\Stream || throw \MenuManager\Vendor\League\Csv\UnavailableFeature::dueToUnsupportedStreamFilterApi(get_class($this->document));
         $this->document->appendFilter($filtername, STREAM_FILTER_READ, $params);
-        $this->stream_filters[$filtername] = true;
+        $this->stream_filters[$filtername] = \true;
         $this->resetProperties();
         $this->input_bom = null;
-
         return $this;
     }
-
     /**
      * Append a stream filter.
      *
      * @throws InvalidArgument If the stream filter API can not be appended
      * @throws UnavailableFeature If the stream filter API can not be used
      */
-    public function appendStreamFilterOnWrite(string $filtername, mixed $params = null): static
+    public function appendStreamFilterOnWrite(string $filtername, mixed $params = null) : static
     {
-        $this->document instanceof Stream || throw UnavailableFeature::dueToUnsupportedStreamFilterApi(get_class($this->document));
-
+        $this->document instanceof \MenuManager\Vendor\League\Csv\Stream || throw \MenuManager\Vendor\League\Csv\UnavailableFeature::dueToUnsupportedStreamFilterApi(get_class($this->document));
         $this->document->appendFilter($filtername, STREAM_FILTER_WRITE, $params);
-        $this->stream_filters[$filtername] = true;
+        $this->stream_filters[$filtername] = \true;
         $this->resetProperties();
         $this->input_bom = null;
-
         return $this;
     }
-
     /**
      * Prepend a stream filter.
      *
      * @throws InvalidArgument If the stream filter API can not be appended
      * @throws UnavailableFeature If the stream filter API can not be used
      */
-    public function prependStreamFilterOnWrite(string $filtername, mixed $params = null): static
+    public function prependStreamFilterOnWrite(string $filtername, mixed $params = null) : static
     {
-        $this->document instanceof Stream || throw UnavailableFeature::dueToUnsupportedStreamFilterApi(get_class($this->document));
-
+        $this->document instanceof \MenuManager\Vendor\League\Csv\Stream || throw \MenuManager\Vendor\League\Csv\UnavailableFeature::dueToUnsupportedStreamFilterApi(get_class($this->document));
         $this->document->prependFilter($filtername, STREAM_FILTER_READ, $params);
-        $this->stream_filters[$filtername] = true;
+        $this->stream_filters[$filtername] = \true;
         $this->resetProperties();
         $this->input_bom = null;
-
         return $this;
     }
-
     /**
      * Prepend a stream filter.
      *
      * @throws InvalidArgument If the stream filter API can not be appended
      * @throws UnavailableFeature If the stream filter API can not be used
      */
-    public function prependStreamFilterOnRead(string $filtername, mixed $params = null): static
+    public function prependStreamFilterOnRead(string $filtername, mixed $params = null) : static
     {
-        $this->document instanceof Stream || throw UnavailableFeature::dueToUnsupportedStreamFilterApi(get_class($this->document));
-
+        $this->document instanceof \MenuManager\Vendor\League\Csv\Stream || throw \MenuManager\Vendor\League\Csv\UnavailableFeature::dueToUnsupportedStreamFilterApi(get_class($this->document));
         $this->document->prependFilter($filtername, STREAM_FILTER_READ, $params);
-        $this->stream_filters[$filtername] = true;
+        $this->stream_filters[$filtername] = \true;
         $this->resetProperties();
         $this->input_bom = null;
-
         return $this;
     }
-
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
@@ -481,12 +408,11 @@ abstract class AbstractCsv implements ByteSequence
      *
      * Returns the stream filter mode.
      */
-    #[Deprecated(message:'use League\Csv\AbstractCsv::supportsStreamFilterOnRead() or League\Csv\AbstractCsv::supportsStreamFilterOnWrite() instead', since:'league/csv:9.7.0')]
-    public function getStreamFilterMode(): int
+    #[\Deprecated(message: 'use League\\Csv\\AbstractCsv::supportsStreamFilterOnRead() or League\\Csv\\AbstractCsv::supportsStreamFilterOnWrite() instead', since: 'league/csv:9.7.0')]
+    public function getStreamFilterMode() : int
     {
         return static::STREAM_FILTER_MODE;
     }
-
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
@@ -497,12 +423,11 @@ abstract class AbstractCsv implements ByteSequence
      *
      * Tells whether the stream filter capabilities can be used.
      */
-    #[Deprecated(message:'use League\Csv\AbstractCsv::supportsStreamFilterOnRead() or League\Csv\AbstractCsv::supportsStreamFilterOnWrite() instead', since:'league/csv:9.7.0')]
-    public function supportsStreamFilter(): bool
+    #[\Deprecated(message: 'use League\\Csv\\AbstractCsv::supportsStreamFilterOnRead() or League\\Csv\\AbstractCsv::supportsStreamFilterOnWrite() instead', since: 'league/csv:9.7.0')]
+    public function supportsStreamFilter() : bool
     {
-        return $this->document instanceof Stream;
+        return $this->document instanceof \MenuManager\Vendor\League\Csv\Stream;
     }
-
     /**
      * Retrieves the CSV content.
      *
@@ -512,12 +437,11 @@ abstract class AbstractCsv implements ByteSequence
      * @see AbstractCsv::toString
      * @codeCoverageIgnore
      */
-    #[Deprecated(message:'use League\Csv\AbstractCsv::toString() instead', since:'league/csv:9.7.0')]
-    public function getContent(): string
+    #[\Deprecated(message: 'use League\\Csv\\AbstractCsv::toString() instead', since: 'league/csv:9.7.0')]
+    public function getContent() : string
     {
         return $this->toString();
     }
-
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
@@ -527,12 +451,11 @@ abstract class AbstractCsv implements ByteSequence
      *
      * Retrieves the CSV content
      */
-    #[Deprecated(message:'use League\Csv\AbstractCsv::toString() instead', since:'league/csv:9.1.0')]
-    public function __toString(): string
+    #[\Deprecated(message: 'use League\\Csv\\AbstractCsv::toString() instead', since: 'league/csv:9.1.0')]
+    public function __toString() : string
     {
         return $this->toString();
     }
-
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
@@ -548,33 +471,28 @@ abstract class AbstractCsv implements ByteSequence
      * @deprecated since version 9.17.0
      * @see https://tools.ietf.org/html/rfc6266#section-4.3
      */
-    #[Deprecated(message:'the method no longer affect the outcome of the class, use League\Csv\HttpHeaders::forFileDownload instead', since:'league/csv:9.17.0')]
-    protected function sendHeaders(string $filename): void
+    #[\Deprecated(message: 'the method no longer affect the outcome of the class, use League\\Csv\\HttpHeaders::forFileDownload instead', since: 'league/csv:9.17.0')]
+    protected function sendHeaders(string $filename) : void
     {
         if (strlen($filename) !== strcspn($filename, '\\/')) {
-            throw InvalidArgument::dueToInvalidHeaderFilename($filename);
+            throw \MenuManager\Vendor\League\Csv\InvalidArgument::dueToInvalidHeaderFilename($filename);
         }
-
         $flag = FILTER_FLAG_STRIP_LOW;
-        if (1 === preg_match('/[^\x20-\x7E]/', $filename)) {
+        if (1 === \preg_match('/[^\\x20-\\x7E]/', $filename)) {
             $flag |= FILTER_FLAG_STRIP_HIGH;
         }
-
         /** @var string $filtered_name */
         $filtered_name = filter_var($filename, FILTER_UNSAFE_RAW, $flag);
         $filename_fallback = str_replace('%', '', $filtered_name);
-
         $disposition = sprintf('attachment; filename="%s"', str_replace('"', '\\"', $filename_fallback));
         if ($filename !== $filename_fallback) {
             $disposition .= sprintf("; filename*=utf-8''%s", rawurlencode($filename));
         }
-
-        header('Content-Type: text/csv');
-        header('Content-Transfer-Encoding: binary');
-        header('Content-Description: File Transfer');
-        header('Content-Disposition: '.$disposition);
+        \header('Content-Type: text/csv');
+        \header('Content-Transfer-Encoding: binary');
+        \header('Content-Description: File Transfer');
+        \header('Content-Disposition: ' . $disposition);
     }
-
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
@@ -588,16 +506,15 @@ abstract class AbstractCsv implements ByteSequence
      *
      * @throws Exception
      */
-    #[Deprecated(message:'use League\Csv\AbstractCsv::download() instead', since:'league/csv:9.18.0')]
-    public function output(?string $filename = null): int
+    #[\Deprecated(message: 'use League\\Csv\\AbstractCsv::download() instead', since: 'league/csv:9.18.0')]
+    public function output(?string $filename = null) : int
     {
         try {
             return $this->download($filename);
         } catch (InvalidArgumentException $exception) {
-            throw new InvalidArgument($exception->getMessage());
+            throw new \MenuManager\Vendor\League\Csv\InvalidArgument($exception->getMessage());
         }
     }
-
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      * @codeCoverageIgnore
@@ -610,13 +527,12 @@ abstract class AbstractCsv implements ByteSequence
      * @throws InvalidArgument If the stream filter API can not be appended
      * @throws UnavailableFeature If the stream filter API can not be used
      */
-    #[Deprecated(message:'use League\Csv\AbstractCsv::appendStreamFilterOnRead() or League\Csv\AbstractCsv::prependStreamFilterOnRead() instead', since:'league/csv:9.18.0')]
-    public function addStreamFilter(string $filtername, ?array $params = null): static
+    #[\Deprecated(message: 'use League\\Csv\\AbstractCsv::appendStreamFilterOnRead() or League\\Csv\\AbstractCsv::prependStreamFilterOnRead() instead', since: 'league/csv:9.18.0')]
+    public function addStreamFilter(string $filtername, ?array $params = null) : static
     {
         if (STREAM_FILTER_READ === static::STREAM_FILTER_MODE) {
             return $this->appendStreamFilterOnRead($filtername, $params);
         }
-
         return $this->appendStreamFilterOnWrite($filtername, $params);
     }
 }

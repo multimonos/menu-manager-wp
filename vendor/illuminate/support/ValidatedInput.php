@@ -1,14 +1,13 @@
 <?php
 
-namespace Illuminate\Support;
+namespace MenuManager\Vendor\Illuminate\Support;
 
 use ArrayIterator;
-use Illuminate\Contracts\Support\ValidatedData;
-use Illuminate\Support\Facades\Date;
+use MenuManager\Vendor\Illuminate\Contracts\Support\ValidatedData;
+use MenuManager\Vendor\Illuminate\Support\Facades\Date;
 use stdClass;
-use Symfony\Component\VarDumper\VarDumper;
+use MenuManager\Vendor\Symfony\Component\VarDumper\VarDumper;
 use Traversable;
-
 class ValidatedInput implements ValidatedData
 {
     /**
@@ -17,7 +16,6 @@ class ValidatedInput implements ValidatedData
      * @var array
      */
     protected $input;
-
     /**
      * Create a new validated input container.
      *
@@ -28,7 +26,6 @@ class ValidatedInput implements ValidatedData
     {
         $this->input = $input;
     }
-
     /**
      * Determine if the validated input has one or more keys.
      *
@@ -37,17 +34,14 @@ class ValidatedInput implements ValidatedData
      */
     public function has($keys)
     {
-        $keys = is_array($keys) ? $keys : func_get_args();
-
+        $keys = \is_array($keys) ? $keys : \func_get_args();
         foreach ($keys as $key) {
-            if (! Arr::has($this->all(), $key)) {
-                return false;
+            if (!\MenuManager\Vendor\Illuminate\Support\Arr::has($this->all(), $key)) {
+                return \false;
             }
         }
-
-        return true;
+        return \true;
     }
-
     /**
      * Determine if the validated input is missing one or more keys.
      *
@@ -56,9 +50,8 @@ class ValidatedInput implements ValidatedData
      */
     public function missing($keys)
     {
-        return ! $this->has($keys);
+        return !$this->has($keys);
     }
-
     /**
      * Get a subset containing the provided keys with values from the input data.
      *
@@ -68,22 +61,16 @@ class ValidatedInput implements ValidatedData
     public function only($keys)
     {
         $results = [];
-
         $input = $this->all();
-
-        $placeholder = new stdClass;
-
-        foreach (is_array($keys) ? $keys : func_get_args() as $key) {
+        $placeholder = new stdClass();
+        foreach (\is_array($keys) ? $keys : \func_get_args() as $key) {
             $value = data_get($input, $key, $placeholder);
-
             if ($value !== $placeholder) {
-                Arr::set($results, $key, $value);
+                \MenuManager\Vendor\Illuminate\Support\Arr::set($results, $key, $value);
             }
         }
-
         return $results;
     }
-
     /**
      * Get all of the input except for a specified array of items.
      *
@@ -92,15 +79,11 @@ class ValidatedInput implements ValidatedData
      */
     public function except($keys)
     {
-        $keys = is_array($keys) ? $keys : func_get_args();
-
+        $keys = \is_array($keys) ? $keys : \func_get_args();
         $results = $this->all();
-
-        Arr::forget($results, $keys);
-
+        \MenuManager\Vendor\Illuminate\Support\Arr::forget($results, $keys);
         return $results;
     }
-
     /**
      * Merge the validated input with the given array of additional data.
      *
@@ -109,9 +92,8 @@ class ValidatedInput implements ValidatedData
      */
     public function merge(array $items)
     {
-        return new static(array_merge($this->all(), $items));
+        return new static(\array_merge($this->all(), $items));
     }
-
     /**
      * Get the input as a collection.
      *
@@ -120,9 +102,8 @@ class ValidatedInput implements ValidatedData
      */
     public function collect($key = null)
     {
-        return collect(is_array($key) ? $this->only($key) : $this->input($key));
+        return collect(\is_array($key) ? $this->only($key) : $this->input($key));
     }
-
     /**
      * Get the raw, underlying input array.
      *
@@ -132,7 +113,6 @@ class ValidatedInput implements ValidatedData
     {
         return $this->input;
     }
-
     /**
      * Get the instance as an array.
      *
@@ -142,7 +122,6 @@ class ValidatedInput implements ValidatedData
     {
         return $this->all();
     }
-
     /**
      * Dynamically access input data.
      *
@@ -153,7 +132,6 @@ class ValidatedInput implements ValidatedData
     {
         return $this->input($name);
     }
-
     /**
      * Dynamically set input data.
      *
@@ -165,7 +143,6 @@ class ValidatedInput implements ValidatedData
     {
         $this->input[$name] = $value;
     }
-
     /**
      * Determine if an input key is set.
      *
@@ -175,7 +152,6 @@ class ValidatedInput implements ValidatedData
     {
         return $this->exists($name);
     }
-
     /**
      * Remove an input key.
      *
@@ -186,29 +162,26 @@ class ValidatedInput implements ValidatedData
     {
         unset($this->input[$name]);
     }
-
     /**
      * Determine if an item exists at an offset.
      *
      * @param  mixed  $key
      * @return bool
      */
-    public function offsetExists($key): bool
+    public function offsetExists($key) : bool
     {
         return $this->exists($key);
     }
-
     /**
      * Get an item at a given offset.
      *
      * @param  mixed  $key
      * @return mixed
      */
-    public function offsetGet($key): mixed
+    public function offsetGet($key) : mixed
     {
         return $this->input($key);
     }
-
     /**
      * Set the item at a given offset.
      *
@@ -216,36 +189,33 @@ class ValidatedInput implements ValidatedData
      * @param  mixed  $value
      * @return void
      */
-    public function offsetSet($key, $value): void
+    public function offsetSet($key, $value) : void
     {
-        if (is_null($key)) {
+        if (\is_null($key)) {
             $this->input[] = $value;
         } else {
             $this->input[$key] = $value;
         }
     }
-
     /**
      * Unset the item at a given offset.
      *
      * @param  string  $key
      * @return void
      */
-    public function offsetUnset($key): void
+    public function offsetUnset($key) : void
     {
         unset($this->input[$key]);
     }
-
     /**
      * Get an iterator for the input.
      *
      * @return \ArrayIterator
      */
-    public function getIterator(): Traversable
+    public function getIterator() : Traversable
     {
         return new ArrayIterator($this->input);
     }
-
     /**
      * Determine if the validated inputs contains a given input item key.
      *
@@ -256,7 +226,6 @@ class ValidatedInput implements ValidatedData
     {
         return $this->has($key);
     }
-
     /**
      * Determine if the validated inputs contains any of the given inputs.
      *
@@ -265,13 +234,10 @@ class ValidatedInput implements ValidatedData
      */
     public function hasAny($keys)
     {
-        $keys = is_array($keys) ? $keys : func_get_args();
-
+        $keys = \is_array($keys) ? $keys : \func_get_args();
         $input = $this->all();
-
-        return Arr::hasAny($input, $keys);
+        return \MenuManager\Vendor\Illuminate\Support\Arr::hasAny($input, $keys);
     }
-
     /**
      * Apply the callback if the validated inputs contains the given input item key.
      *
@@ -285,14 +251,11 @@ class ValidatedInput implements ValidatedData
         if ($this->has($key)) {
             return $callback(data_get($this->all(), $key)) ?: $this;
         }
-
         if ($default) {
             return $default();
         }
-
         return $this;
     }
-
     /**
      * Determine if the validated inputs contains a non-empty value for an input item.
      *
@@ -301,17 +264,14 @@ class ValidatedInput implements ValidatedData
      */
     public function filled($key)
     {
-        $keys = is_array($key) ? $key : func_get_args();
-
+        $keys = \is_array($key) ? $key : \func_get_args();
         foreach ($keys as $value) {
             if ($this->isEmptyString($value)) {
-                return false;
+                return \false;
             }
         }
-
-        return true;
+        return \true;
     }
-
     /**
      * Determine if the validated inputs contains an empty value for an input item.
      *
@@ -320,17 +280,14 @@ class ValidatedInput implements ValidatedData
      */
     public function isNotFilled($key)
     {
-        $keys = is_array($key) ? $key : func_get_args();
-
+        $keys = \is_array($key) ? $key : \func_get_args();
         foreach ($keys as $value) {
-            if (! $this->isEmptyString($value)) {
-                return false;
+            if (!$this->isEmptyString($value)) {
+                return \false;
             }
         }
-
-        return true;
+        return \true;
     }
-
     /**
      * Determine if the validated inputs contains a non-empty value for any of the given inputs.
      *
@@ -339,17 +296,14 @@ class ValidatedInput implements ValidatedData
      */
     public function anyFilled($keys)
     {
-        $keys = is_array($keys) ? $keys : func_get_args();
-
+        $keys = \is_array($keys) ? $keys : \func_get_args();
         foreach ($keys as $key) {
             if ($this->filled($key)) {
-                return true;
+                return \true;
             }
         }
-
-        return false;
+        return \false;
     }
-
     /**
      * Apply the callback if the validated inputs contains a non-empty value for the given input item key.
      *
@@ -363,14 +317,11 @@ class ValidatedInput implements ValidatedData
         if ($this->filled($key)) {
             return $callback(data_get($this->all(), $key)) ?: $this;
         }
-
         if ($default) {
             return $default();
         }
-
         return $this;
     }
-
     /**
      * Apply the callback if the validated inputs is missing the given input item key.
      *
@@ -384,14 +335,11 @@ class ValidatedInput implements ValidatedData
         if ($this->missing($key)) {
             return $callback(data_get($this->all(), $key)) ?: $this;
         }
-
         if ($default) {
             return $default();
         }
-
         return $this;
     }
-
     /**
      * Determine if the given input key is an empty string for "filled".
      *
@@ -401,10 +349,8 @@ class ValidatedInput implements ValidatedData
     protected function isEmptyString($key)
     {
         $value = $this->input($key);
-
-        return ! is_bool($value) && ! is_array($value) && trim((string) $value) === '';
+        return !\is_bool($value) && !\is_array($value) && \trim((string) $value) === '';
     }
-
     /**
      * Get the keys for all of the input.
      *
@@ -412,9 +358,8 @@ class ValidatedInput implements ValidatedData
      */
     public function keys()
     {
-        return array_keys($this->input());
+        return \array_keys($this->input());
     }
-
     /**
      * Retrieve an input item from the validated inputs.
      *
@@ -424,11 +369,8 @@ class ValidatedInput implements ValidatedData
      */
     public function input($key = null, $default = null)
     {
-        return data_get(
-            $this->all(), $key, $default
-        );
+        return data_get($this->all(), $key, $default);
     }
-
     /**
      * Retrieve input from the validated inputs as a Stringable instance.
      *
@@ -440,7 +382,6 @@ class ValidatedInput implements ValidatedData
     {
         return $this->string($key, $default);
     }
-
     /**
      * Retrieve input from the validated inputs as a Stringable instance.
      *
@@ -452,7 +393,6 @@ class ValidatedInput implements ValidatedData
     {
         return str($this->input($key, $default));
     }
-
     /**
      * Retrieve input as a boolean value.
      *
@@ -462,11 +402,10 @@ class ValidatedInput implements ValidatedData
      * @param  bool  $default
      * @return bool
      */
-    public function boolean($key = null, $default = false)
+    public function boolean($key = null, $default = \false)
     {
-        return filter_var($this->input($key, $default), FILTER_VALIDATE_BOOLEAN);
+        return \filter_var($this->input($key, $default), \FILTER_VALIDATE_BOOLEAN);
     }
-
     /**
      * Retrieve input as an integer value.
      *
@@ -476,9 +415,8 @@ class ValidatedInput implements ValidatedData
      */
     public function integer($key, $default = 0)
     {
-        return intval($this->input($key, $default));
+        return \intval($this->input($key, $default));
     }
-
     /**
      * Retrieve input as a float value.
      *
@@ -488,9 +426,8 @@ class ValidatedInput implements ValidatedData
      */
     public function float($key, $default = 0.0)
     {
-        return floatval($this->input($key, $default));
+        return \floatval($this->input($key, $default));
     }
-
     /**
      * Retrieve input from the validated inputs as a Carbon instance.
      *
@@ -506,14 +443,11 @@ class ValidatedInput implements ValidatedData
         if ($this->isNotFilled($key)) {
             return null;
         }
-
-        if (is_null($format)) {
+        if (\is_null($format)) {
             return Date::parse($this->input($key), $tz);
         }
-
         return Date::createFromFormat($format, $this->input($key), $tz);
     }
-
     /**
      * Retrieve input from the validated inputs as an enum.
      *
@@ -525,15 +459,11 @@ class ValidatedInput implements ValidatedData
      */
     public function enum($key, $enumClass)
     {
-        if ($this->isNotFilled($key) ||
-            ! enum_exists($enumClass) ||
-            ! method_exists($enumClass, 'tryFrom')) {
+        if ($this->isNotFilled($key) || !\enum_exists($enumClass) || !\method_exists($enumClass, 'tryFrom')) {
             return null;
         }
-
         return $enumClass::tryFrom($this->input($key));
     }
-
     /**
      * Dump the validated inputs items and end the script.
      *
@@ -543,10 +473,8 @@ class ValidatedInput implements ValidatedData
     public function dd(...$keys)
     {
         $this->dump(...$keys);
-
         exit(1);
     }
-
     /**
      * Dump the items.
      *
@@ -555,10 +483,8 @@ class ValidatedInput implements ValidatedData
      */
     public function dump($keys = [])
     {
-        $keys = is_array($keys) ? $keys : func_get_args();
-
-        VarDumper::dump(count($keys) > 0 ? $this->only($keys) : $this->all());
-
+        $keys = \is_array($keys) ? $keys : \func_get_args();
+        VarDumper::dump(\count($keys) > 0 ? $this->only($keys) : $this->all());
         return $this;
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Illuminate\Database;
+namespace MenuManager\Vendor\Illuminate\Database;
 
-class ConnectionResolver implements ConnectionResolverInterface
+class ConnectionResolver implements \MenuManager\Vendor\Illuminate\Database\ConnectionResolverInterface
 {
     /**
      * All of the registered connections.
@@ -10,14 +10,12 @@ class ConnectionResolver implements ConnectionResolverInterface
      * @var \Illuminate\Database\ConnectionInterface[]
      */
     protected $connections = [];
-
     /**
      * The default connection name.
      *
      * @var string
      */
     protected $default;
-
     /**
      * Create a new connection resolver instance.
      *
@@ -30,7 +28,6 @@ class ConnectionResolver implements ConnectionResolverInterface
             $this->addConnection($name, $connection);
         }
     }
-
     /**
      * Get a database connection instance.
      *
@@ -39,13 +36,11 @@ class ConnectionResolver implements ConnectionResolverInterface
      */
     public function connection($name = null)
     {
-        if (is_null($name)) {
+        if (\is_null($name)) {
             $name = $this->getDefaultConnection();
         }
-
         return $this->connections[$name];
     }
-
     /**
      * Add a connection to the resolver.
      *
@@ -53,11 +48,10 @@ class ConnectionResolver implements ConnectionResolverInterface
      * @param  \Illuminate\Database\ConnectionInterface  $connection
      * @return void
      */
-    public function addConnection($name, ConnectionInterface $connection)
+    public function addConnection($name, \MenuManager\Vendor\Illuminate\Database\ConnectionInterface $connection)
     {
         $this->connections[$name] = $connection;
     }
-
     /**
      * Check if a connection has been registered.
      *
@@ -68,7 +62,6 @@ class ConnectionResolver implements ConnectionResolverInterface
     {
         return isset($this->connections[$name]);
     }
-
     /**
      * Get the default connection name.
      *
@@ -78,7 +71,6 @@ class ConnectionResolver implements ConnectionResolverInterface
     {
         return $this->default;
     }
-
     /**
      * Set the default connection name.
      *

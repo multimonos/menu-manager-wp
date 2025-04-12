@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static \Illuminate\Contracts\View\View file(string $path, \Illuminate\Contracts\Support\Arrayable|array $data = [], array $mergeData = [])
@@ -83,7 +83,7 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\View\Factory
  */
-class View extends Facade
+class View extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.

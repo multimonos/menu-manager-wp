@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static \Illuminate\Http\Request capture()
@@ -182,7 +182,7 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\Http\Request
  */
-class Request extends Facade
+class Request extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.

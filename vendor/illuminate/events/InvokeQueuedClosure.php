@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Events;
+namespace MenuManager\Vendor\Illuminate\Events;
 
 class InvokeQueuedClosure
 {
@@ -13,9 +13,8 @@ class InvokeQueuedClosure
      */
     public function handle($closure, array $arguments)
     {
-        call_user_func($closure->getClosure(), ...$arguments);
+        \call_user_func($closure->getClosure(), ...$arguments);
     }
-
     /**
      * Handle a job failure.
      *
@@ -28,7 +27,6 @@ class InvokeQueuedClosure
     public function failed($closure, array $arguments, array $catchCallbacks, $exception)
     {
         $arguments[] = $exception;
-
         collect($catchCallbacks)->each->__invoke(...$arguments);
     }
 }

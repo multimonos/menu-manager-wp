@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Contracts\Cache;
+namespace MenuManager\Vendor\Illuminate\Contracts\Cache;
 
 use Exception;
-
 class LockTimeoutException extends Exception
 {
     //

@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Facades;
+namespace MenuManager\Vendor\Illuminate\Support\Facades;
 
 /**
  * @method static string full()
@@ -49,7 +49,7 @@ namespace Illuminate\Support\Facades;
  *
  * @see \Illuminate\Routing\UrlGenerator
  */
-class URL extends Facade
+class URL extends \MenuManager\Vendor\Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.

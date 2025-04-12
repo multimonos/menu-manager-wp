@@ -8,16 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
-
-namespace League\Csv\Query;
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv\Query;
 
 use ArrayAccess;
 use ReflectionException;
 use ReflectionObject;
 use TypeError;
-
 use function array_is_list;
 use function array_key_exists;
 use function array_map;
@@ -30,22 +27,18 @@ use function is_int;
 use function is_object;
 use function lcfirst;
 use function str_replace;
-
 final class Row
 {
-    public static function from(mixed $value): Row
+    public static function from(mixed $value) : \MenuManager\Vendor\League\Csv\Query\Row
     {
-        return new self(match (true) {
-            is_object($value),
-            is_array($value) => $value,
-            default => throw new TypeError('The value must be an array or an object; received '.gettype($value).'.'),
+        return new self(match (\true) {
+            is_object($value), is_array($value) => $value,
+            default => throw new TypeError('The value must be an array or an object; received ' . \gettype($value) . '.'),
         });
     }
-
     private function __construct(private readonly array|object $row)
     {
     }
-
     /**
      * Tries to retrieve a single value from a record.
      *
@@ -54,11 +47,10 @@ final class Row
      * @see Row::select()
      *
      */
-    public function value(string|int $key): mixed
+    public function value(string|int $key) : mixed
     {
         return $this->select($key)[$key];
     }
-
     /**
      * Tries to retrieve multiple values from a record.
      *
@@ -71,20 +63,19 @@ final class Row
      *
      * @return non-empty-array<array-key, mixed>
      */
-    public function select(string|int ...$key): array
+    public function select(string|int ...$key) : array
     {
-        return match (true) {
+        return match (\true) {
             is_object($this->row) => self::getObjectPropertyValue($this->row, ...$key),
             default => self::getArrayEntry($this->row, ...$key),
         };
     }
-
     /**
      * @throws QueryException
      *
      * @return non-empty-array<array-key, mixed>
      */
-    private function getArrayEntry(array $row, string|int ...$keys): array
+    private function getArrayEntry(array $row, string|int ...$keys) : array
     {
         $res = [];
         $arrValues = array_values($row);
@@ -97,25 +88,21 @@ final class Row
                 if (!array_is_list($row)) {
                     $row = $arrValues;
                 }
-
                 if ($offset < 0) {
                     $offset += count($row);
                 }
             }
-
-            $res[$key] = array_key_exists($offset, $row) ? $row[$offset] : throw QueryException::dueToUnknownColumn($key, $row);
+            $res[$key] = array_key_exists($offset, $row) ? $row[$offset] : throw \MenuManager\Vendor\League\Csv\Query\QueryException::dueToUnknownColumn($key, $row);
         }
-
-        return [] !== $res ? $res : throw QueryException::dueToMissingColumn();
+        return [] !== $res ? $res : throw \MenuManager\Vendor\League\Csv\Query\QueryException::dueToMissingColumn();
     }
-
     /**
      * @throws ReflectionException
      * @throws QueryException
      *
      * @return non-empty-array<array-key, mixed>
      */
-    private static function getObjectPropertyValue(object $row, string|int ...$keys): array
+    private static function getObjectPropertyValue(object $row, string|int ...$keys) : array
     {
         $res = [];
         $object = new ReflectionObject($row);
@@ -123,54 +110,39 @@ final class Row
             if (array_key_exists($key, $res)) {
                 continue;
             }
-
-            !is_int($key) || throw QueryException::dueToUnknownColumn($key, $row);
-
+            !is_int($key) || throw \MenuManager\Vendor\League\Csv\Query\QueryException::dueToUnknownColumn($key, $row);
             if ($object->hasProperty($key) && $object->getProperty($key)->isPublic()) {
                 $res[$key] = $object->getProperty($key)->getValue($row);
                 continue;
             }
-
             $methodNameList = [$key];
             if (($camelCasedKey = self::camelCase($key)) !== $key) {
                 $methodNameList[] = $camelCasedKey;
             }
             $methodNameList[] = self::camelCase($key, 'get');
             foreach ($methodNameList as $methodName) {
-                if ($object->hasMethod($methodName)
-                    && $object->getMethod($methodName)->isPublic()
-                    && 1 > $object->getMethod($methodName)->getNumberOfRequiredParameters()
-                ) {
+                if ($object->hasMethod($methodName) && $object->getMethod($methodName)->isPublic() && 1 > $object->getMethod($methodName)->getNumberOfRequiredParameters()) {
                     $res[$key] = $object->getMethod($methodName)->invoke($row);
                     continue 2;
                 }
             }
-
-            if (method_exists($row, '__call')) {
+            if (\method_exists($row, '__call')) {
                 $res[$key] = $object->getMethod('__call')->invoke($row, $methodNameList[1]);
                 continue;
             }
-
             if ($row instanceof ArrayAccess && $row->offsetExists($key)) {
-                $res[$key] =  $row->offsetGet($key);
+                $res[$key] = $row->offsetGet($key);
                 continue;
             }
-
-            throw QueryException::dueToUnknownColumn($key, $row);
+            throw \MenuManager\Vendor\League\Csv\Query\QueryException::dueToUnknownColumn($key, $row);
         }
-
-        return [] !== $res ? $res : throw QueryException::dueToMissingColumn();
+        return [] !== $res ? $res : throw \MenuManager\Vendor\League\Csv\Query\QueryException::dueToMissingColumn();
     }
-
-    private static function camelCase(string $value, string $prefix = ''): string
+    private static function camelCase(string $value, string $prefix = '') : string
     {
         if ('' !== $prefix) {
             $prefix .= '_';
         }
-
-        return lcfirst(implode('', array_map(
-            ucfirst(...),
-            explode(' ', str_replace(['-', '_'], ' ', $prefix.$value))
-        )));
+        return lcfirst(implode('', array_map(\ucfirst(...), explode(' ', str_replace(['-', '_'], ' ', $prefix . $value)))));
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support;
+namespace MenuManager\Vendor\Illuminate\Support;
 
 class DefaultProviders
 {
@@ -10,7 +10,6 @@ class DefaultProviders
      * @var array
      */
     protected $providers;
-
     /**
      * Create a new default provider collection.
      *
@@ -18,32 +17,8 @@ class DefaultProviders
      */
     public function __construct(?array $providers = null)
     {
-        $this->providers = $providers ?: [
-            \Illuminate\Auth\AuthServiceProvider::class,
-            \Illuminate\Broadcasting\BroadcastServiceProvider::class,
-            \Illuminate\Bus\BusServiceProvider::class,
-            \Illuminate\Cache\CacheServiceProvider::class,
-            \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
-            \Illuminate\Cookie\CookieServiceProvider::class,
-            \Illuminate\Database\DatabaseServiceProvider::class,
-            \Illuminate\Encryption\EncryptionServiceProvider::class,
-            \Illuminate\Filesystem\FilesystemServiceProvider::class,
-            \Illuminate\Foundation\Providers\FoundationServiceProvider::class,
-            \Illuminate\Hashing\HashServiceProvider::class,
-            \Illuminate\Mail\MailServiceProvider::class,
-            \Illuminate\Notifications\NotificationServiceProvider::class,
-            \Illuminate\Pagination\PaginationServiceProvider::class,
-            \Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
-            \Illuminate\Pipeline\PipelineServiceProvider::class,
-            \Illuminate\Queue\QueueServiceProvider::class,
-            \Illuminate\Redis\RedisServiceProvider::class,
-            \Illuminate\Session\SessionServiceProvider::class,
-            \Illuminate\Translation\TranslationServiceProvider::class,
-            \Illuminate\Validation\ValidationServiceProvider::class,
-            \Illuminate\View\ViewServiceProvider::class,
-        ];
+        $this->providers = $providers ?: [\MenuManager\Vendor\Illuminate\Auth\AuthServiceProvider::class, \MenuManager\Vendor\Illuminate\Broadcasting\BroadcastServiceProvider::class, \MenuManager\Vendor\Illuminate\Bus\BusServiceProvider::class, \MenuManager\Vendor\Illuminate\Cache\CacheServiceProvider::class, \MenuManager\Vendor\Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class, \MenuManager\Vendor\Illuminate\Cookie\CookieServiceProvider::class, \MenuManager\Vendor\Illuminate\Database\DatabaseServiceProvider::class, \MenuManager\Vendor\Illuminate\Encryption\EncryptionServiceProvider::class, \MenuManager\Vendor\Illuminate\Filesystem\FilesystemServiceProvider::class, \MenuManager\Vendor\Illuminate\Foundation\Providers\FoundationServiceProvider::class, \MenuManager\Vendor\Illuminate\Hashing\HashServiceProvider::class, \MenuManager\Vendor\Illuminate\Mail\MailServiceProvider::class, \MenuManager\Vendor\Illuminate\Notifications\NotificationServiceProvider::class, \MenuManager\Vendor\Illuminate\Pagination\PaginationServiceProvider::class, \MenuManager\Vendor\Illuminate\Auth\Passwords\PasswordResetServiceProvider::class, \MenuManager\Vendor\Illuminate\Pipeline\PipelineServiceProvider::class, \MenuManager\Vendor\Illuminate\Queue\QueueServiceProvider::class, \MenuManager\Vendor\Illuminate\Redis\RedisServiceProvider::class, \MenuManager\Vendor\Illuminate\Session\SessionServiceProvider::class, \MenuManager\Vendor\Illuminate\Translation\TranslationServiceProvider::class, \MenuManager\Vendor\Illuminate\Validation\ValidationServiceProvider::class, \MenuManager\Vendor\Illuminate\View\ViewServiceProvider::class];
     }
-
     /**
      * Merge the given providers into the provider collection.
      *
@@ -52,11 +27,9 @@ class DefaultProviders
      */
     public function merge(array $providers)
     {
-        $this->providers = array_merge($this->providers, $providers);
-
+        $this->providers = \array_merge($this->providers, $providers);
         return new static($this->providers);
     }
-
     /**
      * Replace the given providers with other providers.
      *
@@ -66,16 +39,12 @@ class DefaultProviders
     public function replace(array $replacements)
     {
         $current = collect($this->providers);
-
         foreach ($replacements as $from => $to) {
             $key = $current->search($from);
-
-            $current = is_int($key) ? $current->replace([$key => $to]) : $current;
+            $current = \is_int($key) ? $current->replace([$key => $to]) : $current;
         }
-
         return new static($current->values()->toArray());
     }
-
     /**
      * Disable the given providers.
      *
@@ -84,12 +53,8 @@ class DefaultProviders
      */
     public function except(array $providers)
     {
-        return new static(collect($this->providers)
-                ->reject(fn ($p) => in_array($p, $providers))
-                ->values()
-                ->toArray());
+        return new static(collect($this->providers)->reject(fn($p) => \in_array($p, $providers))->values()->toArray());
     }
-
     /**
      * Convert the provider collection to an array.
      *

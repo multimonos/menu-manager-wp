@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInita239904dbe6528ff8319b8822d2e77b2
+class ComposerStaticInit4f57482e5f15787524c4f7c6e4287e26
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -18,169 +18,142 @@ class ComposerStaticInita239904dbe6528ff8319b8822d2e77b2
     );
 
     public static $prefixLengthsPsr4 = array (
-        'v' => 
-        array (
-            'voku\\' => 5,
-        ),
-        'S' => 
-        array (
-            'Symfony\\Polyfill\\Php80\\' => 23,
-            'Symfony\\Polyfill\\Mbstring\\' => 26,
-            'Symfony\\Contracts\\Translation\\' => 30,
-            'Symfony\\Component\\Translation\\' => 30,
-        ),
-        'P' => 
-        array (
-            'Psr\\SimpleCache\\' => 16,
-            'Psr\\Container\\' => 14,
-            'Psr\\Clock\\' => 10,
-        ),
         'M' => 
         array (
+            'MenuManager\\Vendor\\voku\\' => 24,
+            'MenuManager\\Vendor\\Symfony\\Polyfill\\Php80\\' => 42,
+            'MenuManager\\Vendor\\Symfony\\Polyfill\\Mbstring\\' => 45,
+            'MenuManager\\Vendor\\Symfony\\Contracts\\Translation\\' => 49,
+            'MenuManager\\Vendor\\Symfony\\Component\\Translation\\' => 49,
+            'MenuManager\\Vendor\\Psr\\SimpleCache\\' => 35,
+            'MenuManager\\Vendor\\Psr\\Container\\' => 33,
+            'MenuManager\\Vendor\\Psr\\Clock\\' => 29,
+            'MenuManager\\Vendor\\League\\Csv\\' => 30,
+            'MenuManager\\Vendor\\Kalnoy\\Nestedset\\' => 36,
+            'MenuManager\\Vendor\\Illuminate\\Support\\' => 38,
+            'MenuManager\\Vendor\\Illuminate\\Pipeline\\' => 39,
+            'MenuManager\\Vendor\\Illuminate\\Events\\' => 37,
+            'MenuManager\\Vendor\\Illuminate\\Database\\' => 39,
+            'MenuManager\\Vendor\\Illuminate\\Contracts\\' => 40,
+            'MenuManager\\Vendor\\Illuminate\\Container\\' => 40,
+            'MenuManager\\Vendor\\Illuminate\\Bus\\' => 34,
+            'MenuManager\\Vendor\\Doctrine\\Inflector\\' => 38,
+            'MenuManager\\Vendor\\Carbon\\Doctrine\\' => 35,
+            'MenuManager\\Vendor\\Carbon\\' => 26,
+            'MenuManager\\Vendor\\Brick\\Math\\' => 30,
             'MenuManager\\' => 12,
-        ),
-        'L' => 
-        array (
-            'League\\Csv\\' => 11,
-        ),
-        'K' => 
-        array (
-            'Kalnoy\\Nestedset\\' => 17,
-        ),
-        'I' => 
-        array (
-            'Illuminate\\Support\\' => 19,
-            'Illuminate\\Pipeline\\' => 20,
-            'Illuminate\\Events\\' => 18,
-            'Illuminate\\Database\\' => 20,
-            'Illuminate\\Contracts\\' => 21,
-            'Illuminate\\Container\\' => 21,
-            'Illuminate\\Bus\\' => 15,
-        ),
-        'D' => 
-        array (
-            'Doctrine\\Inflector\\' => 19,
-        ),
-        'C' => 
-        array (
-            'Carbon\\Doctrine\\' => 16,
-            'Carbon\\' => 7,
-        ),
-        'B' => 
-        array (
-            'Brick\\Math\\' => 11,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'voku\\' => 
+        'MenuManager\\Vendor\\voku\\' => 
         array (
             0 => __DIR__ . '/..' . '/voku/portable-ascii/src/voku',
         ),
-        'Symfony\\Polyfill\\Php80\\' => 
+        'MenuManager\\Vendor\\Symfony\\Polyfill\\Php80\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
-        'Symfony\\Polyfill\\Mbstring\\' => 
+        'MenuManager\\Vendor\\Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
-        'Symfony\\Contracts\\Translation\\' => 
+        'MenuManager\\Vendor\\Symfony\\Contracts\\Translation\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/translation-contracts',
         ),
-        'Symfony\\Component\\Translation\\' => 
+        'MenuManager\\Vendor\\Symfony\\Component\\Translation\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/translation',
         ),
-        'Psr\\SimpleCache\\' => 
+        'MenuManager\\Vendor\\Psr\\SimpleCache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
-        'Psr\\Container\\' => 
+        'MenuManager\\Vendor\\Psr\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
-        'Psr\\Clock\\' => 
+        'MenuManager\\Vendor\\Psr\\Clock\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/clock/src',
         ),
-        'MenuManager\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/lib/MenuManager',
-        ),
-        'League\\Csv\\' => 
+        'MenuManager\\Vendor\\League\\Csv\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/csv/src',
         ),
-        'Kalnoy\\Nestedset\\' => 
+        'MenuManager\\Vendor\\Kalnoy\\Nestedset\\' => 
         array (
             0 => __DIR__ . '/..' . '/kalnoy/nestedset/src',
         ),
-        'Illuminate\\Support\\' => 
+        'MenuManager\\Vendor\\Illuminate\\Support\\' => 
         array (
             0 => __DIR__ . '/..' . '/illuminate/collections',
             1 => __DIR__ . '/..' . '/illuminate/conditionable',
             2 => __DIR__ . '/..' . '/illuminate/macroable',
             3 => __DIR__ . '/..' . '/illuminate/support',
         ),
-        'Illuminate\\Pipeline\\' => 
+        'MenuManager\\Vendor\\Illuminate\\Pipeline\\' => 
         array (
             0 => __DIR__ . '/..' . '/illuminate/pipeline',
         ),
-        'Illuminate\\Events\\' => 
+        'MenuManager\\Vendor\\Illuminate\\Events\\' => 
         array (
             0 => __DIR__ . '/..' . '/illuminate/events',
         ),
-        'Illuminate\\Database\\' => 
+        'MenuManager\\Vendor\\Illuminate\\Database\\' => 
         array (
             0 => __DIR__ . '/..' . '/illuminate/database',
         ),
-        'Illuminate\\Contracts\\' => 
+        'MenuManager\\Vendor\\Illuminate\\Contracts\\' => 
         array (
             0 => __DIR__ . '/..' . '/illuminate/contracts',
         ),
-        'Illuminate\\Container\\' => 
+        'MenuManager\\Vendor\\Illuminate\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/illuminate/container',
         ),
-        'Illuminate\\Bus\\' => 
+        'MenuManager\\Vendor\\Illuminate\\Bus\\' => 
         array (
             0 => __DIR__ . '/..' . '/illuminate/bus',
         ),
-        'Doctrine\\Inflector\\' => 
+        'MenuManager\\Vendor\\Doctrine\\Inflector\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector',
         ),
-        'Carbon\\Doctrine\\' => 
+        'MenuManager\\Vendor\\Carbon\\Doctrine\\' => 
         array (
             0 => __DIR__ . '/..' . '/carbonphp/carbon-doctrine-types/src/Carbon/Doctrine',
         ),
-        'Carbon\\' => 
+        'MenuManager\\Vendor\\Carbon\\' => 
         array (
             0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
         ),
-        'Brick\\Math\\' => 
+        'MenuManager\\Vendor\\Brick\\Math\\' => 
         array (
             0 => __DIR__ . '/..' . '/brick/math/src',
+        ),
+        'MenuManager\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/lib/MenuManager',
         ),
     );
 
     public static $classMap = array (
-        'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
-        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
-        'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
-        'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
+        'MenuManager\\Vendor\\Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
+        'MenuManager\\Vendor\\PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
+        'MenuManager\\Vendor\\Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'MenuManager\\Vendor\\UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
+        'MenuManager\\Vendor\\ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInita239904dbe6528ff8319b8822d2e77b2::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInita239904dbe6528ff8319b8822d2e77b2::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInita239904dbe6528ff8319b8822d2e77b2::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit4f57482e5f15787524c4f7c6e4287e26::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit4f57482e5f15787524c4f7c6e4287e26::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit4f57482e5f15787524c4f7c6e4287e26::$classMap;
 
         }, null, ClassLoader::class);
     }

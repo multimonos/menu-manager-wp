@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Support\Testing\Fakes;
+namespace MenuManager\Vendor\Illuminate\Support\Testing\Fakes;
 
 interface Fake
 {

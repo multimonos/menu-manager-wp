@@ -1,21 +1,18 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace MenuManager\Vendor\Doctrine\Inflector\Rules\Turkish;
 
-namespace Doctrine\Inflector\Rules\Turkish;
-
-use Doctrine\Inflector\GenericLanguageInflectorFactory;
-use Doctrine\Inflector\Rules\Ruleset;
-
+use MenuManager\Vendor\Doctrine\Inflector\GenericLanguageInflectorFactory;
+use MenuManager\Vendor\Doctrine\Inflector\Rules\Ruleset;
 final class InflectorFactory extends GenericLanguageInflectorFactory
 {
-    protected function getSingularRuleset(): Ruleset
+    protected function getSingularRuleset() : Ruleset
     {
-        return Rules::getSingularRuleset();
+        return \MenuManager\Vendor\Doctrine\Inflector\Rules\Turkish\Rules::getSingularRuleset();
     }
-
-    protected function getPluralRuleset(): Ruleset
+    protected function getPluralRuleset() : Ruleset
     {
-        return Rules::getPluralRuleset();
+        return \MenuManager\Vendor\Doctrine\Inflector\Rules\Turkish\Rules::getPluralRuleset();
     }
 }

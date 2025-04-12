@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Auth;
+namespace MenuManager\Vendor\Illuminate\Contracts\Auth;
 
 interface PasswordBrokerFactory
 {

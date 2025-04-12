@@ -1,10 +1,9 @@
 <?php
 
-namespace Illuminate\Support;
+namespace MenuManager\Vendor\Illuminate\Support;
 
 use DateInterval;
 use DateTimeInterface;
-
 trait InteractsWithTime
 {
     /**
@@ -16,12 +15,8 @@ trait InteractsWithTime
     protected function secondsUntil($delay)
     {
         $delay = $this->parseDateInterval($delay);
-
-        return $delay instanceof DateTimeInterface
-                            ? max(0, $delay->getTimestamp() - $this->currentTime())
-                            : (int) $delay;
+        return $delay instanceof DateTimeInterface ? \max(0, $delay->getTimestamp() - $this->currentTime()) : (int) $delay;
     }
-
     /**
      * Get the "available at" UNIX timestamp.
      *
@@ -31,12 +26,8 @@ trait InteractsWithTime
     protected function availableAt($delay = 0)
     {
         $delay = $this->parseDateInterval($delay);
-
-        return $delay instanceof DateTimeInterface
-                            ? $delay->getTimestamp()
-                            : Carbon::now()->addRealSeconds($delay)->getTimestamp();
+        return $delay instanceof DateTimeInterface ? $delay->getTimestamp() : \MenuManager\Vendor\Illuminate\Support\Carbon::now()->addRealSeconds($delay)->getTimestamp();
     }
-
     /**
      * If the given value is an interval, convert it to a DateTime instance.
      *
@@ -46,12 +37,10 @@ trait InteractsWithTime
     protected function parseDateInterval($delay)
     {
         if ($delay instanceof DateInterval) {
-            $delay = Carbon::now()->add($delay);
+            $delay = \MenuManager\Vendor\Illuminate\Support\Carbon::now()->add($delay);
         }
-
         return $delay;
     }
-
     /**
      * Get the current system time as a UNIX timestamp.
      *
@@ -59,6 +48,6 @@ trait InteractsWithTime
      */
     protected function currentTime()
     {
-        return Carbon::now()->getTimestamp();
+        return \MenuManager\Vendor\Illuminate\Support\Carbon::now()->getTimestamp();
     }
 }

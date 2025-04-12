@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Database\Events;
+namespace MenuManager\Vendor\Illuminate\Database\Events;
 
-use Illuminate\Contracts\Database\Events\MigrationEvent as MigrationEventContract;
-
+use MenuManager\Vendor\Illuminate\Contracts\Database\Events\MigrationEvent as MigrationEventContract;
 class DatabaseRefreshed implements MigrationEventContract
 {
     /**
@@ -13,10 +12,8 @@ class DatabaseRefreshed implements MigrationEventContract
      * @param  bool  seeding
      * @return void
      */
-    public function __construct(
-        public ?string $database = null,
-        public bool $seeding = false
-    ) {
+    public function __construct(public ?string $database = null, public bool $seeding = \false)
+    {
         //
     }
 }

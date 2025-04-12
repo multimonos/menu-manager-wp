@@ -1,10 +1,9 @@
 <?php
 
-namespace Illuminate\Database\Events;
+namespace MenuManager\Vendor\Illuminate\Database\Events;
 
-use Illuminate\Contracts\Database\Events\MigrationEvent as MigrationEventContract;
-use Illuminate\Database\Migrations\Migration;
-
+use MenuManager\Vendor\Illuminate\Contracts\Database\Events\MigrationEvent as MigrationEventContract;
+use MenuManager\Vendor\Illuminate\Database\Migrations\Migration;
 abstract class MigrationEvent implements MigrationEventContract
 {
     /**
@@ -13,14 +12,12 @@ abstract class MigrationEvent implements MigrationEventContract
      * @var \Illuminate\Database\Migrations\Migration
      */
     public $migration;
-
     /**
      * The migration method that was called.
      *
      * @var string
      */
     public $method;
-
     /**
      * Create a new event instance.
      *

@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Filesystem;
+namespace MenuManager\Vendor\Illuminate\Contracts\Filesystem;
 
 interface Factory
 {

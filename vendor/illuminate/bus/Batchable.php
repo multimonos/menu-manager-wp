@@ -1,12 +1,11 @@
 <?php
 
-namespace Illuminate\Bus;
+namespace MenuManager\Vendor\Illuminate\Bus;
 
-use Carbon\CarbonImmutable;
-use Illuminate\Container\Container;
-use Illuminate\Support\Str;
-use Illuminate\Support\Testing\Fakes\BatchFake;
-
+use MenuManager\Vendor\Carbon\CarbonImmutable;
+use MenuManager\Vendor\Illuminate\Container\Container;
+use MenuManager\Vendor\Illuminate\Support\Str;
+use MenuManager\Vendor\Illuminate\Support\Testing\Fakes\BatchFake;
 trait Batchable
 {
     /**
@@ -15,14 +14,12 @@ trait Batchable
      * @var string
      */
     public $batchId;
-
     /**
      * The fake batch, if applicable.
      *
      * @var \Illuminate\Support\Testing\Fakes\BatchFake
      */
     private $fakeBatch;
-
     /**
      * Get the batch instance for the job, if applicable.
      *
@@ -33,12 +30,10 @@ trait Batchable
         if ($this->fakeBatch) {
             return $this->fakeBatch;
         }
-
         if ($this->batchId) {
-            return Container::getInstance()->make(BatchRepository::class)?->find($this->batchId);
+            return Container::getInstance()->make(\MenuManager\Vendor\Illuminate\Bus\BatchRepository::class)?->find($this->batchId);
         }
     }
-
     /**
      * Determine if the batch is still active and processing.
      *
@@ -47,10 +42,8 @@ trait Batchable
     public function batching()
     {
         $batch = $this->batch();
-
-        return $batch && ! $batch->cancelled();
+        return $batch && !$batch->cancelled();
     }
-
     /**
      * Set the batch ID on the job.
      *
@@ -60,10 +53,8 @@ trait Batchable
     public function withBatchId(string $batchId)
     {
         $this->batchId = $batchId;
-
         return $this;
     }
-
     /**
      * Indicate that the job should use a fake batch.
      *
@@ -79,30 +70,9 @@ trait Batchable
      * @param  \Carbon\CarbonImmutable|null  $finishedAt
      * @return array{0: $this, 1: \Illuminate\Support\Testing\Fakes\BatchFake}
      */
-    public function withFakeBatch(string $id = '',
-                                  string $name = '',
-                                  int $totalJobs = 0,
-                                  int $pendingJobs = 0,
-                                  int $failedJobs = 0,
-                                  array $failedJobIds = [],
-                                  array $options = [],
-                                  ?CarbonImmutable $createdAt = null,
-                                  ?CarbonImmutable $cancelledAt = null,
-                                  ?CarbonImmutable $finishedAt = null)
+    public function withFakeBatch(string $id = '', string $name = '', int $totalJobs = 0, int $pendingJobs = 0, int $failedJobs = 0, array $failedJobIds = [], array $options = [], ?CarbonImmutable $createdAt = null, ?CarbonImmutable $cancelledAt = null, ?CarbonImmutable $finishedAt = null)
     {
-        $this->fakeBatch = new BatchFake(
-            empty($id) ? (string) Str::uuid() : $id,
-            $name,
-            $totalJobs,
-            $pendingJobs,
-            $failedJobs,
-            $failedJobIds,
-            $options,
-            $createdAt ?? CarbonImmutable::now(),
-            $cancelledAt,
-            $finishedAt,
-        );
-
+        $this->fakeBatch = new BatchFake(empty($id) ? (string) Str::uuid() : $id, $name, $totalJobs, $pendingJobs, $failedJobs, $failedJobIds, $options, $createdAt ?? CarbonImmutable::now(), $cancelledAt, $finishedAt);
         return [$this, $this->fakeBatch];
     }
 }

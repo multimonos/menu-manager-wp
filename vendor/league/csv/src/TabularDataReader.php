@@ -8,17 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
-
-namespace League\Csv;
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv;
 
 use Closure;
 use Countable;
-use Deprecated;
+use MenuManager\Vendor\Deprecated;
 use Iterator;
 use IteratorAggregate;
-
 /**
  * Represents a Tabular data.
  *
@@ -45,7 +42,7 @@ use IteratorAggregate;
  * @method iterable<TabularDataReader> chunkBy(int $recordsCount) Chunk the TabulaDataReader into smaller TabularDataReader instances of the given size or less.
  * @method TabularDataReader mapHeader(array $headers) Returns a new TabulaDataReader with a new set of headers.
  */
-interface TabularDataReader extends TabularData, IteratorAggregate, Countable
+interface TabularDataReader extends \MenuManager\Vendor\League\Csv\TabularData, IteratorAggregate, Countable
 {
     /**
      * Returns the tabular data rows as an iterator object containing flat array.
@@ -60,14 +57,12 @@ interface TabularDataReader extends TabularData, IteratorAggregate, Countable
      *
      * @return Iterator<array-key, TValue>
      */
-    public function getIterator(): Iterator;
-
+    public function getIterator() : Iterator;
     /**
      * Returns the number of records contained in the tabular data structure
      * excluding the header record.
      */
-    public function count(): int;
-
+    public function count() : int;
     /**
      * Returns the next key-value pairs from the tabular data (first
      * column is the key, second column is the value).
@@ -81,8 +76,7 @@ interface TabularDataReader extends TabularData, IteratorAggregate, Countable
      *
      * @throws UnableToProcessCsv if the column index is invalid or not found
      */
-    public function fetchPairs(string|int $offset_index = 0, string|int $value_index = 1): Iterator;
-
+    public function fetchPairs(string|int $offset_index = 0, string|int $value_index = 1) : Iterator;
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
@@ -96,6 +90,6 @@ interface TabularDataReader extends TabularData, IteratorAggregate, Countable
      *
      * @throws UnableToProcessCsv if argument is less than 0
      */
-    #[Deprecated(message:'use League\Csv\TabularDataReader::nth() instead', since:'league/csv:9.9.0')]
-    public function fetchOne(int $nth_record = 0): array;
+    #[\Deprecated(message: 'use League\\Csv\\TabularDataReader::nth() instead', since: 'league/csv:9.9.0')]
+    public function fetchOne(int $nth_record = 0) : array;
 }

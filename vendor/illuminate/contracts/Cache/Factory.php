@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Cache;
+namespace MenuManager\Vendor\Illuminate\Contracts\Cache;
 
 interface Factory
 {

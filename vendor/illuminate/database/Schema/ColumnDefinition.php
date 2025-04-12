@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Database\Schema;
+namespace MenuManager\Vendor\Illuminate\Database\Schema;
 
-use Illuminate\Support\Fluent;
-
+use MenuManager\Vendor\Illuminate\Support\Fluent;
 /**
  * @method $this after(string $column) Place the column "after" another column (MySQL)
  * @method $this always(bool $value = true) Used as a modifier for generatedAs() (PostgreSQL)

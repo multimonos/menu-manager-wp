@@ -8,8 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Symfony\Component\Translation;
+namespace MenuManager\Vendor\Symfony\Component\Translation;
 
 /**
  * This interface is used to get, set, and delete metadata about the Catalogue.
@@ -27,15 +26,13 @@ interface CatalogueMetadataAwareInterface
      *
      * @return mixed The value that was set or an array with the domains/keys or null
      */
-    public function getCatalogueMetadata(string $key = '', string $domain = 'messages'): mixed;
-
+    public function getCatalogueMetadata(string $key = '', string $domain = 'messages') : mixed;
     /**
      * Adds catalogue metadata to a message domain.
      *
      * @return void
      */
     public function setCatalogueMetadata(string $key, mixed $value, string $domain = 'messages');
-
     /**
      * Deletes catalogue metadata for the given key and domain.
      *

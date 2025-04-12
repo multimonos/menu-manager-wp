@@ -1,10 +1,9 @@
 <?php
 
-namespace Illuminate\Support\Testing\Fakes;
+namespace MenuManager\Vendor\Illuminate\Support\Testing\Fakes;
 
-use Illuminate\Contracts\Mail\Mailable;
-use Illuminate\Mail\PendingMail;
-
+use MenuManager\Vendor\Illuminate\Contracts\Mail\Mailable;
+use MenuManager\Vendor\Illuminate\Mail\PendingMail;
 class PendingMailFake extends PendingMail
 {
     /**
@@ -17,7 +16,6 @@ class PendingMailFake extends PendingMail
     {
         $this->mailer = $mailer;
     }
-
     /**
      * Send a new mailable message instance.
      *
@@ -28,7 +26,6 @@ class PendingMailFake extends PendingMail
     {
         $this->mailer->send($this->fill($mailable));
     }
-
     /**
      * Push the given mailable onto the queue.
      *

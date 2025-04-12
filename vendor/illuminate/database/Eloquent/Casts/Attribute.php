@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database\Eloquent\Casts;
+namespace MenuManager\Vendor\Illuminate\Database\Eloquent\Casts;
 
 class Attribute
 {
@@ -10,28 +10,24 @@ class Attribute
      * @var callable
      */
     public $get;
-
     /**
      * The attribute mutator.
      *
      * @var callable
      */
     public $set;
-
     /**
      * Indicates if caching is enabled for this attribute.
      *
      * @var bool
      */
-    public $withCaching = false;
-
+    public $withCaching = \false;
     /**
      * Indicates if caching of objects is enabled for this attribute.
      *
      * @var bool
      */
-    public $withObjectCaching = true;
-
+    public $withObjectCaching = \true;
     /**
      * Create a new attribute accessor / mutator.
      *
@@ -44,7 +40,6 @@ class Attribute
         $this->get = $get;
         $this->set = $set;
     }
-
     /**
      * Create a new attribute accessor / mutator.
      *
@@ -52,11 +47,10 @@ class Attribute
      * @param  callable|null  $set
      * @return static
      */
-    public static function make(?callable $get = null, ?callable $set = null): static
+    public static function make(?callable $get = null, ?callable $set = null) : static
     {
         return new static($get, $set);
     }
-
     /**
      * Create a new attribute accessor.
      *
@@ -67,7 +61,6 @@ class Attribute
     {
         return new static($get);
     }
-
     /**
      * Create a new attribute mutator.
      *
@@ -78,7 +71,6 @@ class Attribute
     {
         return new static(null, $set);
     }
-
     /**
      * Disable object caching for the attribute.
      *
@@ -86,11 +78,9 @@ class Attribute
      */
     public function withoutObjectCaching()
     {
-        $this->withObjectCaching = false;
-
+        $this->withObjectCaching = \false;
         return $this;
     }
-
     /**
      * Enable caching for the attribute.
      *
@@ -98,8 +88,7 @@ class Attribute
      */
     public function shouldCache()
     {
-        $this->withCaching = true;
-
+        $this->withCaching = \true;
         return $this;
     }
 }

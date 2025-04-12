@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Database;
+namespace MenuManager\Vendor\Illuminate\Contracts\Database;
 
 class ModelIdentifier
 {
@@ -10,7 +10,6 @@ class ModelIdentifier
      * @var string
      */
     public $class;
-
     /**
      * The unique identifier of the model.
      *
@@ -19,28 +18,24 @@ class ModelIdentifier
      * @var mixed
      */
     public $id;
-
     /**
      * The relationships loaded on the model.
      *
      * @var array
      */
     public $relations;
-
     /**
      * The connection name of the model.
      *
      * @var string|null
      */
     public $connection;
-
     /**
      * The class name of the model collection.
      *
      * @var string|null
      */
     public $collectionClass;
-
     /**
      * Create a new model identifier.
      *
@@ -57,7 +52,6 @@ class ModelIdentifier
         $this->relations = $relations;
         $this->connection = $connection;
     }
-
     /**
      * Specify the collection class that should be used when serializing / restoring collections.
      *
@@ -67,7 +61,6 @@ class ModelIdentifier
     public function useCollectionClass(?string $collectionClass)
     {
         $this->collectionClass = $collectionClass;
-
         return $this;
     }
 }

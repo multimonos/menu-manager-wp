@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Translation;
+namespace MenuManager\Vendor\Illuminate\Contracts\Translation;
 
 interface HasLocalePreference
 {

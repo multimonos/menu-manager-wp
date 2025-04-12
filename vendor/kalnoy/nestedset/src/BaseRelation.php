@@ -1,64 +1,56 @@
 <?php
 
-namespace Kalnoy\Nestedset;
+namespace MenuManager\Vendor\Kalnoy\Nestedset;
 
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Builder;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Relations\Relation;
+use MenuManager\Vendor\Illuminate\Database\Query\Builder;
 use InvalidArgumentException;
-
 abstract class BaseRelation extends Relation
 {
     /**
      * @var QueryBuilder
      */
     protected $query;
-
     /**
      * @var NodeTrait|Model
      */
     protected $parent;
-
     /**
      * The count of self joins.
      *
      * @var int
      */
     protected static $selfJoinCount = 0;
-
     /**
      * AncestorsRelation constructor.
      *
      * @param QueryBuilder $builder
      * @param Model $model
      */
-    public function __construct(QueryBuilder $builder, Model $model)
+    public function __construct(\MenuManager\Vendor\Kalnoy\Nestedset\QueryBuilder $builder, Model $model)
     {
-        if ( ! NestedSet::isNode($model)) {
+        if (!\MenuManager\Vendor\Kalnoy\Nestedset\NestedSet::isNode($model)) {
             throw new InvalidArgumentException('Model must be node.');
         }
-
         parent::__construct($builder, $model);
     }
-
     /**
      * @param Model $model
      * @param $related
      *
      * @return bool
      */
-    abstract protected function matches(Model $model, $related);
-
+    protected abstract function matches(Model $model, $related);
     /**
      * @param QueryBuilder $query
      * @param Model $model
      *
      * @return void
      */
-    abstract protected function addEagerConstraint($query, $model);
-
+    protected abstract function addEagerConstraint($query, $model);
     /**
      * @param $hash
      * @param $table
@@ -67,8 +59,7 @@ abstract class BaseRelation extends Relation
      *
      * @return string
      */
-    abstract protected function relationExistenceCondition($hash, $table, $lft, $rgt);
-
+    protected abstract function relationExistenceCondition($hash, $table, $lft, $rgt);
     /**
      * @param EloquentBuilder $query
      * @param EloquentBuilder $parent
@@ -76,28 +67,16 @@ abstract class BaseRelation extends Relation
      *
      * @return mixed
      */
-    public function getRelationExistenceQuery(EloquentBuilder $query, EloquentBuilder $parent,
-                                              $columns = [ '*' ]
-    ) {
+    public function getRelationExistenceQuery(EloquentBuilder $query, EloquentBuilder $parent, $columns = ['*'])
+    {
         $query = $this->getParent()->replicate()->newScopedQuery()->select($columns);
-
         $table = $query->getModel()->getTable();
-
-        $query->from($table.' as '.$hash = $this->getRelationCountHash());
-
+        $query->from($table . ' as ' . ($hash = $this->getRelationCountHash()));
         $query->getModel()->setTable($hash);
-
         $grammar = $query->getQuery()->getGrammar();
-
-        $condition = $this->relationExistenceCondition(
-            $grammar->wrapTable($hash),
-            $grammar->wrapTable($table),
-            $grammar->wrap($this->parent->getLftName()),
-            $grammar->wrap($this->parent->getRgtName()));
-
+        $condition = $this->relationExistenceCondition($grammar->wrapTable($hash), $grammar->wrapTable($table), $grammar->wrap($this->parent->getLftName()), $grammar->wrap($this->parent->getRgtName()));
         return $query->whereRaw($condition);
     }
-
     /**
      * Initialize the relation on a set of models.
      *
@@ -110,18 +89,16 @@ abstract class BaseRelation extends Relation
     {
         return $models;
     }
-
     /**
      * Get a relationship join table hash.
      *
      * @param  bool $incrementJoinCount
      * @return string
      */
-    public function getRelationCountHash($incrementJoinCount = true)
+    public function getRelationCountHash($incrementJoinCount = \true)
     {
-        return 'nested_set_'.($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
+        return 'nested_set_' . ($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
     }
-
     /**
      * Get the results of the relationship.
      *
@@ -131,7 +108,6 @@ abstract class BaseRelation extends Relation
     {
         return $this->query->get();
     }
-
     /**
      * Set the constraints for an eager load of the relation.
      *
@@ -141,17 +117,15 @@ abstract class BaseRelation extends Relation
      */
     public function addEagerConstraints(array $models)
     {
-        $this->query->whereNested(function (Builder $inner) use ($models) {
+        $this->query->whereNested(function (Builder $inner) use($models) {
             // We will use this query in order to apply constraints to the
             // base query builder
             $outer = $this->parent->newQuery()->setQuery($inner);
-
             foreach ($models as $model) {
                 $this->addEagerConstraint($outer, $model);
             }
         });
     }
-
     /**
      * Match the eagerly loaded results to their parents.
      *
@@ -165,13 +139,10 @@ abstract class BaseRelation extends Relation
     {
         foreach ($models as $model) {
             $related = $this->matchForModel($model, $results);
-
             $model->setRelation($relation, $related);
         }
-
         return $models;
     }
-
     /**
      * @param Model $model
      * @param EloquentCollection $results
@@ -181,16 +152,13 @@ abstract class BaseRelation extends Relation
     protected function matchForModel(Model $model, EloquentCollection $results)
     {
         $result = $this->related->newCollection();
-
         foreach ($results as $related) {
             if ($this->matches($model, $related)) {
                 $result->push($related);
             }
         }
-
         return $result;
     }
-
     /**
      * Get the plain foreign key.
      *
@@ -200,6 +168,6 @@ abstract class BaseRelation extends Relation
     {
         // Return a stub value for relation
         // resolvers which need this function.
-        return NestedSet::PARENT_ID;
+        return \MenuManager\Vendor\Kalnoy\Nestedset\NestedSet::PARENT_ID;
     }
 }

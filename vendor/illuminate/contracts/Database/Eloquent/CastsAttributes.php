@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Contracts\Database\Eloquent;
+namespace MenuManager\Vendor\Illuminate\Contracts\Database\Eloquent;
 
-use Illuminate\Database\Eloquent\Model;
-
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 /**
  * @template TGet
  * @template TSet
@@ -20,7 +19,6 @@ interface CastsAttributes
      * @return TGet|null
      */
     public function get(Model $model, string $key, mixed $value, array $attributes);
-
     /**
      * Transform the attribute to its underlying model values.
      *

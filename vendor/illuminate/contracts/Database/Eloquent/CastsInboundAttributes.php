@@ -1,9 +1,8 @@
 <?php
 
-namespace Illuminate\Contracts\Database\Eloquent;
+namespace MenuManager\Vendor\Illuminate\Contracts\Database\Eloquent;
 
-use Illuminate\Database\Eloquent\Model;
-
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 interface CastsInboundAttributes
 {
     /**

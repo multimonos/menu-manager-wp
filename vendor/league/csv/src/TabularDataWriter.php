@@ -8,13 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
-
-namespace League\Csv;
+declare (strict_types=1);
+namespace MenuManager\Vendor\League\Csv;
 
 use Stringable;
-
 /**
  * A class to insert records into a CSV Document.
  */
@@ -30,8 +27,7 @@ interface TabularDataWriter
      * @throws CannotInsertRecord If the record can not be inserted
      * @throws Exception If the record can not be inserted
      */
-    public function insertAll(iterable $records): int;
-
+    public function insertAll(iterable $records) : int;
     /**
      * Adds a single record to a CSV document.
      *
@@ -43,5 +39,5 @@ interface TabularDataWriter
      * @throws CannotInsertRecord If the record can not be inserted
      * @throws Exception If the record can not be inserted
      */
-    public function insertOne(array $record): int;
+    public function insertOne(array $record) : int;
 }
