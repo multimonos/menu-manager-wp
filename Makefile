@@ -9,8 +9,20 @@
 	delete-data \
 	fail
 
+# Using scoper to namespace all the vendor classes under MenuManager\Vendor.
+# After a new package is added via `composer require pkg` re-run `make build`
 build:
-	composer clear-cache && composer dump-autoload
+	php-scoper add-prefix --output-dir=./prefixed-vendor --force \
+	&& rm -rf ./vendor \
+	&& mv ./prefixed-vendor/vendor ./vendor \
+	&& composer clear-cache \
+	&& composer dump-autoload \
+	&& rm -rf ./prefixed-vendor \
+	&& php test.php
+
+bulk-impex:
+	chmod u+x ./bulk-impex.sh && ./bulk-impex.sh
+
 clean:
 	find . -type f -name "*.csv" -print -exec rm {} +
 logs:
@@ -40,11 +52,11 @@ test:
 	wp mm job list; \
 	wp mm job get 1; \
 	wp mm import validate 1; \
-	wp mm import run 1; \
+	wp mm job run 1; \
 	wp mm menu view crowfoot;
 
 run: delete-data \
-	; XDEBUG_SESSION=PHPSTORM wp mm import run 1
+	; XDEBUG_SESSION=PHPSTORM wp mm job run 1
 
 view:
 	wp mm menu view crowfoot
@@ -74,5 +86,3 @@ impex:
 	./impex.sh
 
 
-scope:
-	php-scoper add-prefix --output-dir=./prefixed-vendor

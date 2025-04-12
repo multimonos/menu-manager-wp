@@ -16,7 +16,7 @@ return [
     // will be generated instead.
     //
     // For more see: https://github.com/humbug/php-scoper/blob/master/docs/configuration.md#prefix
-    'prefix'                  => 'MenuManagerVendor',
+    'prefix'                  => 'MenuManager\\Vendor',
 
     // By default when running php-scoper add-prefix, it will prefix all relevant code found in the current working
     // directory. You can however define which files should be scoped by defining a collection of Finders in the
@@ -71,6 +71,7 @@ return [
     //
     // For more information see: https://github.com/humbug/php-scoper/blob/master/docs/configuration.md#excluded-symbols
     'exclude-namespaces'      => [
+        "MenuManager",
         // 'Acme\Foo'                     // The Acme\Foo namespace (and sub-namespaces)
         // '~^PHPUnit\\\\Framework$~',    // The whole namespace PHPUnit\Framework (but not sub-namespaces)
         // '~^$~',                        // The root namespace only
