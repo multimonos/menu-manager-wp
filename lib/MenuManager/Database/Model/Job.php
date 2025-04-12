@@ -2,10 +2,11 @@
 
 namespace MenuManager\Database\Model;
 
-use Illuminate\Database\Schema\Blueprint;
 use MenuManager\Database\db;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
+use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
 
-class Job extends \Illuminate\Database\Eloquent\Model {
+class Job extends Model {
     const TABLE = 'mm_jobs';
     protected $table = 'mm_jobs';
     const CREATED_AT = 'created_at';

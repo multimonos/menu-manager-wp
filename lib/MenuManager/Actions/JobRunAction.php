@@ -6,10 +6,10 @@ use MenuManager\Database\db;
 use MenuManager\Database\Model\Job;
 use MenuManager\Database\PostType\MenuPost;
 
-class ImportExecuteAction {
+class JobRunAction {
 
     public function canStart( Job $job ): bool {
-        return $job->status === Job::STATUS_VALIDATED;
+        return $job->status === Job::STATUS_CREATED;
     }
 
     public function run( $job_id ): ActionResult {
@@ -23,9 +23,9 @@ class ImportExecuteAction {
         }
 
         // guard : job status
-        if ( ! $this->canStart( $job ) ) {
-            return ActionResult::failure( "Job with status '" . $job->status . "' cannot be started.  Must be '" . Job::STATUS_VALIDATED . "'." );
-        }
+//        if ( ! $this->canStart( $job ) ) {
+//            return ActionResult::failure( "Job with status '" . $job->status . "' cannot be started.  Must be '" . Job::STATUS_CREATED . "'." );
+//        }
 
         // split the impex by menu
         $imports = $job->impexes->groupBy( 'menu' );

@@ -2,9 +2,9 @@
 
 namespace MenuManager\Database;
 
-use Illuminate\Container\Container;
-use Illuminate\Database\Capsule\Manager as Capsule;
-use Illuminate\Events\Dispatcher;
+use MenuManager\Vendor\Illuminate\Container\Container;
+use MenuManager\Vendor\Illuminate\Database\Capsule\Manager as Capsule;
+use MenuManager\Vendor\Illuminate\Events\Dispatcher;
 
 class db {
     protected static $capsule;

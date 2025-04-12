@@ -2,10 +2,11 @@
 
 namespace MenuManager\Database\Model;
 
-use Illuminate\Database\Schema\Blueprint;
 use MenuManager\Database\db;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
+use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
 
-class Impex extends \Illuminate\Database\Eloquent\Model {
+class Impex extends Model {
 
     const TABLE = 'mm_impex';
     protected $table = 'mm_impex';

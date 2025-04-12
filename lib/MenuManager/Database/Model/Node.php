@@ -2,13 +2,15 @@
 
 namespace MenuManager\Database\Model;
 
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Collection;
-use Kalnoy\Nestedset\NestedSet;
-use Kalnoy\Nestedset\NodeTrait;
 use MenuManager\Database\db;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
+use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
+use MenuManager\Vendor\Illuminate\Support\Collection;
+use MenuManager\Vendor\Kalnoy\Nestedset\Collection as NestedSetCollection;
+use MenuManager\Vendor\Kalnoy\Nestedset\NestedSet;
+use MenuManager\Vendor\Kalnoy\Nestedset\NodeTrait;
 
-class Node extends \Illuminate\Database\Eloquent\Model {
+class Node extends Model {
 
     use NodeTrait;
 
@@ -88,7 +90,7 @@ class Node extends \Illuminate\Database\Eloquent\Model {
         return $node;
     }
 
-    public static function findRootTree( \WP_Post $menu ): ?\Kalnoy\NestedSet\Collection {
+    public static function findRootTree( \WP_Post $menu ): ?NestedSetCollection {
         $root = self::findRootNode( $menu );
         if ( is_null( $root ) ) {
             return null;
@@ -97,7 +99,7 @@ class Node extends \Illuminate\Database\Eloquent\Model {
         return $tree;
     }
 
-    public static function findPageTree( \WP_Post $menu, string $page ): ?\Kalnoy\NestedSet\Collection {
+    public static function findPageTree( \WP_Post $menu, string $page ): ?NestedSetCollection {
         $page = self::findPageNode( $menu, $page );
         if ( is_null( $page ) ) {
             return null;

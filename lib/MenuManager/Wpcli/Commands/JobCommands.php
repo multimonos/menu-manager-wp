@@ -3,6 +3,7 @@
 namespace MenuManager\Wpcli\Commands;
 
 
+use MenuManager\Actions\JobRunAction;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Job;
 use MenuManager\Wpcli\CliOutput;
@@ -92,5 +93,42 @@ class JobCommands {
 
         // ok
         print_r( $job->toArray() );
+    }
+
+
+    /**
+     * Run an import job.
+     *
+     * ## OPTIONS
+     *
+     * <id>
+     * : The job to run.
+     *
+     * ## EXAMPLES
+     *
+     *      wp mm job run 42
+     *
+     * @when after_wp_load
+     */
+    public function run( $args, $assoc_args ) {
+        $job_id = $args[0];
+
+        // validate
+//        $validate = new ImportValidateAction();
+//        $rs = $validate->run( $job_id );
+//
+//        if ( ! $rs->ok() ) {
+//            WP_CLI::error( $rs->getMessage() . "\n" . print_r( $rs->getData(), true ) );
+//        }
+
+        // run
+        $import = new JobRunAction();
+        $rs = $import->run( $job_id );
+
+        if ( ! $rs->ok() ) {
+            WP_CLI::error( $rs->getMessage() );
+        }
+
+        WP_CLI::success( $rs->getMessage() );
     }
 }

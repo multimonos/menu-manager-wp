@@ -2,7 +2,7 @@
 
 namespace MenuManager\Actions;
 
-use Illuminate\Support\Collection;
+use MenuManager\Vendor\Illuminate\Support\Collection;
 
 class MenuUpdateAction {
     public function run( \WP_Post $menu, Collection $items ) {

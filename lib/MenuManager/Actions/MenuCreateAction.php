@@ -2,11 +2,11 @@
 
 namespace MenuManager\Actions;
 
-use Illuminate\Support\Collection;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\ImportFactory;
 use MenuManager\Database\PostType\MenuPost;
+use MenuManager\Vendor\Illuminate\Support\Collection;
 
 class MenuCreateAction {
 

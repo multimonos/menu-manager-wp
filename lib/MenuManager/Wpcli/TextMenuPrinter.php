@@ -2,9 +2,11 @@
 
 namespace MenuManager\Wpcli;
 
+use MenuManager\Vendor\Kalnoy\Nestedset\Collection;
+
 class TextMenuPrinter {
 
-    public function print( \Kalnoy\Nestedset\Collection $tree ): void {
+    public function print( Collection $tree ): void {
         $this->traverse( $tree );
     }
 

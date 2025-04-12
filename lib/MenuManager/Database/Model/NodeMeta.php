@@ -2,10 +2,11 @@
 
 namespace MenuManager\Database\Model;
 
-use Illuminate\Database\Schema\Blueprint;
 use MenuManager\Database\db;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
+use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
 
-class NodeMeta extends \Illuminate\Database\Eloquent\Model {
+class NodeMeta extends Model {
 
     const TABLE = 'mm_node_meta';
     protected $table = 'mm_node_meta';

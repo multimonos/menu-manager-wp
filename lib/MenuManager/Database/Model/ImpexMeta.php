@@ -2,7 +2,7 @@
 
 namespace MenuManager\Database\Model;
 
-use Illuminate\Support\Collection;
+use MenuManager\Vendor\Illuminate\Support\Collection;
 
 class ImpexMeta {
     public Collection $jobId;

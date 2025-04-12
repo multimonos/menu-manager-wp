@@ -2,7 +2,6 @@
 
 namespace MenuManager\Wpcli\Commands;
 
-use MenuManager\Actions\ImportExecuteAction;
 use MenuManager\Actions\ImportLoadAction;
 use MenuManager\Actions\ImportValidateAction;
 use MenuManager\Import\ImportValidator;
@@ -78,39 +77,4 @@ class ImportCommands {
     }
 
 
-    /**
-     * Run an import job.
-     *
-     * ## OPTIONS
-     *
-     * <job_id>
-     * : The impex job to run.
-     *
-     * ## EXAMPLES
-     *
-     *      wp mm import apply 42
-     *
-     * @when after_wp_load
-     */
-    public function run( $args, $assoc_args ) {
-        $job_id = $args[0];
-
-        // validate
-        $validate = new ImportValidateAction();
-        $rs = $validate->run( $job_id );
-
-        if ( ! $rs->ok() ) {
-            WP_CLI::error( $rs->getMessage() . "\n" . print_r( $rs->getData(), true ) );
-        }
-
-        // run
-        $import = new ImportExecuteAction();
-        $rs = $import->run( $job_id );
-
-        if ( ! $rs->ok() ) {
-            WP_CLI::error( $rs->getMessage() );
-        }
-
-        WP_CLI::success( $rs->getMessage() );
-    }
 }
