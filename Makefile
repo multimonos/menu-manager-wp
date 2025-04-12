@@ -1,11 +1,11 @@
-.PHONY: build clean logs \
-	activate deactivate \
-	import export \
-	availability \
-	food \
-	food-category \
-	drink-category \
-	debug-migrate \
+.PHONY: dummy \
+ 	build \
+ 	clean \
+  	logs \
+	activate \
+	deactivate \
+	import \
+	export \
 	delete-data \
 	fail
 
@@ -24,12 +24,14 @@ bulk-impex:
 	chmod u+x ./bulk-impex.sh && ./bulk-impex.sh
 
 clean:
-	find . -type f -name "*.csv" -print -exec rm {} +
+	find . -type f -name "*.csv" -print -exec rm {} \;
+
 logs:
 	clear && tail -f $(shell dirname $(shell wp config path))/debug.log |grep -v Deprecated
 
 activate:
 	wp plugin activate menu-manager-wp && wp db check |grep "mm_"
+
 deactivate:
 	wp plugin deactivate menu-manager-wp
 
@@ -66,21 +68,6 @@ export:
 	; XDEBUG_SESSION=PHPSTORM wp mm export crowfoot crowfoot.csv \
 	; wc -l crowfoot.csv \
 	; tail -n25 crowfoot.csv
-
-migrate:
-	clear && wp ccm migrate crowfoot
-debug-migrate:
-	XDEBUG_SESSION=PHPSTORM wp ccm migrate crowfoot
-fail:
-	wp mm export crowfoots
-availability:
-	wp term list availability
-food:
-	wp post list --post_type=food
-food-category:
-	wp term list food_menu_section
-drink-category:
-	wp term list drink_menu_section
 
 impex:
 	./impex.sh
