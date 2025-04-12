@@ -32,6 +32,28 @@ class Impex extends Model {
         'type',
     ];
 
+    // CSV Related
+    const CSV_FIELDS = [
+        'action',
+        'menu',
+        'page',
+        'batch_id',
+        'type',
+        'item_id',
+        'title',
+        'prices',
+        'image_ids',
+        'is_new',
+        'is_glutensmart',
+        'is_organic',
+        'is_vegan',
+        'is_vegetarian',
+        'custom',
+        'description',
+    ];
+    const ON = 'yes';
+    const OFF = 'no';
+
     public static function createTable() {
         error_log( self::TABLE );
 

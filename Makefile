@@ -36,7 +36,7 @@ deactivate:
 	wp plugin deactivate menu-manager-wp
 
 delete-data:
-	wp db query "SET foreign_key_checks=0; truncate wp_mm_node_meta; truncate table wp_mm_node; delete from wp_posts where post_type='menus'; SET foreign_key_checks=1;"
+	wp db query "SET foreign_key_checks=0; truncate wp_mm_node_meta; truncate table wp_mm_node; truncate wp_mm_jobs; delete from wp_posts where post_type='menus'; SET foreign_key_checks=1;" \
 
 test:
 	clear; \
@@ -57,21 +57,47 @@ test:
 	wp mm job run 1; \
 	wp mm view crowfoot;
 
-test-impex-loop:
+test-impex-1:
 	clear \
-	; cp ../menu-scraper/data/merged_crowfoot.csv ./import-impex-loop.csv \
-	; sed -i '' 's/crowfoot/impex-loop/g' ./import-impex-loop.csv \
+	; echo 'preparing...' \
+	; rm *.csv \
+	; wp plugin deactivate menu-manager-wp \
+    ; sleep 1 \
+	; wp plugin activate menu-manager-wp \
+	; echo "1) begin..." \
+	; cp ../menu-scraper/data/merged_crowfoot.csv ./import-1.csv \
+	; sed -i '' 's/crowfoot/impexloop/g' ./import-1.csv \
+	; make delete-data \
+	; XDEBUG_SESSION=PHPSTORM wp mm import load ./import-1.csv \
+	; wp mm job run 1 \
+	; wp mm view impexloop \
+	; wp mm export impexloop ./export-1.csv \
+	; echo "1) line counts" \
+	; wc -l ./import-1.csv \
+	; wc -l ./export-1.csv \
+	; echo "1) diff" \
+	; diff ./import-1.csv ./export-1.csv \
+	; echo "Ok"
+
+test-impex-2:
+	clear \
+	; echo "2) begin..." \
 	; wp plugin deactivate menu-manager-wp \
 	; sleep 1 \
 	; wp plugin activate menu-manager-wp \
 	; make delete-data \
-	; XDEBUG_SESSION=PHPSTORM wp mm import load ./import-impex-loop.csv \
+	; cp ./export-1.csv ./import-2.csv \
+	; XDEBUG_SESSION=PHPSTORM wp mm import load ./import-2.csv \
 	; wp mm job run 1 \
-	; wp mm view impex-loop \
-	; wp mm export impex-loop ./export-impex-loop.csv \
-	; wc -l ./import-impex-loop.csv \
-	; wc -l ./export-impex-loop.csv \
-	; diff ./export-impex-loop.csv ./import-impex-loop.csv \
+	; wp mm view impexloop \
+	; wp mm export impexloop ./export-2.csv \
+	; echo "2) line counts" \
+	; wc -l ./import-1.csv \
+	; wc -l ./export-1.csv \
+	; wc -l ./import-2.csv \
+	; wc -l ./export-2.csv \
+	; echo "2) diff" \
+	; diff ./import-2.csv ./export-2.csv \
 	; echo "Done"
 
 

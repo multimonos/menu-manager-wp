@@ -1,12 +1,12 @@
 <?php
 
-namespace MenuManager\Database\Mapper;
+namespace MenuManager\Database\Factory;
 
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Node;
 use MenuManager\Database\Model\NodeMeta;
 
-class ImportNodeMapper {
+class ImportNodeFactory {
 
     public static function createRootNode( \WP_Post $menu ): Node {
         $root = new Node( [
