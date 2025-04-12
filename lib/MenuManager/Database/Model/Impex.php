@@ -71,7 +71,7 @@ class Impex extends Model {
             $table->string( 'action', 32 );
             $table->string( 'menu', 32 );
             $table->string( 'page', 32 );
-            $table->string( 'uuid', 32 )->nullable();
+            $table->string( 'uuid', 64 )->nullable();
             $table->string( 'type', 32 );
             $table->bigInteger( 'item_id' )->nullable();
             $table->string( 'title' )->nullable();

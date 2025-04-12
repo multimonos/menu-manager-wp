@@ -43,7 +43,7 @@ class Node extends Model {
             $table->bigIncrements( 'id' );
             $table->bigInteger( 'menu_id' )->unsigned();
             $table->foreign( 'menu_id' )->references( 'ID' )->on( 'posts' )->onDelete( 'cascade' );
-            $table->string( 'uuid', 32 )->nullable();
+            $table->string( 'uuid', 64 )->nullable();
             NestedSet::columns( $table );
             $table->string( 'type', 32 );
             $table->string( 'title' )->nullable();
