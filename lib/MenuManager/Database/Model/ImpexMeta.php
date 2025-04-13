@@ -7,10 +7,8 @@ use MenuManager\Vendor\Illuminate\Support\Collection;
 class ImpexMeta {
     public Collection $jobId;
     public $rowCount;
-
     public Collection $menuIds;
     public Collection $actions;
-
     public Collection $types;
     public Collection $imageIds;
 

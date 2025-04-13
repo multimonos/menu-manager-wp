@@ -3,6 +3,7 @@
 namespace MenuManager\Database\Model;
 
 use MenuManager\Database\db;
+use MenuManager\Logger;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
 
@@ -13,14 +14,6 @@ enum ImpexAction: string {
     case Price = 'price';
 }
 
-enum ImpexType: string {
-    case Item = 'item';
-    case Wine = 'wine';
-    case OptionGroup = 'option-group';
-    case Option = 'option';
-    case AddonGroup = 'addon-group';
-    case Addon = 'addon';
-}
 
 enum ImpexBoolean: string {
     case True = 'yes';
@@ -73,28 +66,26 @@ class Impex extends Model {
         'custom',
         'description',
     ];
-    const ON = 'yes';
-    const OFF = 'no';
 
     public static function createTable() {
-        error_log( self::TABLE );
+        Logger::info( self::TABLE );
 
         if ( ! db::load()::schema()->hasTable( self::TABLE ) ) {
-            error_log( self::TABLE . ' not found' );
+            Logger::info( self::TABLE . ' not found' );
         } else {
             db::load()::schema()->dropIfExists( self::TABLE );
-            error_log( self::TABLE . ' dropped' );
+            Logger::info( self::TABLE . ' dropped' );
         }
 
         db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
             $table->bigInteger( 'job_id' )->unsigned();
             $table->foreign( 'job_id' )->references( 'id' )->on( Job::TABLE )->onDelete( 'cascade' );
-            $table->string( 'action', 32 );
+            $table->string( 'action', 32 ); // @todo should this be enum?
             $table->string( 'menu', 32 );
             $table->string( 'page', 32 );
             $table->string( 'uuid', 64 )->nullable();
-            $table->string( 'type', 32 );
+            $table->string( 'type', 32 ); // @todo should this be enum?
             $table->bigInteger( 'item_id' )->nullable();
             $table->string( 'title' )->nullable();
             $table->string( 'prices', 64 )->nullable();
@@ -109,36 +100,43 @@ class Impex extends Model {
             $table->dateTime( 'updated_at' )->useCurrent();
         } );
 
-        error_log( self::TABLE . ' created' );
+        Logger::info( self::TABLE . ' created' );
     }
 
     public function job() {
         return $this->belongsTo( Job::class, 'job_id' );
     }
 
+    public static function isType( string $type, array $allowed ): bool {
+        return in_array( NodeType::tryFrom( $type ), $allowed );
+    }
+
     public static function isCategoryType( string $type ): bool {
-        return str_contains( $type, 'category-' );
+        return self::isType( $type, [
+            NodeType::Category0,
+            NodeType::Category1,
+            NodeType::Category2,
+        ] );
     }
 
     public static function isGroupType( string $type ): bool {
-        $types = [
-            'option-group',
-            'addon-group',
-        ];
-        return in_array( $type, $types );
+        return self::isType( $type, [
+            NodeType::OptionGroup,
+            NodeType::AddonGroup,
+        ] );
     }
 
     public static function isGroupItemType( string $type ): bool {
-        return in_array( $type, [
-            'option',
-            'addon',
+        return self::isType( $type, [
+            NodeType::Option,
+            NodeType::Addon,
         ] );
     }
 
     public static function isItemType( string $type ): bool {
-        return in_array( $type, [
-            'item',
-            'wine',
+        return self::isType( $type, [
+            NodeType::Item,
+            NodeType::Wine,
         ] );
     }
 

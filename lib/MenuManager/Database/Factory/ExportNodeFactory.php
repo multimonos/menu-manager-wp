@@ -3,22 +3,29 @@
 namespace MenuManager\Database\Factory;
 
 use MenuManager\Database\Model\Impex;
+use MenuManager\Database\Model\ImpexBoolean;
 use MenuManager\Database\Model\Node;
+use MenuManager\Database\Model\NodeType;
 
 class ExportNodeFactory {
+
+    public static function toBoolean( bool $val ): ImpexBoolean {
+        return $val === true ? ImpexBoolean::True : ImpexBoolean::False;
+    }
 
     public static function createRow( \WP_Post $menu, string $page, Node $node ): ?array {
 
         $simple_types = [
-            'item',
-            'option-group',
-            'option',
-            'addon',
-            'addon-group',
-            'wine',
+            NodeType::Item,
+            NodeType::OptionGroup,
+            NodeType::Option,
+            NodeType::AddonGroup,
+            NodeType::Addon,
+            NodeType::Wine,
         ];
 
-        if ( in_array( $node->type, $simple_types ) ) {
+
+        if ( in_array( NodeType::tryFrom( $node->type ), $simple_types ) ) {
             return self::createMenuitemRow( $menu, $page, $node );
 
         } elseif ( Impex::isCategoryType( $node->type ) ) {
@@ -31,12 +38,12 @@ class ExportNodeFactory {
     public static function createCategoryRow( \WP_Post $menu, string $page, Node $node ): array {
 
         return [
-            'action'         => $node->action,
+            'action'         => '',
             'menu'           => $menu->post_name,
             'page'           => $page,
             'uuid'           => $node->uuid,
             'item_id'        => $node->id,
-            'type'           => $node->type,
+            'type'           => NodeType::from( $node->type )->value, // valid or throw
             'title'          => $node->title,
             'prices'         => (string)$node->meta->prices,
             'image_ids'      => '',
@@ -52,21 +59,21 @@ class ExportNodeFactory {
 
     public static function createMenuitemRow( \WP_Post $menu, string $page, Node $node ): array {
         return [
-            'action'         => $node->action,
+            'action'         => '',
             'menu'           => $menu->post_name,
             'page'           => $page,
             'uuid'           => $node->uuid,
             'item_id'        => $node->id,
-            'type'           => $node->type,
+            'type'           => NodeType::from( $node->type )->value, // valid or throw
             'title'          => $node->title,
             'prices'         => (string)$node->meta->prices,
             'image_ids'      => (string)$node->meta->image_ids,
             'custom'         => '',
-            'is_new'         => (string)($node->meta->hasTag( 'new' ) ? Impex::ON : Impex::OFF),
-            'is_vegan'       => (string)($node->meta->hasTag( 'vegan' ) ? Impex::ON : Impex::OFF),
-            'is_vegetarian'  => (string)($node->meta->hasTag( 'vegetarian' ) ? Impex::ON : Impex::OFF),
-            'is_glutensmart' => (string)($node->meta->hasTag( 'gluten-smart' ) ? Impex::ON : Impex::OFF),
-            'is_organic'     => (string)($node->meta->hasTag( 'organic' ) ? Impex::ON : Impex::OFF),
+            'is_new'         => self::toBoolean( $node->meta->hasTag( 'new' ) )->value,
+            'is_vegan'       => self::toBoolean( $node->meta->hasTag( 'vegan' ) )->value,
+            'is_vegetarian'  => self::toBoolean( $node->meta->hasTag( 'vegetarian' ) )->value,
+            'is_glutensmart' => self::toBoolean( $node->meta->hasTag( 'gluten-smart' ) )->value,
+            'is_organic'     => self::toBoolean( $node->meta->hasTag( 'organic' ) )->value,
             'description'    => $node->description,
         ];
 

@@ -3,6 +3,7 @@
 namespace MenuManager\Database\Model;
 
 use MenuManager\Database\db;
+use MenuManager\Logger;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
 
@@ -22,13 +23,13 @@ class NodeMeta extends Model {
     ];
 
     public static function createTable() {
-        error_log( self::TABLE );
+        Logger::info( self::TABLE );
 
         if ( ! db::load()::schema()->hasTable( self::TABLE ) ) {
-            error_log( self::TABLE . ' not found' );
+            Logger::info( self::TABLE . ' not found' );
         } else {
             db::load()::schema()->dropIfExists( self::TABLE );
-            error_log( self::TABLE . ' dropped' );
+            Logger::info( self::TABLE . ' dropped' );
         }
 
         db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
@@ -41,6 +42,8 @@ class NodeMeta extends Model {
             $table->dateTime( 'created_at' )->useCurrent();
             $table->dateTime( 'updated_at' )->useCurrent();
         } );
+
+        Logger::info( self::TABLE . ' created' );
     }
 
     public function node() {

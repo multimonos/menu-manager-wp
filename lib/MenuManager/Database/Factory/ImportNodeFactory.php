@@ -5,13 +5,14 @@ namespace MenuManager\Database\Factory;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Node;
 use MenuManager\Database\Model\NodeMeta;
+use MenuManager\Database\Model\NodeType;
 
 class ImportNodeFactory {
 
     public static function createRootNode( \WP_Post $menu ): Node {
         $root = new Node( [
             'menu_id' => $menu->ID,
-            'type'    => 'root',
+            'type'    => NodeType::Root->value,
             'title'   => 'menu.' . $menu->post_name,
         ] );
 
@@ -26,7 +27,7 @@ class ImportNodeFactory {
         $page = new Node( [
             'menu_id'   => $menu->ID,
             'parent_id' => $root->id,
-            'type'      => 'page',
+            'type'      => NodeType::Page->value,
             'title'     => $page_slug,
         ] );
 

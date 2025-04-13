@@ -3,12 +3,27 @@
 namespace MenuManager\Database\Model;
 
 use MenuManager\Database\db;
+use MenuManager\Logger;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
 use MenuManager\Vendor\Illuminate\Support\Collection;
 use MenuManager\Vendor\Kalnoy\Nestedset\Collection as NestedSetCollection;
 use MenuManager\Vendor\Kalnoy\Nestedset\NestedSet;
 use MenuManager\Vendor\Kalnoy\Nestedset\NodeTrait;
+
+enum NodeType: string {
+    case Root = 'root';
+    case Page = 'page';
+    case Category0 = 'category-0';
+    case Category1 = 'category-1';
+    case Category2 = 'category-2';
+    case Item = 'item';
+    case Wine = 'wine';
+    case OptionGroup = 'option-group';
+    case Option = 'option';
+    case AddonGroup = 'addon-group';
+    case Addon = 'addon';
+}
 
 class Node extends Model {
 
@@ -28,15 +43,14 @@ class Node extends Model {
         'description',
     ];
 
-
     public static function createTable() {
-        error_log( self::TABLE );
+        Logger::info( self::TABLE );
 
         if ( ! db::load()::schema()->hasTable( self::TABLE ) ) {
-            error_log( self::TABLE . ' not found' );
+            Logger::info( self::TABLE . ' not found' );
         } else {
             db::load()::schema()->dropIfExists( self::TABLE );
-            error_log( self::TABLE . ' dropped' );
+            Logger::info( self::TABLE . ' dropped' );
         }
 
         db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
@@ -51,6 +65,8 @@ class Node extends Model {
             $table->dateTime( 'created_at' )->useCurrent();
             $table->dateTime( 'updated_at' )->useCurrent();
         } );
+
+        Logger::info( self::TABLE . ' created' );
     }
 
     protected function getScopeAttributes() {
@@ -72,11 +88,15 @@ class Node extends Model {
     }
 
     public static function countForMenu( \WP_Post $menu ): int {
-        return Node::where( 'menu_id', $menu->ID )->whereNotIn( 'type', ['root', 'page'] )->count();
+        return Node::where( 'menu_id', $menu->ID )
+            ->whereNotIn( 'type', [NodeType::Root->value, NodeType::Page->value] )
+            ->count();
     }
 
     public static function findRootNode( \WP_Post $menu ): ?Node {
-        $node = Node::where( 'menu_id', $menu->ID )->where( 'type', 'root' )->first();
+        $node = Node::where( 'menu_id', $menu->ID )
+            ->where( 'type', NodeType::Root->value )
+            ->first();
         return $node;
     }
 
@@ -88,7 +108,10 @@ class Node extends Model {
     }
 
     public static function findPageNode( \WP_Post $menu, string $page ): ?Node {
-        $node = Node::where( 'menu_id', $menu->ID )->where( 'type', 'page' )->where( 'title', $page )->first();
+        $node = Node::where( 'menu_id', $menu->ID )
+            ->where( 'type', NodeType::Page->value )
+            ->where( 'title', $page )
+            ->first();
         return $node;
     }
 
@@ -97,7 +120,11 @@ class Node extends Model {
         if ( is_null( $root ) ) {
             return null;
         }
-        $tree = Node::scoped( ['menu_id' => $menu->ID] )->with( "meta" )->withDepth()->descendantsOf( $root->id )->toTree();
+        $tree = Node::scoped( ['menu_id' => $menu->ID] )
+            ->with( "meta" )
+            ->withDepth()
+            ->descendantsOf( $root->id )
+            ->toTree();
         return $tree;
     }
 
@@ -106,7 +133,11 @@ class Node extends Model {
         if ( is_null( $page ) ) {
             return null;
         }
-        $tree = Node::scoped( ['menu_id' => $menu->ID] )->with( "meta" )->withDepth()->descendantsOf( $page->id )->toTree();
+        $tree = Node::scoped( ['menu_id' => $menu->ID] )
+            ->with( "meta" )
+            ->withDepth()
+            ->descendantsOf( $page->id )
+            ->toTree();
         return $tree;
     }
 
