@@ -13,6 +13,7 @@ class TextMenuPrinter {
     protected function traverse( $nodes, $prefix = '' ) {
         foreach ( $nodes as $node ) {
             echo "\n"
+                . str_pad( $node->id, 6 )
                 . str_pad( $node->type, 15 )
                 . str_pad( $node->depth, 3 )
                 . $prefix
