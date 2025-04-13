@@ -9,6 +9,7 @@ use WP_CLI;
 
 
 class ImportCommands {
+
     /**
      * Load a CSV to create an import job.
      *
@@ -32,8 +33,8 @@ class ImportCommands {
         }
 
         // load
-        $action = new LoadTask();
-        $rs = $action->run( $path );
+        $task = new LoadTask();
+        $rs = $task->run( $path );
 
         // guard : err
         if ( ! $rs->ok() ) {
@@ -65,8 +66,8 @@ class ImportCommands {
         $job_id = $args[0];
 
         // guard : job status
-        $action = new ValidateTask();
-        $rs = $action->run( $job_id );
+        $task = new ValidateTask();
+        $rs = $task->run( $job_id );
 
         // guard : err
         if ( ! $rs->ok() ) {

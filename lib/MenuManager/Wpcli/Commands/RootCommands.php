@@ -44,8 +44,8 @@ class RootCommands {
             : sanitize_file_name( $dst );
 
         // action
-        $action = new ExportTask();
-        $rs = $action->run( $menu, $dst );
+        $task = new ExportTask();
+        $rs = $task->run( $menu, $dst );
 
         if ( ! $rs->ok() ) {
             WP_CLI::error( $rs->getMessage() );

@@ -92,7 +92,7 @@ class JobCommands {
         }
 
         // ok
-        print_r( $job->toArray() );
+        echo json_encode( $job->toArray() );
     }
 
 
@@ -113,17 +113,8 @@ class JobCommands {
     public function run( $args, $assoc_args ) {
         $job_id = $args[0];
 
-        // validate
-//        $validate = new ImportValidateAction();
-//        $rs = $validate->run( $job_id );
-//
-//        if ( ! $rs->ok() ) {
-//            WP_CLI::error( $rs->getMessage() . "\n" . print_r( $rs->getData(), true ) );
-//        }
-
-        // run
-        $import = new JobRunTask();
-        $rs = $import->run( $job_id );
+        $task = new JobRunTask();
+        $rs = $task->run( $job_id );
 
         if ( ! $rs->ok() ) {
             WP_CLI::error( $rs->getMessage() );

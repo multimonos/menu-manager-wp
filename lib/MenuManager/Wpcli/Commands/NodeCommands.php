@@ -89,8 +89,10 @@ class NodeCommands {
         }
 
         // ok
-        echo "\nNode: " . json_encode( $node->toArray(), JSON_PRETTY_PRINT );
-        echo "\n\nNodeMeta: " . json_encode( $node->meta->toArray(), JSON_PRETTY_PRINT );
+        echo json_encode( [
+            "Node"     => $node->toArray(),
+            "NodeMeta" => $node->meta->toArray(),
+        ] );
     }
 
 }
