@@ -9,6 +9,7 @@ use MenuManager\Plugin\Deactivate;
 use MenuManager\Wpcli\Commands\ImportCommands;
 use MenuManager\Wpcli\Commands\JobCommands;
 use MenuManager\Wpcli\Commands\MenuCommands;
+use MenuManager\Wpcli\Commands\NodeCommands;
 use MenuManager\Wpcli\Commands\RootCommands;
 
 require_once __DIR__ . '/vendor/scoper-autoload.php';
@@ -25,6 +26,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
     WP_CLI::add_command( $command_namespace . ' import', ImportCommands::class );
     WP_CLI::add_command( $command_namespace . ' job', JobCommands::class );
     WP_CLI::add_command( $command_namespace . ' menu', MenuCommands::class );
+    WP_CLI::add_command( $command_namespace . ' node', NodeCommands::class );
 }
 
 // plugin
