@@ -72,7 +72,7 @@ class NodeCommands {
      * ## OPTIONS
      *
      * <id>
-     * : The id of the node ot get.
+     * : The id of the node.
      *
      * @when after_wp_load
      */
@@ -95,4 +95,32 @@ class NodeCommands {
         ] );
     }
 
+
+    /**
+     * Delete a node.
+     *
+     * ## OPTIONS
+     *
+     * <id>
+     * : The id of the node.
+     *
+     * @when after_wp_load
+     */
+    public function delete( $args, $assoc_args ) {
+        db::load();
+
+        $id = $args[0];
+
+        $node = Node::find( $id );
+
+        // failed
+        if ( $node === null ) {
+            WP_CLI::error( "Node not found id=" . $id );
+        }
+
+        if ( ! $node->delete() ) {
+            WP_CLI::error( "Failed to delete Node id=" . $id );
+        }
+        WP_CLI::success( 'Node deleted id=' . $id );
+    }
 }

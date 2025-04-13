@@ -109,8 +109,7 @@ MODIFY_KEY=modify-test
 ITEM_ID=230
 
 test-modify-setup:
-	clear \
-	; echo '$(MODIFY_KEY) preparing...' \
+	echo '$(MODIFY_KEY) preparing...' \
 	; wp plugin deactivate $(PLUGIN) \
     ; sleep 1 \
 	; wp plugin activate $(PLUGIN) \
@@ -120,7 +119,6 @@ test-modify-setup:
 	; sed -i '' 's/$(TEST_KEY)/$(MODIFY_KEY)/g' $(MODIFY_KEY)-import.csv \
 	; wp mm import load $(MODIFY_KEY)-import.csv \
 	; wp mm job run 1 \
-	; wp mm view $(MODIFY_KEY) \
 	; wp mm export $(MODIFY_KEY) $(MODIFY_KEY)-export.csv \
 	; echo "Node.before:" \
 	; wp mm node get $(ITEM_ID) |jq \
@@ -129,8 +127,6 @@ test-modify-setup:
 test-modify-after:
 	cat $(MODIFY_KEY)-patch.csv \
 	; wp mm import load $(MODIFY_KEY)-patch.csv \
-	; wp mm job list \
-	; wp mm job get 2|jq \
 	; wp mm job run 2 \
 	; echo "Node.after:" \
 	; wp mm node get $(ITEM_ID) |jq \
@@ -161,6 +157,18 @@ test-delete-item:
 	; cat $(MODIFY_KEY)-export.csv |grep -E "($(ITEM_ID)|action)" > $(MODIFY_KEY)-patch.csv \
 	; sed -i '' -E 's/^"",/"delete",/g' $(MODIFY_KEY)-patch.csv \
 	; make test-modify-after
+
+test-delete-option-group:
+	make test-modify-setup \
+	; echo 'Deleta action patch csv ...' \
+	; cat $(MODIFY_KEY)-export.csv |grep -E "($(ITEM_ID)|action)" > $(MODIFY_KEY)-patch.csv \
+	; sed -i '' -E 's/^"",/"delete",/g' $(MODIFY_KEY)-patch.csv \
+	; sed -i '' 's/$(ITEM_ID)/219/g' $(MODIFY_KEY)-patch.csv \
+	; wp mm node get 219 |jq \
+	; wp mm node get 220 |jq \
+	; make test-modify-after \
+	; wp mm node get 219 \
+	; wp mm node get 220
 
 test-setvar:
 	clear \

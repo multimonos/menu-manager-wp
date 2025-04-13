@@ -38,7 +38,7 @@ class ModifyMenuTask {
                     continue;
                 }
 
-                print_r( ['row' => $row->toArray()] );
+//                print_r( ['row' => $row->toArray()] );
 
                 switch ( $action ) {
                     case ImpexAction::Update:
