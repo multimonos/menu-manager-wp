@@ -48,8 +48,8 @@ class JobCommands {
                         'id'         => $x->id,
                         'type'       => $x->type,
                         'status'     => $x->status,
-                        'created_at' => $x->created_at,
                         'source'     => $x->source,
+                        'created_at' => $x->created_at,
                     ];
                 } )->toArray();
 
@@ -60,8 +60,8 @@ class JobCommands {
                 );
 
                 CliOutput::table(
-                    [5, 10, 10, 20, $maxlen_source],
-                    ['id', 'type', 'status', 'created_at', 'source'],
+                    [5, 10, 10, $maxlen_source, 20],
+                    ['id', 'type', 'status', 'source', 'created_at'],
                     $data,
                 );
                 break;
@@ -92,7 +92,7 @@ class JobCommands {
         }
 
         // ok
-        echo json_encode( $job->toArray() );
+        echo json_encode( ['Job' => $job->toArray()] );
     }
 
 

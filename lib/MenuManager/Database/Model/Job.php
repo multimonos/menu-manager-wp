@@ -3,8 +3,22 @@
 namespace MenuManager\Database\Model;
 
 use MenuManager\Database\db;
+use MenuManager\Logger;
+use MenuManager\Utils\EnumTools;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
+
+enum JobStatus: string {
+    case Created = 'created';
+    case Validated = 'validated';
+    case Running = 'running';
+    case Done = 'done';
+}
+
+enum JobType: string {
+    case Import = 'import';
+    case Export = 'export';
+}
 
 class Job extends Model {
     const TABLE = 'mm_jobs';
@@ -12,33 +26,33 @@ class Job extends Model {
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-    const STATUS_CREATED = 'created';
-    const STATUS_VALIDATED = 'validated';
-    const STATUS_RUNNING = 'running';
-    const STATUS_DONE = 'done';
-
-    protected $fillable = ['type', 'status', 'source'];
+    protected $fillable = [
+        'type',
+        'status',
+        'source',
+    ];
 
     public static function createTable() {
-        error_log( self::TABLE );
+        Logger::info( 'created ' . self::TABLE );
 
         if ( ! db::load()::schema()->hasTable( self::TABLE ) ) {
-            error_log( self::TABLE . ' not found' );
+            Logger::info( self::TABLE . ' not found' );
         } else {
             db::load()::schema()->dropIfExists( self::TABLE );
-            error_log( self::TABLE . ' dropped' );
+            Logger::info( self::TABLE . ' dropped' );
         }
 
         db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
-            $table->enum( 'type', ['import', 'export'] );
-            $table->enum( 'status', ['created', 'validated', 'running', 'done'] )->default( 'created' );
+            $table->enum( 'type', EnumTools::values( JobType::class ) );
+            $table->enum( 'status', EnumTools::values( JobStatus::class ) )->default( JobStatus::Created );
             $table->string( 'source' )->nullable();
             $table->dateTime( 'created_at' )->useCurrent();
             $table->dateTime( 'updated_at' )->useCurrent();
             $table->index( ['type', 'status'] );
         } );
-        error_log( self::TABLE . ' created' );
+
+        Logger::info( self::TABLE . ' created' );
     }
 
     public function impexes() {

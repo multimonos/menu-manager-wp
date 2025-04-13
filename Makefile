@@ -9,6 +9,10 @@
 	delete-data \
 	fail
 
+PLUGIN="menu-manager-wp"
+TEST_CSV="../menu-scraper/data/merged_crowfoot.csv"
+TEST_KEY="crowfoot"
+
 # Using scoper to namespace all the vendor classes under MenuManager\Vendor.
 # After a new package is added via `composer require pkg` re-run `make build`
 build:
@@ -60,7 +64,6 @@ test:
 test-impex-1:
 	clear \
 	; echo 'preparing...' \
-	; rm *.csv \
 	; wp plugin deactivate menu-manager-wp \
     ; sleep 1 \
 	; wp plugin activate menu-manager-wp \
@@ -87,7 +90,7 @@ test-impex-2:
 	; wp plugin activate menu-manager-wp \
 	; make delete-data \
 	; cp ./export-1.csv ./import-2.csv \
-	; XDEBUG_SESSION=PHPSTORM wp mm import load ./import-2.csv \
+	; wp mm import load ./import-2.csv \
 	; wp mm job run 1 \
 	; wp mm view impexloop \
 	; wp mm export impexloop ./export-2.csv \
@@ -100,6 +103,44 @@ test-impex-2:
 	; diff ./import-2.csv ./export-2.csv \
 	; echo "Done"
 
+
+# test update item
+UPDATE_KEY=update-test
+UPDATE_ID=230
+test-update:
+	clear \
+	; echo '$(UPDATE_KEY) preparing...' \
+	; wp plugin deactivate $(PLUGIN) \
+    ; sleep 1 \
+	; wp plugin activate $(PLUGIN) \
+	; make delete-data \
+	; echo "begin..." \
+	; cp $(TEST_CSV) $(UPDATE_KEY)-import.csv \
+	; sed -i '' 's/$(TEST_KEY)/$(UPDATE_KEY)/g' $(UPDATE_KEY)-import.csv \
+	; wp mm import load $(UPDATE_KEY)-import.csv \
+	; wp mm job run 1 \
+	; wp mm view $(UPDATE_KEY) \
+	; wp mm export $(UPDATE_KEY) $(UPDATE_KEY)-export.csv \
+	; wp mm node get $(UPDATE_ID) |jq \
+	; wp mm node get $(UPDATE_ID) |jq > $(UPDATE_KEY)-node-$(UPDATE_ID)-original.json \
+	; echo 'Creating patch csv ...' \
+	; cat $(UPDATE_KEY)-export.csv |grep -E "($(UPDATE_ID)|action)" > $(UPDATE_KEY)-patch.csv \
+	; sed -i '' 's/Cabin Super/Foobar bazz/g' $(UPDATE_KEY)-patch.csv \
+	; sed -i '' -E 's/^"",/"update",/g' $(UPDATE_KEY)-patch.csv \
+	; cat $(UPDATE_KEY)-patch.csv \
+	; wp mm import load $(UPDATE_KEY)-patch.csv \
+	; wp mm job list \
+	; wp mm job get 2|jq \
+	; wp mm job run 2 \
+	; wp mm node get $(UPDATE_ID) |jq \
+	; wp mm node get $(UPDATE_ID) |jq > $(UPDATE_KEY)-node-$(UPDATE_ID)-updated.json \
+	; diff $(UPDATE_KEY)-node-$(UPDATE_ID)-original.json $(UPDATE_KEY)-node-$(UPDATE_ID)-updated.json \
+	; echo "Ok"
+
+test-setvar:
+	clear \
+	foo="bar" \
+	echo \$foo
 
 run: delete-data \
 	; XDEBUG_SESSION=PHPSTORM wp mm job run 1

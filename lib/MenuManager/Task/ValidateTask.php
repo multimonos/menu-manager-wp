@@ -6,11 +6,12 @@ use MenuManager\Database\db;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\ImpexMeta;
 use MenuManager\Database\Model\Job;
+use MenuManager\Database\Model\JobStatus;
 use MenuManager\Database\PostType\MenuPost;
 
 class ValidateTask {
     public function canStart( Job $job ): bool {
-        return $job->status === Job::STATUS_CREATED;
+        return JobStatus::tryFrom( $job->status ) === JobStatus::Created;
     }
 
     public function run( $job_id ): TaskResult {
@@ -29,13 +30,13 @@ class ValidateTask {
         }
 
         // guard : validated
-        if ( $job->status === Job::STATUS_VALIDATED ) {
+        if ( JobStatus::tryFrom( $job->status ) === JobStatus::Validated ) {
             return TaskResult::success( "Already validated. Nothing to do." );
         }
 
         // guard : job status
         if ( ! $this->canStart( $job ) ) {
-            return TaskResult::failure( "Job with status '" . $job->status . "' cannot be started.  Must be '" . Job::STATUS_CREATED . "'." );
+            return TaskResult::failure( "Job with status '" . $job->status . "' cannot be started.  Must be '" . JobStatus::Created . "'." );
         }
 
         // review the impex
@@ -121,7 +122,7 @@ class ValidateTask {
 
         // valid
         if ( empty( $err ) ) {
-            $job->status = Job::STATUS_VALIDATED;
+            $job->status = JobStatus::Validated;
             $job->save();
             return TaskResult::success( 'Validated', $msg );
         }

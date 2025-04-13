@@ -6,6 +6,28 @@ use MenuManager\Database\db;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
 
+enum ImpexAction: string {
+    case Update = 'update';
+    case Insert = 'insert';
+    case Delete = 'delete';
+    case Price = 'price';
+}
+
+enum ImpexType: string {
+    case Item = 'item';
+    case Wine = 'wine';
+    case OptionGroup = 'option-group';
+    case Option = 'option';
+    case AddonGroup = 'addon-group';
+    case Addon = 'addon';
+}
+
+enum ImpexBoolean: string {
+    case True = 'yes';
+    case False = 'no';
+}
+
+
 class Impex extends Model {
 
     const TABLE = 'mm_impex';

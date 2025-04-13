@@ -5,12 +5,10 @@ namespace MenuManager\Task;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Job;
+use MenuManager\Logger;
 use MenuManager\Vendor\League\Csv\Reader;
 
 class LoadTask {
-    public static function to_bool( mixed $v ): bool {
-        return in_array( $v, ['yes', 'true', true, 'Y'] ) ? true : false;
-    }
 
     public function run( string $path ): TaskResult {
 
@@ -34,18 +32,14 @@ class LoadTask {
                 throw new \Exception( "Header row is missing" );
             }
 
-            // csv : debug
-//            print_r( [
-//                'headers' => $headers,
-//                'import'  => $import_id,
-//            ] );
-
             // job
             $job = Job::create( [
                 'type'   => 'import',
                 'status' => 'created',
                 'source' => $path,
             ] );
+
+            Logger::taskInfo( 'load', 'src=' . $path );
 
 
             // impex : load rows
@@ -83,11 +77,11 @@ class LoadTask {
 
             $conn->commit();
 
-            return TaskResult::success( "Imported: {$path}" );
+            return TaskResult::success( "Loaded: {$path}" );
 
         } catch (Exception $e) {
             $conn->rollBack();
-            return TaskResult::failure( "Import failed: " . $e->getMessage() );
+            return TaskResult::failure( "Load failed: " . $e->getMessage() );
         }
     }
 

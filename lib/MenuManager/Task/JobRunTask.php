@@ -5,12 +5,13 @@ namespace MenuManager\Task;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Job;
 use MenuManager\Database\PostType\MenuPost;
+use MenuManager\Logger;
 
 class JobRunTask {
 
-    public function canStart( Job $job ): bool {
-        return $job->status === Job::STATUS_CREATED;
-    }
+//    public function canStart( Job $job ): bool {
+//        return $job->status === Job::STATUS_CREATED;
+//    }
 
     public function run( $job_id ): TaskResult {
         db::load();
@@ -22,6 +23,7 @@ class JobRunTask {
             return TaskResult::failure( "Job not found '" . $job_id . "'" );
         }
 
+        Logger::taskInfo( 'run', 'job=' . $job->id );
         // guard : job status
 //        if ( ! $this->canStart( $job ) ) {
 //            return ActionResult::failure( "Job with status '" . $job->status . "' cannot be started.  Must be '" . Job::STATUS_CREATED . "'." );

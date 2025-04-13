@@ -6,6 +6,7 @@ use MenuManager\Database\db;
 use MenuManager\Database\Factory\ImportNodeFactory;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\PostType\MenuPost;
+use MenuManager\Logger;
 use MenuManager\Vendor\Illuminate\Support\Collection;
 
 class CreateTask {
@@ -21,7 +22,7 @@ class CreateTask {
             if ( ! $menu instanceof \WP_Post ) {
                 return false;
             }
-            error_log( "created menu " . $menu->post_name );
+            Logger::taskInfo( 'create', 'menu=' . $menu->post_name );
 
             // ROOT
             $root = ImportNodeFactory::createRootNode( $menu );
