@@ -1,5 +1,6 @@
 .DS_Store
 *.csv
 *.sql
+*.json
 prefixed-vendor/
 data/*.csv
