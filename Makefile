@@ -104,38 +104,63 @@ test-impex-2:
 	; echo "Done"
 
 
-# test update item
-UPDATE_KEY=update-test
-UPDATE_ID=230
-test-update:
+# Test modify cases
+MODIFY_KEY=modify-test
+ITEM_ID=230
+
+test-modify-setup:
 	clear \
-	; echo '$(UPDATE_KEY) preparing...' \
+	; echo '$(MODIFY_KEY) preparing...' \
 	; wp plugin deactivate $(PLUGIN) \
     ; sleep 1 \
 	; wp plugin activate $(PLUGIN) \
 	; make delete-data \
 	; echo "begin..." \
-	; cp $(TEST_CSV) $(UPDATE_KEY)-import.csv \
-	; sed -i '' 's/$(TEST_KEY)/$(UPDATE_KEY)/g' $(UPDATE_KEY)-import.csv \
-	; wp mm import load $(UPDATE_KEY)-import.csv \
+	; cp $(TEST_CSV) $(MODIFY_KEY)-import.csv \
+	; sed -i '' 's/$(TEST_KEY)/$(MODIFY_KEY)/g' $(MODIFY_KEY)-import.csv \
+	; wp mm import load $(MODIFY_KEY)-import.csv \
 	; wp mm job run 1 \
-	; wp mm view $(UPDATE_KEY) \
-	; wp mm export $(UPDATE_KEY) $(UPDATE_KEY)-export.csv \
-	; wp mm node get $(UPDATE_ID) |jq \
-	; wp mm node get $(UPDATE_ID) |jq > $(UPDATE_KEY)-node-$(UPDATE_ID)-original.json \
-	; echo 'Creating patch csv ...' \
-	; cat $(UPDATE_KEY)-export.csv |grep -E "($(UPDATE_ID)|action)" > $(UPDATE_KEY)-patch.csv \
-	; sed -i '' 's/Cabin Super/Foobar bazz/g' $(UPDATE_KEY)-patch.csv \
-	; sed -i '' -E 's/^"",/"update",/g' $(UPDATE_KEY)-patch.csv \
-	; cat $(UPDATE_KEY)-patch.csv \
-	; wp mm import load $(UPDATE_KEY)-patch.csv \
+	; wp mm view $(MODIFY_KEY) \
+	; wp mm export $(MODIFY_KEY) $(MODIFY_KEY)-export.csv \
+	; echo "Node.before:" \
+	; wp mm node get $(ITEM_ID) |jq \
+	; wp mm node get $(ITEM_ID) |jq > $(MODIFY_KEY)-node-$(ITEM_ID)-original.json
+
+test-modify-after:
+	cat $(MODIFY_KEY)-patch.csv \
+	; wp mm import load $(MODIFY_KEY)-patch.csv \
 	; wp mm job list \
 	; wp mm job get 2|jq \
 	; wp mm job run 2 \
-	; wp mm node get $(UPDATE_ID) |jq \
-	; wp mm node get $(UPDATE_ID) |jq > $(UPDATE_KEY)-node-$(UPDATE_ID)-updated.json \
-	; diff $(UPDATE_KEY)-node-$(UPDATE_ID)-original.json $(UPDATE_KEY)-node-$(UPDATE_ID)-updated.json \
+	; echo "Node.after:" \
+	; wp mm node get $(ITEM_ID) |jq \
+	; wp mm node get $(ITEM_ID) |jq > $(MODIFY_KEY)-node-$(ITEM_ID)-updated.json \
+	; diff $(MODIFY_KEY)-node-$(ITEM_ID)-original.json $(MODIFY_KEY)-node-$(ITEM_ID)-updated.json \
 	; echo "Ok"
+
+test-update-item:
+	make test-modify-setup \
+	; echo 'Update action patch csv ...' \
+	; cat $(MODIFY_KEY)-export.csv |grep -E "($(ITEM_ID)|action)" > $(MODIFY_KEY)-patch.csv \
+	; sed -i '' 's/Cabin Super/--- FOOBAR BAZZ ---/g' $(MODIFY_KEY)-patch.csv \
+	; sed -i '' 's/6.50/99.95/g' $(MODIFY_KEY)-patch.csv \
+	; sed -i '' -E 's/^"",/"update",/g' $(MODIFY_KEY)-patch.csv \
+	; make test-modify-after
+
+test-price-item:
+	make test-modify-setup \
+	; echo 'Price action patch csv ...' \
+	; cat $(MODIFY_KEY)-export.csv |grep -E "($(ITEM_ID)|action)" > $(MODIFY_KEY)-patch.csv \
+	; sed -i '' -E 's/^"",/"price",/g' $(MODIFY_KEY)-patch.csv \
+	; sed -i '' 's/6.50/77.66/g' $(MODIFY_KEY)-patch.csv \
+	; make test-modify-after
+
+test-delete-item:
+	make test-modify-setup \
+	; echo 'Deleta action patch csv ...' \
+	; cat $(MODIFY_KEY)-export.csv |grep -E "($(ITEM_ID)|action)" > $(MODIFY_KEY)-patch.csv \
+	; sed -i '' -E 's/^"",/"delete",/g' $(MODIFY_KEY)-patch.csv \
+	; make test-modify-after
 
 test-setvar:
 	clear \

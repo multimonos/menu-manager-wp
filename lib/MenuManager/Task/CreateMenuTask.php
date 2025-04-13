@@ -9,7 +9,7 @@ use MenuManager\Database\PostType\MenuPost;
 use MenuManager\Logger;
 use MenuManager\Vendor\Illuminate\Support\Collection;
 
-class CreateTask {
+class CreateMenuTask {
 
 
     public function run( $menu_id, Collection $items ): bool {

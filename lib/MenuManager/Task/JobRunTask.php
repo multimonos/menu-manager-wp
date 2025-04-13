@@ -33,18 +33,19 @@ class JobRunTask {
 
             // one import task per menu
 
-            $imports = $job->impexes->groupBy( 'menu' );
+            $menus = $job->impexes->groupBy( 'menu' );
 
-            $imports->each( function ( $rows, $menu_id ) {
+            $menus->each( function ( $rows, $menu_id ) {
 
                 $menu = MenuPost::find( $menu_id );
 
                 if ( $menu === null ) {
-                    $create = new CreateTask();
-                    $create->run( $menu_id, $rows );
+                    $create_menu = new CreateMenuTask();
+                    $create_menu->run( $menu_id, $rows );
+
                 } else {
-                    $update = new UpdateTask();
-                    $update->run( $menu, $rows );
+                    $modify_task = new ModifyMenuTask();
+                    $modify_task->run( $menu, $rows );
                 }
 
             } );
