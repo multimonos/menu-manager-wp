@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Actions;
+namespace MenuManager\Task;
 
 use MenuManager\Database\db;
 use MenuManager\Database\Factory\ImportNodeFactory;
@@ -8,7 +8,7 @@ use MenuManager\Database\Model\Impex;
 use MenuManager\Database\PostType\MenuPost;
 use MenuManager\Vendor\Illuminate\Support\Collection;
 
-class MenuCreateAction {
+class CreateTask {
 
 
     public function run( $menu_id, Collection $items ): bool {

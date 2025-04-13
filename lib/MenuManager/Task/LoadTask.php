@@ -1,18 +1,18 @@
 <?php
 
-namespace MenuManager\Actions;
+namespace MenuManager\Task;
 
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Job;
 use MenuManager\Vendor\League\Csv\Reader;
 
-class ImportLoadAction {
+class LoadTask {
     public static function to_bool( mixed $v ): bool {
         return in_array( $v, ['yes', 'true', true, 'Y'] ) ? true : false;
     }
 
-    public function run( string $path ): ActionResult {
+    public function run( string $path ): TaskResult {
 
         $conn = db::load()->getConnection();
 
@@ -83,11 +83,11 @@ class ImportLoadAction {
 
             $conn->commit();
 
-            return ActionResult::success( "Imported: {$path}" );
+            return TaskResult::success( "Imported: {$path}" );
 
         } catch (Exception $e) {
             $conn->rollBack();
-            return ActionResult::failure( "Import failed: " . $e->getMessage() );
+            return TaskResult::failure( "Import failed: " . $e->getMessage() );
         }
     }
 

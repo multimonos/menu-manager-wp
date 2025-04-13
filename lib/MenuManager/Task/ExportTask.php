@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Actions;
+namespace MenuManager\Task;
 
 use MenuManager\Database\db;
 use MenuManager\Database\Factory\ExportNodeFactory;
@@ -10,9 +10,9 @@ use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
 use MenuManager\Vendor\League\Csv\Bom;
 use MenuManager\Vendor\League\Csv\Writer;
 
-class ExportAction {
+class ExportTask {
 
-    public function run( \WP_Post $menu, string $path ): ActionResult {
+    public function run( \WP_Post $menu, string $path ): TaskResult {
 
         db::load();
         db::load()::connection()->enableQueryLog();
@@ -58,7 +58,7 @@ class ExportAction {
         echo "\n";
 
 
-        return ActionResult::success( "Exported menu '" . $menu->post_name . "' to " . $path );
+        return TaskResult::success( "Exported menu '" . $menu->post_name . "' to " . $path );
     }
 
     protected function visit( Collection $nodes, callable $callback ): array {

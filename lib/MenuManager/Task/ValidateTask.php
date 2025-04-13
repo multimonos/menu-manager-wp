@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Actions;
+namespace MenuManager\Task;
 
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Impex;
@@ -8,12 +8,12 @@ use MenuManager\Database\Model\ImpexMeta;
 use MenuManager\Database\Model\Job;
 use MenuManager\Database\PostType\MenuPost;
 
-class ImportValidateAction {
+class ValidateTask {
     public function canStart( Job $job ): bool {
         return $job->status === Job::STATUS_CREATED;
     }
 
-    public function run( $job_id ): ActionResult {
+    public function run( $job_id ): TaskResult {
 
         db::load();
 
@@ -25,17 +25,17 @@ class ImportValidateAction {
         $job = Job::find( $job_id );
 
         if ( $job === null ) {
-            return ActionResult::failure( "Job not found '" . $job_id . "'" );
+            return TaskResult::failure( "Job not found '" . $job_id . "'" );
         }
 
         // guard : validated
         if ( $job->status === Job::STATUS_VALIDATED ) {
-            return ActionResult::success( "Already validated. Nothing to do." );
+            return TaskResult::success( "Already validated. Nothing to do." );
         }
 
         // guard : job status
         if ( ! $this->canStart( $job ) ) {
-            return ActionResult::failure( "Job with status '" . $job->status . "' cannot be started.  Must be '" . Job::STATUS_CREATED . "'." );
+            return TaskResult::failure( "Job with status '" . $job->status . "' cannot be started.  Must be '" . Job::STATUS_CREATED . "'." );
         }
 
         // review the impex
@@ -43,7 +43,7 @@ class ImportValidateAction {
 
         // guard : row count
         if ( empty( $rows ) ) {
-            return ActionResult::failure( 'Impex has no rows' );
+            return TaskResult::failure( 'Impex has no rows' );
         }
 
         echo "\n--- " . date( 'YmdHis' ) . " ---\n";
@@ -51,7 +51,7 @@ class ImportValidateAction {
         // meta
         $menus = $rows->groupBy( 'menu' );
         if ( $menus->count() === 0 ) {
-            return ActionResult::failure( 'No menus found' );
+            return TaskResult::failure( 'No menus found' );
         }
         echo "\nmenu-count:" . $menus->count();
 
@@ -123,10 +123,10 @@ class ImportValidateAction {
         if ( empty( $err ) ) {
             $job->status = Job::STATUS_VALIDATED;
             $job->save();
-            return ActionResult::success( 'Validated', $msg );
+            return TaskResult::success( 'Validated', $msg );
         }
 
-        return ActionResult::failure( "Failed to validate", $err );
+        return TaskResult::failure( "Failed to validate", $err );
 
     }
 

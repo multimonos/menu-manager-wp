@@ -2,10 +2,10 @@
 
 namespace MenuManager\Wpcli\Commands;
 
-use MenuManager\Actions\ExportAction;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Node;
 use MenuManager\Database\PostType\MenuPost;
+use MenuManager\Task\ExportTask;
 use MenuManager\Wpcli\TextMenuPrinter;
 use WP_CLI;
 
@@ -44,7 +44,7 @@ class RootCommands {
             : sanitize_file_name( $dst );
 
         // action
-        $action = new ExportAction();
+        $action = new ExportTask();
         $rs = $action->run( $menu, $dst );
 
         if ( ! $rs->ok() ) {

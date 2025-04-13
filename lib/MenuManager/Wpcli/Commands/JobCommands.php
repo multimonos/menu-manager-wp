@@ -3,9 +3,9 @@
 namespace MenuManager\Wpcli\Commands;
 
 
-use MenuManager\Actions\JobRunAction;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Job;
+use MenuManager\Task\JobRunTask;
 use MenuManager\Wpcli\CliOutput;
 use WP_CLI;
 
@@ -122,7 +122,7 @@ class JobCommands {
 //        }
 
         // run
-        $import = new JobRunAction();
+        $import = new JobRunTask();
         $rs = $import->run( $job_id );
 
         if ( ! $rs->ok() ) {

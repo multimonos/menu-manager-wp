@@ -1,10 +1,10 @@
 <?php
 
-namespace MenuManager\Actions;
+namespace MenuManager\Task;
 
 use MenuManager\Vendor\Illuminate\Support\Collection;
 
-class MenuUpdateAction {
+class UpdateTask {
     public function run( \WP_Post $menu, Collection $items ) {
         echo "\nUPDATE: {$menu->post_name}";
         // only take action where specified

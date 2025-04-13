@@ -1,8 +1,8 @@
 <?php
 
-namespace MenuManager\Actions;
+namespace MenuManager\Task;
 
-class ActionResult {
+class TaskResult {
 
     private bool $success = true;
     private string $message = "";

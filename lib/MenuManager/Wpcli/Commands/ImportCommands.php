@@ -2,9 +2,9 @@
 
 namespace MenuManager\Wpcli\Commands;
 
-use MenuManager\Actions\ImportLoadAction;
-use MenuManager\Actions\ImportValidateAction;
 use MenuManager\Import\ImportValidator;
+use MenuManager\Task\LoadTask;
+use MenuManager\Task\ValidateTask;
 use WP_CLI;
 
 
@@ -32,7 +32,7 @@ class ImportCommands {
         }
 
         // load
-        $action = new ImportLoadAction();
+        $action = new LoadTask();
         $rs = $action->run( $path );
 
         // guard : err
@@ -65,7 +65,7 @@ class ImportCommands {
         $job_id = $args[0];
 
         // guard : job status
-        $action = new ImportValidateAction();
+        $action = new ValidateTask();
         $rs = $action->run( $job_id );
 
         // guard : err
