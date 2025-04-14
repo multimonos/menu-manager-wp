@@ -48,35 +48,40 @@ class CloneMenuTask {
             return TaskResult::failure( "Failed to create target ment '{$target_slug}'." );
         }
 
-        db::load()->getConnection()->transaction( function () use ( $src, $dst, $root ) {
+        try {
+            db::load()->getConnection()->transaction( function () use ( $src, $dst, $root ) {
 
-            // visit every node and save it
-            $cloneNode = function ( Node $node, $parent = null ) use ( &$cloneNode, $src, $dst ) {
-                $newNode = $node->replicate( ['id', '_lft', '_rgt', 'parent_id', 'depth'] );
-                $newNode->menu_id = $dst->ID;
-                $newNode->title = $dst->post_name . '--' . $node->title;
-                echo " " . $node->id;
+                // visit every node and save it
+                $cloneNode = function ( Node $node, $parent = null ) use ( &$cloneNode, $src, $dst ) {
+                    $newNode = $node->replicate( ['id', '_lft', '_rgt', 'parent_id', 'depth'] );
+                    $newNode->menu_id = $dst->ID;
+                    $newNode->title = $dst->post_name . '--' . $node->title;
+                    echo " " . $node->id;
 
-                if ( is_null( $parent ) ) { // root node
-                    $newNode->save();
-                    $newNode->refresh();
-                    $newNode->fixTree();
-                } else {
-                    $newNode = $parent->children()->create( $newNode->toArray() );
-                }
+                    if ( is_null( $parent ) ) { // root node
+                        $newNode->save();
+                        $newNode->refresh();
+                        $newNode->fixTree();
+                    } else {
+                        $newNode = $parent->children()->create( $newNode->toArray() );
+                    }
 
-                foreach ( $node->children as $child ) {
-                    $cloneNode( $child, $newNode );
-                }
+                    foreach ( $node->children as $child ) {
+                        $cloneNode( $child, $newNode );
+                    }
 
-            };
+                };
 
-            $cloneNode( $root );
+                $cloneNode( $root );
 
-        } );
+            } );
 
+        } catch (\Throwable $e) {
+            // delete the dst
+            MenuPost::delete( $dst->ID );
+            return TaskResult::failure( "Clone failed.  " . $e->getMessage() );
+        }
 
-        // maybe delete dst if an error ocurred
 
         // Ok.
         $queries = db::load()::connection()->getQueryLog();

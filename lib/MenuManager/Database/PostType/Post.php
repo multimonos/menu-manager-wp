@@ -55,4 +55,9 @@ class Post {
 
         return $id;
     }
+
+    public static function delete( $post_id, $force = true ): bool {
+        $rs = wp_delete_post( $post_id, $force );
+        return $rs instanceof \WP_Post;
+    }
 }
