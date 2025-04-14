@@ -183,15 +183,22 @@ test-clone:
 
 clone:
 	echo "cloning..." \
-	; wp db query "select count(*) as 'START' from wp_mm_node;" \
+	; echo "counts:" \
+	; wp db query "select count(*) as 'start.nodes' from wp_mm_node;" \
+	; wp db query "select count(*) as 'start.meta' from wp_mm_node_meta;" \
+	; echo "cleaning:" \
 	; wp db query "delete from wp_posts where post_name='$(CLONE_SLUG)';" \
 	; wp db query "delete from wp_posts where post_name='victoria';" \
-	; wp db query "select count(*) as 'CROWFOOT ONLY' from wp_mm_node;" \
+	; echo "cleaned:" \
+	; wp db query "select count(*) as 'clean.nodes' from wp_mm_node;" \
+	; wp db query "select count(*) as 'clean.meta' from wp_mm_node_meta;" \
 	; wp mm menu list \
 	; wp mm menu clone crowfoot $(CLONE_SLUG) \
-	; wp db query "select count(*) as 'AFTER' from wp_mm_node;" \
+	; echo "final counts:" \
+	; wp db query "select count(*) as 'final.nodes' from wp_mm_node;" \
+	; wp db query "select count(*) as 'finale.meta' from wp_mm_node_meta;" \
 	; wp mm menu list \
-	; wp mm view $(CLONE_SLUG) \
+	; wp mm view $(CLONE_SLUG) |tail \
 	; echo "Done."
 
 

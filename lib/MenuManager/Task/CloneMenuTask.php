@@ -49,31 +49,8 @@ class CloneMenuTask {
         }
 
         try {
-            db::load()->getConnection()->transaction( function () use ( $src, $dst, $root ) {
-
-                // visit every node and save it
-                $cloneNode = function ( Node $node, $parent = null ) use ( &$cloneNode, $src, $dst ) {
-                    $newNode = $node->replicate( ['id', '_lft', '_rgt', 'parent_id', 'depth'] );
-                    $newNode->menu_id = $dst->ID;
-                    $newNode->title = $dst->post_name . '--' . $node->title;
-                    echo " " . $node->id;
-
-                    if ( is_null( $parent ) ) { // root node
-                        $newNode->save();
-                        $newNode->refresh();
-                        $newNode->fixTree();
-                    } else {
-                        $newNode = $parent->children()->create( $newNode->toArray() );
-                    }
-
-                    foreach ( $node->children as $child ) {
-                        $cloneNode( $child, $newNode );
-                    }
-
-                };
-
-                $cloneNode( $root );
-
+            db::load()->getConnection()->transaction( function () use ( $root, $dst ) {
+                $this->cloneNode( $dst, $root );
             } );
 
         } catch (\Throwable $e) {
@@ -90,17 +67,33 @@ class CloneMenuTask {
         ] );
     }
 
-//    protected function visit( Node $node, callable $callback ): void {
-//        foreach ( $nodes as $node ) {
-//
-//            $callback( $node );
-//
-//            if ( $node->children->isNotEmpty() ) {
-//                foreach ( $node->children as $child ) {
-//                    $callback()
-//                }
-//                $this->visit( $node->children, $callback );
-//            }
-//        }
-//    }
+    protected function cloneNode( \WP_Post $menu, Node $node, Node $parent = null ) {
+        // Node
+        $newNode = $node->replicate( ['id', '_lft', '_rgt', 'parent_id', 'depth'] );
+        $newNode->menu_id = $menu->ID;
+        $newNode->title = $menu->post_name . '--' . $node->title;
+
+        echo " " . $node->id;
+
+        if ( is_null( $parent ) ) { // root node
+            $newNode->save();
+            $newNode->refresh();
+            $newNode->fixTree();
+        } else {
+            $newNode = $parent->children()->create( $newNode->toArray() );
+
+            // NodeMeta
+            if ( $node->meta->exists ) {
+                $newMeta = $node->meta->replicate( ['id'] );
+                $newMeta->node_id = $newNode->id;
+                $newMeta->save();
+            }
+
+        }
+
+        foreach ( $node->children as $child ) {
+            $this->cloneNode( $menu, $child, $newNode );
+        }
+    }
+
 }
