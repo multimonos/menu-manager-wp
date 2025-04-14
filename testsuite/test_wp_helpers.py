@@ -3,6 +3,7 @@ import time
 from mysql.connector import MySQLConnection, cursor
 from mysql.connector.cursor import MySQLCursorDict
 from wordpress import Config, Database, config_item, get_config
+from wpcli import plugin_activate, plugin_deactivate, table_count
 
 PLUGIN = "menu-manager-wp"
 
@@ -63,34 +64,23 @@ def test_db_cursor(db_cursor: MySQLCursorDict):
 def test_plugin_deactivate(db_cursor: MySQLCursorDict):
     """test plugin deactivation kills tables"""
 
-    # deactivate
-    subprocess.run(["wp", "plugin", "deactivate", PLUGIN], check=False)
-    rs = subprocess.run(
-        ["wp", "plugin", "status", PLUGIN], check=True, capture_output=True
-    )
-    assert "inactive" in rs.stdout.decode().lower()
+    rs = plugin_deactivate(PLUGIN)
+    assert "success" in rs.lower()
 
     # table count
     time.sleep(1)
-    db_cursor.execute("show tables like 'wp_mm_%';")
-    tables = db_cursor.fetchall()
-    assert len(tables) == 0
+    cnt = table_count(db_cursor)
+    assert cnt == 0
 
 
 def test_plugin_activate(db_cursor: MySQLCursorDict):
     """test plugin activation"""
     # active
-    subprocess.run(["wp", "plugin", "activate", PLUGIN], check=False)
-    rs = subprocess.run(
-        ["wp", "plugin", "status", PLUGIN], check=True, capture_output=True
-    )
-    output = rs.stdout.decode().lower()
-    assert "inactive" not in output
-    assert "active" in output
+    rs = plugin_activate(PLUGIN)
+    assert "success" in rs.lower()
 
     # table count
     time.sleep(1)
-    db_cursor.execute("show tables like 'wp_mm_%';")
-    tables = db_cursor.fetchall()
-    print(tables)
-    assert len(tables) > 0
+    cnt = table_count(db_cursor)
+    assert cnt > 0
+    assert cnt == 4
