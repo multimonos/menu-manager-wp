@@ -17,7 +17,7 @@ class CreateMenuTask {
         db::load()->getConnection()->transaction( function () use ( $menu_id, $items ) {
 
             // MENU
-            $menu = MenuPost::save( ['post_title' => $menu_id, 'post_name' => $menu_id] );
+            $menu = MenuPost::create( ['post_title' => $menu_id, 'post_name' => $menu_id] );
 
             if ( ! $menu instanceof \WP_Post ) {
                 return false;

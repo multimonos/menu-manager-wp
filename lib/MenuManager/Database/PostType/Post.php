@@ -41,7 +41,7 @@ class Post {
         return is_array( $posts ) ? $posts : [];
     }
 
-    public static function save( array $data ): mixed {
+    public static function create( array $data ): mixed {
         $ndata = array_merge( $data, [
             'post_type'   => static::POST_TYPE,
             'post_status' => 'publish',
