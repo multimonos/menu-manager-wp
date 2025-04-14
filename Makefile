@@ -43,23 +43,20 @@ delete-data:
 	wp db query "SET foreign_key_checks=0; truncate wp_mm_node_meta; truncate table wp_mm_node; truncate wp_mm_jobs; delete from wp_posts where post_type='menus'; SET foreign_key_checks=1;" \
 
 test:
-	clear; \
-	wp plugin deactivate menu-manager-wp; \
-	sleep 1; \
-	wp plugin activate menu-manager-wp; \
-	make delete-data; \
-	wp db check | grep "mm_"; \
-	wp db query 'select count(*) from wp_mm_impex;'; \
-	XDEBUG_SESSION=PHPSTORM wp mm import load ./data/valid_create.csv; \
-	wp db query 'select count(*) from wp_mm_impex;'; \
-	wp db check | grep "mm_"; \
-	wp mm menu list; \
-	wp mm menu get crowfoot; \
-	wp mm job list; \
-	wp mm job get 1; \
-	wp mm import validate 1; \
-	wp mm job run 1; \
-	wp mm view crowfoot;
+	clear \
+	; wp plugin deactivate menu-manager-wp \
+	; sleep 1 \
+	; wp plugin activate menu-manager-wp \
+	; make delete-data \
+	; wp db check | grep "mm_" \
+	; wp db query 'select count(*) from wp_mm_impex' \
+	; wp mm import load ./data/valid_create.csv \
+	; wp db query 'select count(*) from wp_mm_impex' \
+	; wp db check | grep "mm_" \
+	; wp mm menu list \
+	; wp mm menu get crowfoot \
+	; wp mm job run 1 \
+	; wp mm view crowfoot
 
 test-impex-1:
 	clear \
@@ -169,6 +166,34 @@ test-delete-option-group:
 	; make test-modify-after \
 	; wp mm node get 219 \
 	; wp mm node get 220
+
+CLONE_SLUG=foobar
+test-clone:
+	make test \
+	; echo "error cases..." \
+	; wp mm menu clone crowfoot crowfoot \
+	; wp mm menu clone crowfoot victoria \
+	; wp mm menu clone crowfoot 31662 \
+	; wp mm menu clone foobar bamzizz \
+	; echo "cloning ..." \
+	; wp mm menu clone crowfoot $(CLONE_SLUG) \
+	; wp mm menu list \
+	; wp mm view $(CLONE_SLUG) \
+	; echo "Done."
+
+clone:
+	echo "cloning..." \
+	; wp db query "select count(*) as 'START' from wp_mm_node;" \
+	; wp db query "delete from wp_posts where post_name='$(CLONE_SLUG)';" \
+	; wp db query "delete from wp_posts where post_name='victoria';" \
+	; wp db query "select count(*) as 'CROWFOOT ONLY' from wp_mm_node;" \
+	; wp mm menu list \
+	; wp mm menu clone crowfoot $(CLONE_SLUG) \
+	; wp db query "select count(*) as 'AFTER' from wp_mm_node;" \
+	; wp mm menu list \
+	; wp mm view $(CLONE_SLUG) \
+	; echo "Done."
+
 
 test-setvar:
 	clear \

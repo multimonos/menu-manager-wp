@@ -4,6 +4,7 @@ namespace MenuManager\Wpcli\Commands;
 
 
 use MenuManager\Database\PostType\MenuPost;
+use MenuManager\Task\CloneMenuTask;
 use WP_CLI;
 
 class MenuCommands {
@@ -18,7 +19,7 @@ class MenuCommands {
      *
      * ## EXAMPLES
      *
-     *      wp mm jobs list
+     *      wp mm menu list
      *
      * @when after_wp_load
      */
@@ -33,12 +34,12 @@ class MenuCommands {
      * ## OPTIONS
      *
      * <id>
-     *  : The id or slug of the menu ot get.
+     * : The id or slug of the menu ot get.
      *
      * ## EXAMPLES
      *
-     *      wp mm menus get 42
-     *      wp mm menus get foobar
+     *      wp mm menu get 42
+     *      wp mm menu get foobar
      *
      * @when after_wp_load
      */
@@ -57,5 +58,38 @@ class MenuCommands {
             }
         }
     }
+
+    /**
+     * Get details about a menu.
+     *
+     * ## OPTIONS
+     *
+     * <source_slug>
+     * : The id or slug of the source menu.
+     *
+     * <target_slug>
+     * : The slug of new menu.
+     *
+     * ## EXAMPLES
+     *
+     *      wp mm menu clone 42 foobar
+     *      wp mm menu clone bam foobar
+     *
+     * @when after_wp_load
+     */
+    public function clone( $args, $assoc_args ) {
+        list( $src, $dst ) = $args;
+
+        $task = new CloneMenuTask();
+        $rs = $task->run( $src, $dst );
+
+        if ( ! $rs->ok() ) {
+            WP_CLI::error( $rs->getMessage() );
+        }
+
+        array_map( fn( $x ) => WP_CLI::line( $x ), $rs->getData() );
+        WP_CLI::success( $rs->getMessage() );
+    }
+
 
 }
