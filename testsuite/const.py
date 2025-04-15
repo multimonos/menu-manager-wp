@@ -1,1 +1,7 @@
+DATAPATH = "./data"
 PLUGIN_NAME = "menu-manager-wp"
+A = f"{DATAPATH}/a.csv"
+B = f"{DATAPATH}/b.csv"
+AB = f"{DATAPATH}/ab.csv"
+A_SLUG = "aaa-menu"
+B_SLUG = "bbb-menu"

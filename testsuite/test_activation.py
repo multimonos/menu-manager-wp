@@ -1,8 +1,10 @@
 import time
 from mysql.connector.cursor import MySQLCursorDict
+import pytest
 from plugin import plugin_activate, plugin_deactivate, table_count
 
 
+@pytest.mark.serial
 def test_plugin_deactivate(cursor: MySQLCursorDict):
     """test plugin deactivation kills tables"""
 
@@ -15,6 +17,7 @@ def test_plugin_deactivate(cursor: MySQLCursorDict):
     assert cnt == 0
 
 
+@pytest.mark.serial
 def test_plugin_activate(cursor: MySQLCursorDict):
     """test plugin activation"""
     # active
