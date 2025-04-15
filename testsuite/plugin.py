@@ -1,18 +1,21 @@
 import subprocess
 
+
 from mysql.connector.cursor import MySQLCursorDict
 
+from const import PLUGIN_NAME
 
-def plugin_activate(name: str) -> str:
+
+def plugin_activate() -> str:
     rs = subprocess.run(
-        ["wp", "plugin", "activate", name], check=False, capture_output=True
+        ["wp", "plugin", "activate", PLUGIN_NAME], check=False, capture_output=True
     )
     return rs.stdout.decode()
 
 
-def plugin_deactivate(name: str) -> str:
+def plugin_deactivate() -> str:
     rs = subprocess.run(
-        ["wp", "plugin", "deactivate", name], check=False, capture_output=True
+        ["wp", "plugin", "deactivate", PLUGIN_NAME], check=False, capture_output=True
     )
     return rs.stdout.decode()
 
