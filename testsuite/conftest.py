@@ -23,7 +23,7 @@ def db_config() -> Database:
     return get_dbconfig()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def conn(db_config: Database) -> Generator[MySQLConnection, None, None]:
     """Create a database connection using WP-CLI retrieved config."""
     max_retries = 5
@@ -32,6 +32,7 @@ def conn(db_config: Database) -> Generator[MySQLConnection, None, None]:
     for attempt in range(max_retries):
         try:
             conn = mysql.connector.connect(**db_config)
+            conn.autocommit = True
             yield conn
             conn.close()
             return
@@ -42,7 +43,7 @@ def conn(db_config: Database) -> Generator[MySQLConnection, None, None]:
                 raise
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def cursor(conn: MySQLConnection) -> Generator[MySQLCursorDict, None, None]:
     """Create a cursor from the database connection."""
     cursor: MySQLCursorDict = conn.cursor(dictionary=True)

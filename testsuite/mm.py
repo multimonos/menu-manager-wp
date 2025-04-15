@@ -7,6 +7,8 @@ from pathlib import Path
 import os
 import json
 
+from const import PLUGIN_NAME
+
 def get_wp_config_value(key):
     """Retrieve a value from wp-config.php using WP-CLI."""
     try:
@@ -28,7 +30,6 @@ def get_db_config():
         "database": get_wp_config_value("DB_NAME")
     }
 
-PLUGIN_NAME = "menu-manager-wp"
 TEST_DATA_DIR = Path("./data")
 TEST_CSV = TEST_DATA_DIR / "valid_create.csv"
 
