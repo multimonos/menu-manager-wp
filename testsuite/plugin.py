@@ -1,11 +1,20 @@
 from pathlib import Path
 from subprocess import run, CompletedProcess
 import json
+import time
 from typing import Any, cast
 from model import Job, Menu
 from mysql.connector.cursor import MySQLCursorDict
 
-from const import MENU_TYPE, PLUGIN_NAME
+from const import (
+    MENU_TYPE,
+    PLUGIN_NAME,
+    TBL_IMPEX,
+    TBL_JOBS,
+    TBL_NODEMETA,
+    TBL_NODES,
+    TBL_POSTS,
+)
 
 
 def csv_exists(filepath: str) -> bool:
@@ -17,6 +26,7 @@ def sql_count(cursor: MySQLCursorDict, sql: str) -> int:
     sql_print(sql)
     cursor.execute(sql)
     row: dict[str, Any] | None = cursor.fetchone()
+    # print(row)
     if row is None:
         return -1
     val = row.get("cnt")
@@ -29,7 +39,9 @@ def sql_print(sql: str) -> None:
 
 def wpcli(*args: str) -> CompletedProcess[str]:
     rs = run(["wp", *args], check=False, capture_output=True, text=True)
-    print(f"CLI  args={rs.args}, returncode={rs.returncode}, stderr={rs.stderr}")
+    print(
+        f"CLI  call='{' '.join(rs.args)}', returncode={rs.returncode}, stderr={rs.stderr}"
+    )
     return rs
 
 
@@ -41,10 +53,30 @@ def task_success(rs: CompletedProcess[str]) -> bool:
     return rs.returncode == 0 and "success" in rs.stdout.lower()
 
 
+"""plugin fns"""
+
+
+def plugin_reboot(cursor) -> None:
+    plugin_deactivate()
+    plugin_activate()
+    plugin_clean(cursor)
+
+
 def plugin_clean(cursor: MySQLCursorDict) -> None:
-    sql = f"delete from wp_posts where post_type = '{MENU_TYPE}';"
-    sql_print(sql)
-    cursor.execute(sql)
+    stmts = [
+        f"set foreign_key_checks=0;",
+        f"delete from {TBL_POSTS} where post_type = '{MENU_TYPE}';",
+        f"truncate {TBL_NODEMETA};",
+        f"truncate {TBL_JOBS};",
+        f"truncate {TBL_IMPEX};",
+        f"truncate {TBL_NODES};",
+        f"set foreign_key_checks=1;",
+    ]
+    for sql in stmts:
+        sql_print(sql)
+        cursor.execute(sql)
+
+    time.sleep(1)
 
 
 def plugin_activate() -> str:
@@ -57,6 +89,9 @@ def plugin_deactivate() -> str:
     return rs.stdout
 
 
+"""table fns"""
+
+
 def table_count(cursor: MySQLCursorDict) -> int:
     sql = "show tables like 'wp_mm_%';"
     print(sql)
@@ -65,13 +100,26 @@ def table_count(cursor: MySQLCursorDict) -> int:
     return len(rows)
 
 
+def tables_are_empty(cursor) -> bool:
+    return (
+        menu_count(cursor) == 0
+        and job_count(cursor) == 0
+        and impex_count(cursor) == 0
+        and node_count(cursor) == 0
+        and nodemeta_count(cursor) == 0
+    )
+
+
+"""menu fns"""
+
+
 def menu_count(cursor: MySQLCursorDict) -> int:
-    sql = f"select count(*) as cnt from wp_posts where post_type = '{MENU_TYPE}';"
+    sql = f"select count(*) as cnt from {TBL_POSTS} where post_type = '{MENU_TYPE}';"
     return sql_count(cursor, sql)
 
 
 def menu_exists(cursor: MySQLCursorDict, name: str) -> bool:
-    sql = f"select count(*) as cnt from wp_posts where post_type = '{MENU_TYPE}' and post_name='{name}';"
+    sql = f"select count(*) as cnt from {TBL_POSTS} where post_type = '{MENU_TYPE}' and post_name='{name}';"
     return sql_count(cursor, sql) == 1
 
 
@@ -95,20 +143,40 @@ def menu_get(name: str) -> Menu | None:
         return None
 
 
+"""node fns"""
+
+
 def node_count(cursor: MySQLCursorDict) -> int:
-    return sql_count(cursor, "select count(*) as cnt from wp_mm_node;")
+    return sql_count(cursor, f"select count(*) as cnt from {TBL_NODES};")
+
+
+"""node meta fns"""
+
+
+def nodemeta_count(cursor: MySQLCursorDict) -> int:
+    return sql_count(cursor, f"select count(*) as cnt from {TBL_NODEMETA};")
+
+
+"""impex fns"""
 
 
 def impex_count(cursor: MySQLCursorDict) -> int:
-    return sql_count(cursor, "select count(*) as cnt from wp_mm_impex;")
+    return sql_count(cursor, f"select count(*) as cnt from {TBL_IMPEX};")
 
 
 def impex_load(filepath: str) -> CompletedProcess[str]:
     return mmcli("import", "load", filepath)
 
 
+"""job fns"""
+
+
+def job_count(cursor: MySQLCursorDict) -> int:
+    return sql_count(cursor, f"select count(*) as cnt from {TBL_JOBS};")
+
+
 def job_exists(cursor: MySQLCursorDict, id: int) -> bool:
-    sql = f"select count(*) as cnt from wp_mm_jobs where id='{id}';"
+    sql = f"select count(*) as cnt from {TBL_JOBS} where id='{id}';"
     return sql_count(cursor, sql) == 1
 
 
