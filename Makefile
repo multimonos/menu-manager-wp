@@ -42,6 +42,7 @@ deactivate:
 delete-data:
 	wp db query "SET foreign_key_checks=0; truncate wp_mm_node_meta; truncate table wp_mm_node; truncate wp_mm_jobs; delete from wp_posts where post_type='menus'; SET foreign_key_checks=1;" \
 
+# load
 test:
 	clear \
 	; wp plugin deactivate menu-manager-wp \

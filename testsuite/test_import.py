@@ -7,7 +7,9 @@ from plugin import (
     impex_count,
     impex_load,
     job_exists,
+    job_run,
     menu_exists,
+    node_count,
     plugin_reboot,
     tables_are_empty,
     cli_success,
@@ -15,7 +17,7 @@ from plugin import (
 
 
 @pytest.mark.serial
-def test_load(cursor: MySQLCursorDict):
+def test_import(cursor: MySQLCursorDict):
     assert csv_exists(AB_CSV)
 
     # reset
@@ -30,5 +32,13 @@ def test_load(cursor: MySQLCursorDict):
     assert menu_exists(cursor, A_SLUG) == False
     assert menu_exists(cursor, B_SLUG) == False
 
-    # job
+    # import data
     assert job_exists(cursor, 1)
+    assert cli_success(job_run(1))
+
+    # menus should exist
+    assert menu_exists(cursor, A_SLUG)
+    assert menu_exists(cursor, B_SLUG)
+
+    # nodes should exist + root, 3 pages for each menu
+    assert node_count(cursor) == AB_NODECOUNT

@@ -3,7 +3,7 @@ from subprocess import run, CompletedProcess
 import json
 import time
 from typing import Any, cast
-from model import Job, Menu
+from model import Job, Menu, Node
 from mysql.connector.cursor import MySQLCursorDict
 
 from const import (
@@ -37,6 +37,9 @@ def sql_print(sql: str) -> None:
     print(f"SQL  {sql}")
 
 
+"""cli"""
+
+
 def wpcli(*args: str) -> CompletedProcess[str]:
     rs = run(["wp", *args], check=False, capture_output=True, text=True)
     print(
@@ -49,7 +52,7 @@ def mmcli(*args: str) -> CompletedProcess[str]:
     return wpcli("mm", *args)
 
 
-def task_success(rs: CompletedProcess[str]) -> bool:
+def cli_success(rs: CompletedProcess[str]) -> bool:
     return rs.returncode == 0 and "success" in rs.stdout.lower()
 
 
@@ -79,14 +82,12 @@ def plugin_clean(cursor: MySQLCursorDict) -> None:
     time.sleep(1)
 
 
-def plugin_activate() -> str:
-    rs = wpcli("plugin", "activate", PLUGIN_NAME)
-    return rs.stdout
+def plugin_activate() -> CompletedProcess[str]:
+    return wpcli("plugin", "activate", PLUGIN_NAME)
 
 
-def plugin_deactivate() -> str:
-    rs = wpcli("plugin", "deactivate", PLUGIN_NAME)
-    return rs.stdout
+def plugin_deactivate() -> CompletedProcess[str]:
+    return wpcli("plugin", "deactivate", PLUGIN_NAME)
 
 
 """table fns"""
@@ -123,6 +124,10 @@ def menu_exists(cursor: MySQLCursorDict, name: str) -> bool:
     return sql_count(cursor, sql) == 1
 
 
+def menu_clone(menu_id_or_slug: str, target: str) -> CompletedProcess[str]:
+    return mmcli("menu", "clone", menu_id_or_slug, target)
+
+
 def menu_get(name: str) -> Menu | None:
     rs = mmcli("menu", "get", name)
 
@@ -131,14 +136,8 @@ def menu_get(name: str) -> Menu | None:
 
     try:
         raw: dict[str, str] = json.loads(rs.stdout.strip())
-        print(raw)
-
-        if isinstance(raw, dict):
-            o = cast(Menu, raw)
-            print(o)
-            return o
-
-        return None
+        o = cast(Menu, raw)
+        return o
     except:
         return None
 
@@ -146,8 +145,38 @@ def menu_get(name: str) -> Menu | None:
 """node fns"""
 
 
+def is_node(x: Node | None) -> bool:
+    return (
+        x is not None
+        and isinstance(x, dict)
+        and isinstance(x.get("id"), int)
+        and isinstance(x.get("menu_id"), int)
+        and isinstance(x.get("uuid"), str)
+        and isinstance(x.get("meta"), dict)
+    )
+
+
 def node_count(cursor: MySQLCursorDict) -> int:
     return sql_count(cursor, f"select count(*) as cnt from {TBL_NODES};")
+
+
+def node_exists(cursor: MySQLCursorDict, id: int) -> bool:
+    sql = f"select count(*) as cnt from {TBL_NODES} where id = {id};"
+    return sql_count(cursor, sql) == 1
+
+
+def node_get(id: int) -> Node | None:
+    rs = mmcli("node", "get", str(id))
+
+    if rs.returncode != 0:
+        return None
+
+    try:
+        raw: dict[str, str] = json.loads(rs.stdout.strip())
+        o = cast(Node, raw)
+        return o
+    except:
+        return None
 
 
 """node meta fns"""
@@ -187,16 +216,10 @@ def job_get(id: int) -> Job | None:
         return None
 
     try:
-        o: dict[str, str] = json.loads(rs.stdout.strip())
+        raw: dict[str, str] = json.loads(rs.stdout.strip())
+        o = cast(Job, raw)
+        return o
 
-        raw = o.get("Job")
-
-        if isinstance(raw, dict):
-            print(o)
-            o = cast(Job, raw)
-            return o
-
-        return None
     except:
         return None
 

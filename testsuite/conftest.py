@@ -2,6 +2,7 @@ from mysql.connector.cursor import MySQLCursorDict
 import pytest
 import mysql.connector
 from mysql.connector.connection import MySQLConnection
+from const import PATCH_ID
 from wordpress import Config, Database, get_config, get_dbconfig
 from collections.abc import Generator
 
