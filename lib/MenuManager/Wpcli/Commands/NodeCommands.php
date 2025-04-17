@@ -88,11 +88,9 @@ class NodeCommands {
             WP_CLI::error( "Node not found id=" . $id );
         }
 
-        // ok
-        echo json_encode( [
-            "Node"     => $node->toArray(),
-            "NodeMeta" => $node->meta->toArray(),
-        ] );
+        // jsohn
+        $node->load( 'meta' );
+        echo $node->toJson();
     }
 
 
@@ -121,6 +119,7 @@ class NodeCommands {
         if ( ! $node->delete() ) {
             WP_CLI::error( "Failed to delete Node id=" . $id );
         }
+
         WP_CLI::success( 'Node deleted id=' . $id );
     }
 }

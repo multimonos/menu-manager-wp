@@ -91,8 +91,7 @@ class JobCommands {
             WP_CLI::error( "Job not found id=" . $id );
         }
 
-        // ok
-        echo json_encode( ['Job' => $job->toArray()] );
+        echo $job->toJson();
     }
 
 

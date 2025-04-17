@@ -47,12 +47,12 @@ class MenuCommands {
         $id = $args[0];
 
         if ( is_numeric( $id ) ) {
-            WP_CLI::runcommand( "post get {$id} --format=table" );
+            WP_CLI::runcommand( "post get {$id} --format=json" );
         } else {
             $post = MenuPost::find( $id );
 
             if ( $post instanceof \WP_Post ) {
-                WP_CLI::runcommand( "post get {$post->ID} --format=table" );
+                WP_CLI::runcommand( "post get {$post->ID} --format=json" );
             } else {
                 WP_CLI::error( "Menu not found '$id'." );
             }
