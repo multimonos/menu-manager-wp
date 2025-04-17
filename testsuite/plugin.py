@@ -22,6 +22,17 @@ def csv_exists(filepath: str) -> bool:
     return path.exists()
 
 
+def csv_linecount(filepath: str) -> int:
+    cnt = -1
+    path = Path(filepath)
+    if path.exists():
+        with open(path, "r") as f:
+            doc = f.read()
+            cnt = len(doc.splitlines())
+            return cnt
+    return cnt
+
+
 def sql_count(cursor: MySQLCursorDict, sql: str) -> int:
     sql_print(sql)
     cursor.execute(sql)
@@ -195,6 +206,10 @@ def impex_count(cursor: MySQLCursorDict) -> int:
 
 def impex_load(filepath: str) -> CompletedProcess[str]:
     return mmcli("import", "load", filepath)
+
+
+def impex_export(menu: str, target: str) -> CompletedProcess[str]:
+    return mmcli("export", menu, target)
 
 
 """job fns"""

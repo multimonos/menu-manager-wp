@@ -43,8 +43,7 @@ setup-core-csv:
 	; cp $(SCRAPED_DATA)/merged_vernon.csv $(B_CSV) \
 	; sed -i '' 's/crowfoot/aaa-menu/g' $(A_CSV) \
 	; sed -i '' 's/vernon/bbb-menu/g' $(B_CSV) \
-	; cat $(DATAPATH)/a.csv > $(AB_CSV) \
-	; cat $(DATAPATH)/b.csv >> $(AB_CSV) \
+	; (head -n 1 $(A_CSV) && tail -n +2 $(A_CSV) && tail -n +2 $(B_CSV) >> $(AB_CSV) \
 	; echo "Done."
 
 setup-patch-update-csv:
