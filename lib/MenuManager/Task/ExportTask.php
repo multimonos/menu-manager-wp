@@ -22,7 +22,7 @@ class ExportTask {
         $pages = Node::findPageNames( $menu );
 
         // Collect rows ... write csv.
-        echo "\n";
+//        echo "\n";
 
         // writer
         $writer = Writer::createFromPath( $path, 'w' );
@@ -52,13 +52,15 @@ class ExportTask {
 
         $queries = db::load()::connection()->getQueryLog();
 
-        echo "\n" . count( $queries ) . ' queries';
-        echo "\nsource.count: " . $expected_count;
-        echo "\nexport.count: " . count( $rows );
-        echo "\n";
+//        echo "\n" . count( $queries ) . ' queries';
+//        echo "\nsource.count: " . $expected_count;
+//        echo "\nexport.count: " . count( $rows );
+//        echo "\n";
 
 
-        return TaskResult::success( "Exported menu '" . $menu->post_name . "' to " . $path );
+        return TaskResult::success( "Exported menu '" . $menu->post_name . "' to " . $path, [
+            'queries' => count( $queries ) . ' queries',
+        ] );
     }
 
     protected function visit( Collection $nodes, callable $callback ): array {

@@ -37,11 +37,11 @@ class RootCommands {
             WP_CLI::error( "Menu not found" );
         }
 
-        // output path
+        // target path
         $dst = $args[1] ?? null;
         $dst = empty( $dst )
             ? "menu-export_{$menu->post_name}_{$menu->ID}__" . date( 'Ymd\THis' ) . '.csv'
-            : sanitize_file_name( $dst );
+            : $dst;
 
         // action
         $task = new ExportTask();
