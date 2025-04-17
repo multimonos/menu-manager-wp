@@ -9,7 +9,6 @@ def test_plugin_deactivate(cursor: MySQLCursorDict):
     """test plugin deactivation kills tables"""
 
     assert cli_success(plugin_deactivate())
-    time.sleep(1)
     assert table_count(cursor) == 0
 
 
