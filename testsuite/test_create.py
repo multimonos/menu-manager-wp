@@ -7,7 +7,6 @@ from const import (
     A_CSV,
     A_NODECOUNT,
     AB_CSV,
-    AB_NODECOUNT,
     B_COUNT,
     B_CSV,
     B_NODECOUNT,

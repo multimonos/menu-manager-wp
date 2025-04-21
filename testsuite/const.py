@@ -22,10 +22,8 @@ B_SLUG = "bbb-menu"
 C_SLUG = "ccc-menu"
 A_COUNT = 233
 B_COUNT = 224
-AB_COUNT = A_COUNT + B_COUNT
 A_NODECOUNT = A_COUNT + 4  # items count + 3 pages and root node
 B_NODECOUNT = B_COUNT + 4  # items count + 3 pages and root node
-AB_NODECOUNT = A_NODECOUNT + B_NODECOUNT
 
 # patch update
 PATCH_ID = 230

@@ -6,9 +6,8 @@ from const import (
     A_COUNT,
     A_CSV,
     A_SLUG,
-    AB_COUNT,
     AB_CSV,
-    AB_NODECOUNT,
+    B_COUNT,
     B_SLUG,
     EXPORT_CSV,
 )
@@ -39,7 +38,7 @@ def test_export(cursor: MySQLCursorDict):
 
     # load success
     assert cli_success(impex_load(AB_CSV))
-    assert impex_count(cursor) == AB_COUNT
+    assert impex_count(cursor) == A_COUNT + B_COUNT
 
     # menus should not exist
     assert menu_exists(cursor, A_SLUG) == False
@@ -52,7 +51,7 @@ def test_export(cursor: MySQLCursorDict):
     # menus should exist
     assert menu_exists(cursor, A_SLUG)
     assert menu_exists(cursor, B_SLUG)
-    assert node_count(cursor) == AB_NODECOUNT
+    assert node_count(cursor) == A_COUNT + B_COUNT
 
     # export
     path = Path(EXPORT_CSV)
