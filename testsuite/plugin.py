@@ -204,6 +204,11 @@ def impex_count(cursor: MySQLCursorDict) -> int:
     return sql_count(cursor, f"select count(*) as cnt from {TBL_IMPEX};")
 
 
+def impex_menu_count(cursor: MySQLCursorDict, menu_id: str) -> int:
+    sql = f"select count(*) as cnt from {TBL_IMPEX} where menu='{menu_id}';"
+    return sql_count(cursor, sql)
+
+
 def impex_load(filepath: str) -> CompletedProcess[str]:
     return mmcli("import", "load", filepath)
 

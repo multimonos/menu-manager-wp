@@ -14,18 +14,18 @@ TBL_NODEMETA = "wp_mm_node_meta"
 # - counts are item count not line count
 #
 A_CSV = f"{DATAPATH}/a.csv"
-A_COUNT = 233
-A_NODECOUNT = A_COUNT + 4  # items count + 3 pages and root node
-A_SLUG = "aaa-menu"
 B_CSV = f"{DATAPATH}/b.csv"
-B_COUNT = 224
-B_NODECOUNT = B_COUNT + 4  # items count + 3 pages and root node
+AB_CSV = f"{DATAPATH}/ab.csv"
+EXPORT_CSV = f"{DATAPATH}/export.csv"
+A_SLUG = "aaa-menu"
 B_SLUG = "bbb-menu"
 C_SLUG = "ccc-menu"
-AB_CSV = f"{DATAPATH}/ab.csv"
+A_COUNT = 233
+B_COUNT = 224
 AB_COUNT = A_COUNT + B_COUNT
+A_NODECOUNT = A_COUNT + 4  # items count + 3 pages and root node
+B_NODECOUNT = B_COUNT + 4  # items count + 3 pages and root node
 AB_NODECOUNT = A_NODECOUNT + B_NODECOUNT
-EXPORT_CSV = f"{DATAPATH}/export.csv"
 
 # patch update
 PATCH_ID = 230
