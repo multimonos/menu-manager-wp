@@ -42,6 +42,7 @@ class ExportNodeFactory {
             'menu'           => $menu->post_name,
             'page'           => $page,
             'uuid'           => $node->uuid,
+            'parent_id'      => $node->parent_id,
             'item_id'        => $node->id,
             'type'           => NodeType::from( $node->type )->value, // valid or throw
             'title'          => $node->title,
@@ -63,6 +64,7 @@ class ExportNodeFactory {
             'menu'           => $menu->post_name,
             'page'           => $page,
             'uuid'           => $node->uuid,
+            'parent_id'      => $node->parent_id,
             'item_id'        => $node->id,
             'type'           => NodeType::from( $node->type )->value, // valid or throw
             'title'          => $node->title,

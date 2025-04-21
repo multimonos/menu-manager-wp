@@ -103,7 +103,7 @@ class Node extends Model {
     public static function findPageNames( \WP_Post $menu ): Collection {
         $root = self::findRootNode( $menu );
         return is_null( $root )
-            ? []
+            ? new Collection()
             : $root->children->pluck( 'title' )->map( fn( $x ) => mb_strtolower( $x ) );
     }
 

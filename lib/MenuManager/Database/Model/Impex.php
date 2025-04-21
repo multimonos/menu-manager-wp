@@ -53,6 +53,7 @@ class Impex extends Model {
         'menu',
         'page',
         'uuid',
+        'parent_id',
         'type',
         'item_id',
         'title',
@@ -85,6 +86,7 @@ class Impex extends Model {
             $table->string( 'menu', 32 );
             $table->string( 'page', 32 );
             $table->string( 'uuid', 64 )->nullable();
+            $table->bigInteger( 'parent_id' )->unsigned()->nullable();
             $table->string( 'type', 32 ); // @todo should this be enum?
             $table->bigInteger( 'item_id' )->nullable();
             $table->string( 'title' )->nullable();
