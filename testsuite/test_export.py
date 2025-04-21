@@ -5,9 +5,11 @@ import pytest
 from const import (
     A_COUNT,
     A_CSV,
+    A_NODECOUNT,
     A_SLUG,
     AB_CSV,
     B_COUNT,
+    B_NODECOUNT,
     B_SLUG,
     EXPORT_CSV,
 )
@@ -17,6 +19,7 @@ from plugin import (
     impex_count,
     impex_export,
     impex_load,
+    impex_menu_count,
     job_exists,
     job_run,
     menu_exists,
@@ -39,6 +42,7 @@ def test_export(cursor: MySQLCursorDict):
     # load success
     assert cli_success(impex_load(AB_CSV))
     assert impex_count(cursor) == A_COUNT + B_COUNT
+    assert impex_menu_count(cursor, A_SLUG) == A_COUNT
 
     # menus should not exist
     assert menu_exists(cursor, A_SLUG) == False
@@ -51,7 +55,7 @@ def test_export(cursor: MySQLCursorDict):
     # menus should exist
     assert menu_exists(cursor, A_SLUG)
     assert menu_exists(cursor, B_SLUG)
-    assert node_count(cursor) == A_COUNT + B_COUNT
+    assert node_count(cursor) == A_NODECOUNT + B_NODECOUNT
 
     # export
     path = Path(EXPORT_CSV)
