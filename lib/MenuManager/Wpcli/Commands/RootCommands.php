@@ -90,9 +90,11 @@ class RootCommands {
         }
 
         // tree
-        $tree = empty( $page )
-            ? Node::findRootTree( $menu )
-            : Node::findPageTree( $menu, $page );
+        $root = empty( $page )
+            ? Node::findRootNode( $menu )
+            : Node::findPageNode( $menu, $page );
+
+        $tree = Node::getSortedMenu( $menu, $root );
 
         if ( ! $tree || $tree->count() === 0 ) {
             WP_CLI::error( "Menu not found or is empty '" . trim( $id . ' ' . $page ) . "'." );

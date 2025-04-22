@@ -25,10 +25,10 @@ class ExportNodeFactory {
         ];
 
 
-        if ( in_array( NodeType::tryFrom( $node->type ), $simple_types ) ) {
+        if ( in_array( $node->type, $simple_types ) ) {
             return self::createMenuitemRow( $menu, $page, $node );
 
-        } elseif ( Impex::isCategoryType( $node->type ) ) {
+        } elseif ( Impex::isCategoryType( $node->type->value ) ) {
             return self::createCategoryRow( $menu, $page, $node );
         }
 
@@ -43,8 +43,9 @@ class ExportNodeFactory {
             'page'           => $page,
             'uuid'           => $node->uuid,
             'parent_id'      => $node->parent_id,
+            'sort_order'     => $node->sort_order,
             'item_id'        => $node->id,
-            'type'           => NodeType::from( $node->type )->value, // valid or throw
+            'type'           => $node->type->value, // valid or throw
             'title'          => $node->title,
             'prices'         => (string)$node->meta->prices,
             'image_ids'      => '',
@@ -65,8 +66,9 @@ class ExportNodeFactory {
             'page'           => $page,
             'uuid'           => $node->uuid,
             'parent_id'      => $node->parent_id,
+            'sort_order'     => $node->sort_order,
             'item_id'        => $node->id,
-            'type'           => NodeType::from( $node->type )->value, // valid or throw
+            'type'           => $node->type->value, // valid or throw
             'title'          => $node->title,
             'prices'         => (string)$node->meta->prices,
             'image_ids'      => (string)$node->meta->image_ids,

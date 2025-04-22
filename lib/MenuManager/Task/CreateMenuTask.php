@@ -7,14 +7,17 @@ use MenuManager\Database\Factory\ImportNodeFactory;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\PostType\MenuPost;
 use MenuManager\Logger;
+use MenuManager\Utils\NodeSortOrderManager;
 use MenuManager\Vendor\Illuminate\Support\Collection;
 
-class CreateMenuTask {
 
+class CreateMenuTask {
 
     public function run( $menu_id, Collection $items ): bool {
 
         db::load()->getConnection()->transaction( function () use ( $menu_id, $items ) {
+
+            $sorter = new NodeSortOrderManager();
 
             // MENU
             $menu = MenuPost::create( ['post_title' => $menu_id, 'post_name' => $menu_id] );
@@ -30,10 +33,11 @@ class CreateMenuTask {
             // PAGE
             $pages = $items->groupBy( 'page' );
 
-            $pages->each( function ( Collection $rows, string $page_slug ) use ( $menu, $root ) {
+            $pages->each( function ( Collection $rows, string $page_slug ) use ( $sorter, $menu, $root ) {
 
                 // PAGE
                 $page = ImportNodeFactory::createPageNode( $menu, $root, $page_slug );
+                $sorter->setSort( $page )->save();
 
                 // ALL ITEMS
                 $level = 0;
@@ -57,6 +61,7 @@ class CreateMenuTask {
                         // guard : parent must exist
                         if ( $parent ) {
                             $node->saveWithParent( $parent );
+                            $sorter->setSort( $node )->save();
                             $root->fixTree();
 
                             // set parent for this level
@@ -74,6 +79,7 @@ class CreateMenuTask {
 
                         if ( $parent ) {
                             $group->saveWithParent( $parent );
+                            $sorter->setSort( $group )->save();
                             $root->fixTree();
 
                             // OPTIONS,ADDONS
@@ -81,6 +87,7 @@ class CreateMenuTask {
 
                             while ( $cnt < $rows->count() && Impex::isGroupItemType( $rows[$cnt]->type ) ) {
                                 $item = ImportNodeFactory::createMenuitemNode( $menu, $rows[$cnt], $group );
+                                $sorter->setSort( $item )->save();
                                 $cnt++;
                             }
                         }
@@ -93,6 +100,7 @@ class CreateMenuTask {
 
                         if ( $parent ) {
                             $item = ImportNodeFactory::createMenuitemNode( $menu, $row, $parent );
+                            $sorter->setSort( $item )->save();
                         }
                         $cnt++;
 

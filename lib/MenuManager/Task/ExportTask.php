@@ -14,34 +14,39 @@ class ExportTask {
 
     public function run( \WP_Post $menu, string $path ): TaskResult {
 
-        db::load();
         db::load()::connection()->enableQueryLog();
 
         // PAGES
         $expected_count = Node::countForMenu( $menu );
-        $pages = Node::findPageNames( $menu );
+        $page_names = Node::findPageNames( $menu );
 
         // Collect rows ... write csv.
-//        echo "\n";
-
-        // writer
         $writer = Writer::createFromPath( $path, 'w' );
-//        $writer->setOutputBOM( Writer::BOM_UTF8 ); // Add BOM for UTF-8
+
+        // NOTE: User's must import the csv instead of just "opening" the csv, so, that they can choose the UTF8 encoding.
         $writer->setOutputBOM( Bom::Utf8 );
-//        $writer->setOutputBOM( Bom::Utf16Le );
-//        $writer->setEnclosure( '"' );
+
+        // Writer config
+        $writer->setDelimiter( ',' );
+        $writer->setEnclosure( '"' );
+        $writer->setEscape( '\\' );
+        $writer->setNewline( "\r\n" );
         $writer->forceEnclosure();
+
 
         // headings
         $writer->insertOne( Impex::CSV_FIELDS );
 
         //  rows
-        if ( ! empty( $pages ) ) {
+        if ( ! empty( $page_names ) ) {
 
-            foreach ( $pages as $page ) {
-                $tree = Node::findPageTree( $menu, $page );
+            foreach ( $page_names as $page_name ) {
 
-                $rows = $this->visit( $tree, fn( Node $node ) => ExportNodeFactory::createRow( $menu, $page, $node ) );
+                // new
+                $page = Node::findPageNode( $menu, $page_name );
+                $tree = Node::getSortedMenu( $menu, $page );
+
+                $rows = $this->visit( $tree, fn( Node $node ) => ExportNodeFactory::createRow( $menu, $page_name, $node ) );
 
                 foreach ( $rows as $sparse_row ) {
                     $dense_row = self::arrayFillKeys( Impex::CSV_FIELDS, $sparse_row );
@@ -51,12 +56,6 @@ class ExportTask {
         }
 
         $queries = db::load()::connection()->getQueryLog();
-
-//        echo "\n" . count( $queries ) . ' queries';
-//        echo "\nsource.count: " . $expected_count;
-//        echo "\nexport.count: " . count( $rows );
-//        echo "\n";
-
 
         return TaskResult::success( "Exported menu '" . $menu->post_name . "' to " . $path, [
             'queries' => count( $queries ) . ' queries',
@@ -82,7 +81,6 @@ class ExportTask {
             }
         }
 
-//        echo "\n" . count( $rows );
         return $rows;
     }
 
