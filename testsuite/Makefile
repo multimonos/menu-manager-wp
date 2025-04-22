@@ -22,6 +22,9 @@ test-create:
 test-export:
 	pytest -xvs -n1 ./test_export.py
 
+test-sort:
+	clear && pytest -xvs -n1 ./test_sort.py && wp mm view tiny
+
 watch:
 	ls *.py | entr make test
 
@@ -39,6 +42,7 @@ DATAPATH=./data
 A_CSV=$(DATAPATH)/a.csv
 B_CSV=$(DATAPATH)/b.csv
 AB_CSV=$(DATAPATH)/ab.csv
+TINY_CSV=$(DATAPATH)/tiny.csv
 PATCH_UPDATE_CSV=$(DATAPATH)/patch-update-item.csv
 PATCH_PRICE_CSV=$(DATAPATH)/patch-price-item.csv
 PATCH_DELETE_ITEM_CSV=$(DATAPATH)/patch-delete-item.csv
@@ -63,6 +67,7 @@ fixtures:
 	; make fixture-patch-price-csv \
 	; make fixture-patch-delete-item-csv \
 	; make fixture-patch-delete-group-csv \
+	; make fixture-tiny-csv \
 	; tree $(DATAPATH) \
 	; wc -l $(DATAPATH)/*.csv \
 	; echo "Ok" \
@@ -117,3 +122,9 @@ fixture-patch-delete-group-csv:
 	; echo "Ok" \
 	; }
 
+fixture-tiny-csv:
+	@{ echo "Create tiny menu $(TINY_CSV)..." \
+	; head -n42 $(A_CSV) > $(TINY_CSV) \
+	; sed -i '' 's/aaa-menu/tiny/g' $(TINY_CSV) \
+	; echo "Ok" \
+	; }
