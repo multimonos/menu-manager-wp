@@ -27,7 +27,7 @@ class ImportNodeFactory {
         $page = new Node( [
             'menu_id'   => $menu->ID,
             'parent_id' => $root->id,
-            'type'      => NodeType::Page->value,
+            'type'      => NodeType::Page,
             'title'     => $page_slug,
         ] );
 
@@ -72,7 +72,7 @@ class ImportNodeFactory {
         $node = new Node( [
             'menu_id'     => $menu->ID,
             'uuid'        => $row->uuid,
-            'type'        => $row->type,
+            'type'        => NodeType::from( $row->type ),
             'title'       => $row->title,
             'description' => $row->description,
         ] );
