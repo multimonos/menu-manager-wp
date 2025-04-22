@@ -54,6 +54,7 @@ class Impex extends Model {
         'page',
         'uuid',
         'parent_id',
+        'sort_order',
         'type',
         'item_id',
         'title',
@@ -72,10 +73,10 @@ class Impex extends Model {
         Logger::info( self::TABLE );
 
         if ( ! db::load()::schema()->hasTable( self::TABLE ) ) {
-            Logger::info( self::TABLE . ' not found' );
+            Logger::info( self::TABLE . ' table not found' );
         } else {
             db::load()::schema()->dropIfExists( self::TABLE );
-            Logger::info( self::TABLE . ' dropped' );
+            Logger::info( self::TABLE . ' table dropped' );
         }
 
         db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
@@ -102,7 +103,7 @@ class Impex extends Model {
             $table->dateTime( 'updated_at' )->useCurrent();
         } );
 
-        Logger::info( self::TABLE . ' created' );
+        Logger::info( self::TABLE . ' table created' );
     }
 
     public function job() {
