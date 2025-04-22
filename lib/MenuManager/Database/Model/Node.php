@@ -34,6 +34,10 @@ class Node extends Model {
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
+    protected $casts = [
+        'type' => NodeType::class,
+    ];
+
     protected $fillable = [
         'menu_id',
         'parent_id',
@@ -41,16 +45,17 @@ class Node extends Model {
         'type',
         'title',
         'description',
+        'sort_order',
     ];
 
     public static function createTable() {
         Logger::info( self::TABLE );
 
         if ( ! db::load()::schema()->hasTable( self::TABLE ) ) {
-            Logger::info( self::TABLE . ' not found' );
+            Logger::info( self::TABLE . ' table not found' );
         } else {
             db::load()::schema()->dropIfExists( self::TABLE );
-            Logger::info( self::TABLE . ' dropped' );
+            Logger::info( self::TABLE . ' table dropped' );
         }
 
         db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
@@ -62,11 +67,12 @@ class Node extends Model {
             $table->string( 'type', 32 );
             $table->string( 'title' )->nullable();
             $table->text( 'description' )->nullable();
+            $table->integer( 'sort_order' )->unsigned()->nullable();
             $table->dateTime( 'created_at' )->useCurrent();
             $table->dateTime( 'updated_at' )->useCurrent();
         } );
 
-        Logger::info( self::TABLE . ' created' );
+        Logger::info( self::TABLE . ' table created' );
     }
 
     protected function getScopeAttributes() {
@@ -115,29 +121,18 @@ class Node extends Model {
         return $node;
     }
 
-    public static function findRootTree( \WP_Post $menu ): ?NestedSetCollection {
-        $root = self::findRootNode( $menu );
-        if ( is_null( $root ) ) {
-            return null;
-        }
-        $tree = Node::scoped( ['menu_id' => $menu->ID] )
-            ->with( "meta" )
-            ->withDepth()
-            ->descendantsOf( $root->id )
-            ->toTree();
-        return $tree;
-    }
+    public static function getSortedMenu( \WP_Post $menu, Node $parent ): ?NestedSetCollection {
 
-    public static function findPageTree( \WP_Post $menu, string $page ): ?NestedSetCollection {
-        $page = self::findPageNode( $menu, $page );
-        if ( is_null( $page ) ) {
-            return null;
-        }
         $tree = Node::scoped( ['menu_id' => $menu->ID] )
+            // ->defaultOrder() // must not be present
             ->with( "meta" )
             ->withDepth()
-            ->descendantsOf( $page->id )
+            ->orderBy( 'depth' )
+            ->orderBy( 'sort_order' ) // NULL first
+//            ->orderByRaw( 'COALESCE(sort_order, 9999)' ) // NULL last
+            ->descendantsOf( $parent->id ) // position of this call matters.
             ->toTree();
+
         return $tree;
     }
 
