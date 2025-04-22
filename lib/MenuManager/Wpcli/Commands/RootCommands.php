@@ -5,7 +5,7 @@ namespace MenuManager\Wpcli\Commands;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Node;
 use MenuManager\Database\PostType\MenuPost;
-use MenuManager\Task\ExportTask;
+use MenuManager\Task\ExportCsvTask;
 use MenuManager\Wpcli\TextMenuPrinter;
 use WP_CLI;
 
@@ -40,11 +40,11 @@ class RootCommands {
         // target path
         $dst = $args[1] ?? null;
         $dst = empty( $dst )
-            ? "menu-export_{$menu->post_name}_{$menu->ID}__" . date( 'Ymd\THis' ) . '.csv'
+            ? "menu-export_{$menu->post_name}_{$menu->ID}__" . date( 'Ymd\THis' ) . '_utf8.csv'
             : $dst;
 
         // action
-        $task = new ExportTask();
+        $task = new ExportCsvTask();
         $rs = $task->run( $menu, $dst );
 
         if ( ! $rs->ok() ) {

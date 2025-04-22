@@ -10,7 +10,7 @@ use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
 use MenuManager\Vendor\League\Csv\Bom;
 use MenuManager\Vendor\League\Csv\Writer;
 
-class ExportTask {
+class ExportCsvTask {
 
     public function run( \WP_Post $menu, string $path ): TaskResult {
 
