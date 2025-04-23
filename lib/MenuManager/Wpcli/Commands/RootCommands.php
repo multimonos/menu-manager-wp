@@ -2,12 +2,10 @@
 
 namespace MenuManager\Wpcli\Commands;
 
-use MenuManager\Database\db;
-use MenuManager\Database\Model\Node;
 use MenuManager\Database\PostType\MenuPost;
 use MenuManager\Task\ExportCsvTask;
 use MenuManager\Task\ExportExcelTask;
-use MenuManager\Wpcli\TextMenuPrinter;
+use MenuManager\Task\ViewMenuAsTextTask;
 use WP_CLI;
 
 class RootCommands {
@@ -88,13 +86,8 @@ class RootCommands {
      * @when after_wp_load
      */
     public function view( $args, $assoc_args ) {
-
-        // @todo refactor into action
-
-        db::load()::connection()->enableQueryLog();
-
         $id = $args[0];
-        $page = $args[1] ?? null;
+        $pagename = $args[1] ?? null;
 
         // menu
         $menu = MenuPost::find( $id );
@@ -103,31 +96,14 @@ class RootCommands {
             WP_CLI::error( "Menu not found '{$id}'." );
         }
 
-        // tree
-        $root = empty( $page )
-            ? Node::findRootNode( $menu )
-            : Node::findPageNode( $menu, $page );
+        $task = new ViewMenuAsTextTask();
+        $rs = $task->run( $menu, $pagename );
 
-        $tree = Node::getSortedMenu( $menu, $root );
-
-        if ( ! $tree || $tree->count() === 0 ) {
-            WP_CLI::error( "Menu not found or is empty '" . trim( $id . ' ' . $page ) . "'." );
+        if ( ! $rs->ok() ) {
+            WP_CLI::error( $rs->getMessage() );
         }
 
-
-        // printer
-        $printer = new TextMenuPrinter();
-
-        // print
-        echo "\n$id $page";
-        $printer->print( $tree );
-
-        // log
-        $queries = db::load()::connection()->getQueryLog();
-
-        echo "\n\n";
-        WP_CLI::line( "Nodes: " . $tree->count() );
-        WP_CLI::success( count( $queries ) . ' queries.' );
+        WP_CLI::success( $rs->getMessage() );
     }
 
     /**
