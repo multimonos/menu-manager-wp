@@ -11,9 +11,10 @@ class ImportNodeFactory {
 
     public static function createRootNode( \WP_Post $menu ): Node {
         $root = new Node( [
-            'menu_id' => $menu->ID,
-            'type'    => NodeType::Root->value,
-            'title'   => 'menu.' . $menu->post_name,
+            'menu_id'    => $menu->ID,
+            'type'       => NodeType::Root->value,
+            'title'      => 'menu.' . $menu->post_name,
+            'sort_order' => 0,
         ] );
 
         $root->saveAsRoot();
