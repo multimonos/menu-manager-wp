@@ -6,6 +6,7 @@ namespace MenuManager\Wpcli\Commands;
 use MenuManager\Database\db;
 use MenuManager\Database\Model\Job;
 use MenuManager\Task\JobRunTask;
+use MenuManager\Task\ValidateTask;
 use MenuManager\Wpcli\CliOutput;
 use WP_CLI;
 
@@ -68,6 +69,35 @@ class JobCommands {
         }
     }
 
+    /**
+     * Validate a job.
+     *
+     * ## OPTIONS
+     *
+     * <job_id>
+     * : The impex job to validate.
+     *
+     * ## EXAMPLES
+     *
+     *      wp mm import validate 42
+     *
+     * @when after_wp_load
+     */
+    public function validate( $args, $assoc_args ) {
+
+        // job get
+        $job_id = $args[0];
+
+        // guard : job status
+        $task = new ValidateTask();
+        $rs = $task->run( $job_id );
+
+        // guard : err
+        if ( ! $rs->ok() ) {
+            WP_CLI::error( $rs->getMessage() . "\n" . print_r( $rs->getData(), true ) );
+        }
+        WP_CLI::success( $rs->getMessage() . "\n" . print_r( $rs->getData(), true ) );
+    }
 
     /**
      * Get details about a job.

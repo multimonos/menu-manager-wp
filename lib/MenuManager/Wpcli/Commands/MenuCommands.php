@@ -5,6 +5,7 @@ namespace MenuManager\Wpcli\Commands;
 
 use MenuManager\Database\PostType\MenuPost;
 use MenuManager\Task\CloneMenuTask;
+use MenuManager\Task\ViewMenuAsTextTask;
 use WP_CLI;
 
 class MenuCommands {
@@ -110,4 +111,41 @@ class MenuCommands {
         WP_CLI::runcommand( "post delete {$id} --force" );
     }
 
+    /**
+     * Print menu to stdout.
+     *
+     * ## OPTIONS
+     *
+     * <menu_id>
+     * : The id or slug of the menu to get.
+     *
+     * [<page>]
+     * : The page to fetch
+     *
+     * ## EXAMPLES
+     *
+     *   wp mm view crowfoot
+     *   wp mm view crowfoot drink
+     *
+     * @when after_wp_load
+     */
+    public function view( $args, $assoc_args ) {
+        $id = $args[0];
+        $pagename = $args[1] ?? null;
+
+        // menu
+        $menu = MenuPost::find( $id );
+
+        if ( ! $menu ) {
+            WP_CLI::error( "Menu not found '{$id}'." );
+        }
+
+        $task = new ViewMenuAsTextTask();
+        $rs = $task->run( $menu, $pagename );
+
+        if ( ! $rs->ok() ) {
+            WP_CLI::error( $rs->getMessage() );
+        }
+        WP_CLI::success( $rs->getMessage() );
+    }
 }

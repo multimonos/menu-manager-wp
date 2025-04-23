@@ -5,19 +5,53 @@ namespace MenuManager\Wpcli\Commands;
 use MenuManager\Database\PostType\MenuPost;
 use MenuManager\Task\ExportCsvTask;
 use MenuManager\Task\ExportExcelTask;
-use MenuManager\Task\ViewMenuAsTextTask;
+use MenuManager\Task\LoadTask;
 use WP_CLI;
 
 class RootCommands {
+
     /**
-     * Export menu to CSV.
+     * Load a CSV to create an import job.
+     *
+     * ## OPTIONS
+     *
+     * <file>
+     * : The CSV file to consume.
+     *
+     * ## EXAMPLES
+     *
+     *      wp mm import load impex-foobar.csv
+     *
+     * @when after_wp_load
+     */
+    public function load( $args, $assoc_args ) {
+        list( $path ) = $args;
+
+        // guard : file
+        if ( ! file_exists( $path ) ) {
+            WP_CLI::error( "File not found $path" );
+        }
+
+        // load
+        $task = new LoadTask();
+        $rs = $task->run( $path );
+
+        // guard : err
+        if ( ! $rs->ok() ) {
+            WP_CLI::error( $rs->getMessage() );
+        }
+        WP_CLI::success( $rs->getMessage() );
+    }
+
+    /**
+     * Export menu to CSV or Excel.
      *
      * ## OPTIONS
      *
      * <menu_id>
      * : ID of the menu.
      *
-     * [<csv_file>]
+     * [<file>]
      * : The CSV file to write.
      *
      * [--format=<format>]
@@ -67,50 +101,4 @@ class RootCommands {
     }
 
 
-    /**
-     * Print menu to stdout.
-     *
-     * ## OPTIONS
-     *
-     * <id>
-     * : The id or slug of the menu to get.
-     *
-     * [<page>]
-     * : The page to fetch
-     *
-     * ## EXAMPLES
-     *
-     *   wp mm view crowfoot
-     *   wp mm view crowfoot drink
-     *
-     * @when after_wp_load
-     */
-    public function view( $args, $assoc_args ) {
-        $id = $args[0];
-        $pagename = $args[1] ?? null;
-
-        // menu
-        $menu = MenuPost::find( $id );
-
-        if ( ! $menu ) {
-            WP_CLI::error( "Menu not found '{$id}'." );
-        }
-
-        $task = new ViewMenuAsTextTask();
-        $rs = $task->run( $menu, $pagename );
-
-        if ( ! $rs->ok() ) {
-            WP_CLI::error( $rs->getMessage() );
-        }
-        WP_CLI::success( $rs->getMessage() );
-    }
-
-    /**
-     * Test something.
-     *
-     * @when after_wp_load
-     */
-    public function test( $args, $assoc_args ) {
-        WP_CLI::success( "Nothing to do." );
-    }
 }
