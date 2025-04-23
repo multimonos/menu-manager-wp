@@ -90,4 +90,24 @@ class MenuCommands {
     }
 
 
+    /**
+     * Delete a menu.
+     *
+     * ## OPTIONS
+     *
+     * <id>
+     * : The id of the menu.
+     *
+     * @when after_wp_load
+     */
+    public function delete( $args, $assoc_args ) {
+        $id = $args[0];
+
+        if ( ! is_numeric( $id ) ) {
+            WP_CLI::error( "Delete requires a numeric id." );
+        }
+
+        WP_CLI::runcommand( "post delete {$id} --force" );
+    }
+
 }
