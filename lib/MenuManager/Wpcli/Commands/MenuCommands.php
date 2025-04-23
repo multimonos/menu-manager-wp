@@ -24,7 +24,7 @@ class MenuCommands {
      *
      * @when after_wp_load
      */
-    public function list( $args, $assoc_args ) {
+    public function ls( $args, $assoc_args ) {
         $format = $assoc_args['format'] ?? 'table';
         WP_CLI::runcommand( "post list --post_type=menus --format={$format}" );
     }
@@ -101,7 +101,7 @@ class MenuCommands {
      *
      * @when after_wp_load
      */
-    public function delete( $args, $assoc_args ) {
+    public function rm( $args, $assoc_args ) {
         $id = $args[0];
 
         if ( ! is_numeric( $id ) ) {

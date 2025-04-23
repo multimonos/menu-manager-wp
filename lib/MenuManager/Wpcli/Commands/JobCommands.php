@@ -26,7 +26,7 @@ class JobCommands {
      *
      * @when after_wp_load
      */
-    public function list( $args, $assoc_args ) {
+    public function ls( $args, $assoc_args ) {
         $format = $assoc_args['format'] ?? 'table';
 
         db::load();
@@ -149,5 +149,35 @@ class JobCommands {
             WP_CLI::error( $rs->getMessage() );
         }
         WP_CLI::success( $rs->getMessage() );
+    }
+
+
+    /**
+     * Delete a job.
+     *
+     * ## OPTIONS
+     *
+     * <job_id>
+     * : The id of the job.
+     *
+     * @when after_wp_load
+     */
+    public function rm( $args, $assoc_args ) {
+        db::load();
+
+        $id = $args[0];
+
+        $obj = Job::find( $id );
+
+        // failed
+        if ( $obj === null ) {
+            WP_CLI::error( "Node not found id=" . $id );
+        }
+
+        if ( ! $obj->delete() ) {
+            WP_CLI::error( "Failed to delete Job id=" . $id );
+        }
+
+        WP_CLI::success( 'Job deleted id=' . $id );
     }
 }
