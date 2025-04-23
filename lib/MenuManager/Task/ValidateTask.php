@@ -10,15 +10,52 @@ use MenuManager\Database\Model\JobStatus;
 use MenuManager\Database\PostType\MenuPost;
 
 class ValidateTask {
-    public function canStart( Job $job ): bool {
-        return JobStatus::tryFrom( $job->status ) === JobStatus::Created;
+
+    protected $msgs = [];
+    protected $warnings = [];
+    protected $errors = [];
+
+    protected function warn( string $msg ): void {
+        $this->warn[] = $msg;
+    }
+
+    protected function err( string $msg ): void {
+        $this->errors[] = $msg;
+    }
+
+    protected function info( string $msg ): void {
+        $this->msgs[] = $msg;
+    }
+
+    protected function collect(): array {
+        return [
+            'info'     => $this->msgs,
+            'warnings' => $this->warnings,
+            'errors'   => $this->errors,
+        ];
     }
 
     public function run( $job_id ): TaskResult {
 
         db::load();
 
-        // throw fatal errors only
+        // ERRORS + WARNINGS
+
+        // create : err : parent_id cannot be set
+        // create : err : sort_order cannot be set
+        // create : err : item_id cannot be set
+        // create : err : title must be set
+
+        // update : err : parent_id cannot be empty
+        // update : err : sort_order cannot be empty
+        // update : err : item_id cannot be empty
+        // update : err : title cannot be empty
+
+        // delete : err : item_id cannot be empty
+        // delete : warn : if children then delete will remove children as well
+
+
+        // throw no errors
         $err = [];
         $msg = [];
 
@@ -30,35 +67,32 @@ class ValidateTask {
         }
 
         // guard : validated
-        if ( JobStatus::tryFrom( $job->status ) === JobStatus::Validated ) {
-            return TaskResult::success( "Already validated. Nothing to do." );
-        }
-
-        // guard : job status
-        if ( ! $this->canStart( $job ) ) {
-            return TaskResult::failure( "Job with status '" . $job->status . "' cannot be started.  Must be '" . JobStatus::Created . "'." );
-        }
+//        if ( JobStatus::tryFrom( $job->status ) === JobStatus::Validated ) {
+//            return TaskResult::success( "Already validated. Nothing to do." );
+//        }
 
         // review the impex
         $rows = $job->impexes;
 
         // guard : row count
         if ( empty( $rows ) ) {
-            return TaskResult::failure( 'Impex has no rows' );
+            $this->err( 'Impex has no rows.' );
+            return TaskResult::failure( 'Invalid', $this->collect() );
         }
 
-        echo "\n--- " . date( 'YmdHis' ) . " ---\n";
-
-        // meta
+        // menus
         $menus = $rows->groupBy( 'menu' );
+        echo "\n" . get_class( $menus );
         if ( $menus->count() === 0 ) {
-            return TaskResult::failure( 'No menus found' );
+            $this->err( 'No menus found.' );
+            return TaskResult::failure( 'Invalid', $this->collect() );
+        } else {
+            $this->info( $menus->count() . " menu(s) will be affected '" . $menus->keys()->join( ',' ) ) . "'";
         }
-        echo "\nmenu-count:" . $menus->count();
 
 
         $menus->each( function ( $rows ) use ( &$err, &$msg ) {
-            echo "\nrowcount:" . count( $rows );
+//            echo "\nrowcount:" . count( $rows );
 //            print_r( $rows );
 
 //            print_r( $rows->pluck( 'action' )->unique() );
@@ -124,10 +158,10 @@ class ValidateTask {
         if ( empty( $err ) ) {
             $job->status = JobStatus::Validated;
             $job->save();
-            return TaskResult::success( 'Validated', $msg );
+            return TaskResult::success( 'Validated.', $this->collect() );
         }
 
-        return TaskResult::failure( "Failed to validate", $err );
+        return TaskResult::failure( "Invalid", $this->collect() );
 
     }
 

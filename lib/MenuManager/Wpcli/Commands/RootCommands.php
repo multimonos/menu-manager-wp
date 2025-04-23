@@ -6,6 +6,7 @@ use MenuManager\Database\PostType\MenuPost;
 use MenuManager\Task\ExportCsvTask;
 use MenuManager\Task\ExportExcelTask;
 use MenuManager\Task\LoadTask;
+use MenuManager\Types\ExportMethod;
 use WP_CLI;
 
 class RootCommands {
@@ -81,7 +82,7 @@ class RootCommands {
         if ( 'csv' === $format ) {
             $path = empty( $dst ) ? $filestem . '.csv' : $dst;
             $task = new ExportCsvTask();
-            $rs = $task->run( $menu, $path );
+            $rs = $task->run( ExportMethod::File, $menu, $path );
 
             if ( ! $rs->ok() ) {
                 WP_CLI::error( $rs->getMessage() );
@@ -91,7 +92,7 @@ class RootCommands {
         } else if ( 'excel' === $format ) {
             $path = empty( $dst ) ? $filestem . '.xlsx' : $dst;
             $task = new ExportExcelTask();
-            $rs = $task->run( $menu, $path );
+            $rs = $task->run( ExportMethod::File, $menu, $path );
 
             if ( ! $rs->ok() ) {
                 WP_CLI::error( $rs->getMessage() );

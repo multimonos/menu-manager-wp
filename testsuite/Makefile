@@ -13,6 +13,9 @@ parallel:
 test:
 	make parallel && make serial
 
+test-activation:
+	pytest -xvs -n1 ./test_activation.py
+
 test-load:
 	pytest -xvs -n1 ./test_load.py
 
@@ -67,7 +70,6 @@ fixtures:
 	; make fixture-patch-price-csv \
 	; make fixture-patch-delete-item-csv \
 	; make fixture-patch-delete-group-csv \
-	; make fixture-tiny-csv \
 	; tree $(DATAPATH) \
 	; wc -l $(DATAPATH)/*.csv \
 	; echo "Ok" \

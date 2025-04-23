@@ -6,16 +6,16 @@ use MenuManager\Database\db;
 use MenuManager\Database\Factory\ExportNodeFactory;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Node;
+use MenuManager\Types\ExportMethod;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
 use MenuManager\Vendor\PhpOffice\PhpSpreadsheet\Spreadsheet;
 use MenuManager\Vendor\PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ExportExcelTask {
 
-    public function run( \WP_Post $menu, string $path ): TaskResult {
+    public function run( ExportMethod $method, \WP_Post $menu, string $path ): TaskResult {
 
         db::load()::connection()->enableQueryLog();
-
 
         // PAGES
         $page_names = Node::findPageNames( $menu );
@@ -47,6 +47,27 @@ class ExportExcelTask {
         $sheet->fromArray( $rows, null, 'A1' );
         $writer = new Xlsx( $workbook );
         $writer->save( $path );
+
+
+        // DOWNLOAD
+        if ( ExportMethod::Download === $method ) {
+            header( 'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' );
+            header( 'Content-Disposition: attachment; filename="' . $path . '"' );
+            header( 'Cache-Control: max-age=0' );
+
+            // If you're serving to IE over HTTPS, remove the Cache-Control header
+            header( 'Cache-Control: max-age=1' );
+
+            // If you're serving to IE
+            header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' ); // Date in the past
+            header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
+            header( 'Cache-Control: cache, must-revalidate' );
+            header( 'Pragma: public' );
+
+            // Write to php://output
+            $writer->save( 'php://output' );
+            exit;
+        }
 
         $queries = db::load()::connection()->getQueryLog();
 

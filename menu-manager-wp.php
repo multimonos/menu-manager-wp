@@ -34,6 +34,10 @@ register_deactivation_hook( __FILE__, [Deactivate::class, 'run'] );
 
 function menu_manager_plugin() {
     MenuPost::init();
+
+    if ( is_admin() ) {
+        require_once __DIR__ . '/test.php';
+    }
 }
 
 menu_manager_plugin();

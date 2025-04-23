@@ -6,24 +6,30 @@ use MenuManager\Database\db;
 use MenuManager\Database\Factory\ExportNodeFactory;
 use MenuManager\Database\Model\Impex;
 use MenuManager\Database\Model\Node;
+use MenuManager\Types\ExportMethod;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
+use MenuManager\Vendor\League\Csv\AbstractCsv;
 use MenuManager\Vendor\League\Csv\Bom;
 use MenuManager\Vendor\League\Csv\Writer;
+use SplTempFileObject;
 
-class ExportCsvTask {
 
-    public function run( \WP_Post $menu, string $path ): TaskResult {
+class CsvWriterFactory {
+    public static function create( ExportMethod $mode, string $path ): AbstractCsv {
+        switch ( $mode ) {
+            case ExportMethod::Download:
+                $writer = Writer::createFromFileObject( new SplTempFileObject() );
+                break;
 
-        db::load()::connection()->enableQueryLog();
+            default:
+            case ExportMethod::File:
+                $writer = Writer::createFromPath( $path, 'w' );
+                break;
+        }
 
-        // PAGES
-        $expected_count = Node::countForMenu( $menu );
-        $page_names = Node::findPageNames( $menu );
-
-        // Collect rows ... write csv.
-        $writer = Writer::createFromPath( $path, 'w' );
-
-        // NOTE: User's must import the csv instead of just "opening" the csv, so, that they can choose the UTF8 encoding.
+        // NOTE
+        // User's must import the csv instead of just "opening" the csv, so, that
+        // they can choose the UTF8 encoding.
         $writer->setOutputBOM( Bom::Utf8 );
 
         // Writer config
@@ -33,6 +39,22 @@ class ExportCsvTask {
         $writer->setNewline( "\r\n" );
         $writer->forceEnclosure();
 
+        return $writer;
+    }
+}
+
+class ExportCsvTask {
+
+    public function run( ExportMethod $method, \WP_Post $menu, string $path ): TaskResult {
+
+        db::load()::connection()->enableQueryLog();
+
+        // PAGES
+        $expected_count = Node::countForMenu( $menu );
+        $page_names = Node::findPageNames( $menu );
+
+        // Collect rows ... write csv.
+        $writer = CsvWriterFactory::create( $method, $path );
 
         // headings
         $writer->insertOne( Impex::CSV_FIELDS );
@@ -57,6 +79,14 @@ class ExportCsvTask {
 
         $queries = db::load()::connection()->getQueryLog();
 
+
+        // Download only.
+        if ( ExportMethod::Download === $method ) {
+            $writer->output( $path );
+            die;
+        }
+
+        // Other
         return TaskResult::success( "Exported menu '" . $menu->post_name . "' to " . $path, [
             'queries' => count( $queries ) . ' queries',
         ] );

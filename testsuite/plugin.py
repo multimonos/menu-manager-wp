@@ -210,7 +210,7 @@ def impex_menu_count(cursor: MySQLCursorDict, menu_id: str) -> int:
 
 
 def impex_load(filepath: str) -> CompletedProcess[str]:
-    return mmcli("import", "load", filepath)
+    return mmcli("load", filepath)
 
 
 def impex_export(menu: str, target: str) -> CompletedProcess[str]:
