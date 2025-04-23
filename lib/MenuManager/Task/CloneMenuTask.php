@@ -71,7 +71,6 @@ class CloneMenuTask {
         // Node
         $newNode = $node->replicate( ['id', '_lft', '_rgt', 'parent_id', 'depth'] );
         $newNode->menu_id = $menu->ID;
-        $newNode->title = $menu->post_name . '--' . $node->title;
 
         if ( is_null( $parent ) ) { // root node
             $newNode->save();
