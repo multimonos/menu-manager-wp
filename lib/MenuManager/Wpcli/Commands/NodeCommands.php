@@ -45,7 +45,7 @@ class NodeCommands {
                 $data = Node::all()->transform( function ( $x ) {
                     return [
                         'id'    => $x->id,
-                        'type'  => $x->type,
+                        'type'  => $x->type->value,
                         'title' => $x->title,
                     ];
                 } )->toArray();
