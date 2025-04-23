@@ -118,7 +118,6 @@ class JobCommands {
         if ( ! $rs->ok() ) {
             WP_CLI::error( $rs->getMessage() );
         }
-
         WP_CLI::success( $rs->getMessage() );
     }
 }

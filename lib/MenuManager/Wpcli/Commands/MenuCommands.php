@@ -86,8 +86,6 @@ class MenuCommands {
         if ( ! $rs->ok() ) {
             WP_CLI::error( $rs->getMessage() );
         }
-
-        array_map( fn( $x ) => WP_CLI::line( $x ), $rs->getData() );
         WP_CLI::success( $rs->getMessage() );
     }
 

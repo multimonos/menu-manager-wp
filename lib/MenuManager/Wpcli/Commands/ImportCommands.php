@@ -40,8 +40,6 @@ class ImportCommands {
         if ( ! $rs->ok() ) {
             WP_CLI::error( $rs->getMessage() );
         }
-
-        // ok
         WP_CLI::success( $rs->getMessage() );
     }
 
@@ -73,9 +71,6 @@ class ImportCommands {
         if ( ! $rs->ok() ) {
             WP_CLI::error( $rs->getMessage() . "\n" . print_r( $rs->getData(), true ) );
         }
-
         WP_CLI::success( $rs->getMessage() . "\n" . print_r( $rs->getData(), true ) );
     }
-
-
 }

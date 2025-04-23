@@ -54,7 +54,7 @@ class CloneMenuTask {
             } );
 
         } catch (\Throwable $e) {
-            // delete the dst
+            // cleanup
             MenuPost::delete( $dst->ID );
             return TaskResult::failure( "Clone failed.  " . $e->getMessage() );
         }
@@ -73,8 +73,6 @@ class CloneMenuTask {
         $newNode->menu_id = $menu->ID;
         $newNode->title = $menu->post_name . '--' . $node->title;
 
-        echo " " . $node->id;
-
         if ( is_null( $parent ) ) { // root node
             $newNode->save();
             $newNode->refresh();
@@ -88,7 +86,6 @@ class CloneMenuTask {
                 $newMeta->node_id = $newNode->id;
                 $newMeta->save();
             }
-
         }
 
         foreach ( $node->children as $child ) {
