@@ -32,6 +32,8 @@ class Impex extends Model {
         'job_id',
         'action',
         'uuid',
+        'parent_id',
+        'sort_order',
         'description',
         'image_ids',
         'is_glutensmart',
@@ -83,12 +85,13 @@ class Impex extends Model {
             $table->bigIncrements( 'id' );
             $table->bigInteger( 'job_id' )->unsigned();
             $table->foreign( 'job_id' )->references( 'id' )->on( Job::TABLE )->onDelete( 'cascade' );
-            $table->string( 'action', 32 ); // @todo should this be enum?
+            $table->string( 'action', 32 ); // @todo should this be enum? ... no let user make mistake,catch in validation
             $table->string( 'menu', 32 );
             $table->string( 'page', 32 );
             $table->string( 'uuid', 64 )->nullable();
             $table->bigInteger( 'parent_id' )->unsigned()->nullable();
-            $table->string( 'type', 32 ); // @todo should this be enum?
+            $table->integer( 'sort_order' )->unsigned()->nullable();
+            $table->string( 'type', 32 ); // @todo should this be enum? ... no let user make mistake,catch in validation
             $table->bigInteger( 'item_id' )->nullable();
             $table->string( 'title' )->nullable();
             $table->string( 'prices', 64 )->nullable();

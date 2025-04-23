@@ -145,6 +145,7 @@ class ModifyMenuTask {
             'type'        => NodeType::from( $row->type )->value, // must be valid
             'title'       => $row->title,
             'description' => $row->description,
+            'sort_order'  => $row->sort_order,
         ] );
 
         if ( $node->isDirty() ) {

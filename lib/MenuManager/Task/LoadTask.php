@@ -56,7 +56,9 @@ class LoadTask {
                 Impex::create( [
                     'job_id'         => $job->id,
                     'action'         => $record['action'],
-                    'uuid'           => $record['uuid'],
+                    'uuid'           => empty( $record['uuid'] ) ? null : $record['uuid'],
+                    'parent_id'      => empty( $record['parent_id'] ) ? null : $record['parent_id'],
+                    'sort_order'     => empty( $record['sort_order'] ) ? null : $record['sort_order'],
                     'description'    => $record['description'],
                     'image_ids'      => $record['image_ids'],
                     'is_glutensmart' => Impex::toBoolean( $record['is_glutensmart'] ),
