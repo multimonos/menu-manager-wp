@@ -1,16 +1,10 @@
 <?php
 
 use MenuManager\Foobar;
-use MenuManager\Vendor\League\Csv\Reader;
+use MenuManager\Vendor\League\Csv\Writer;
 
 require_once __DIR__ . '/vendor/scoper-autoload.php';
 
-$reader = Reader::createFromPath( './data/valid_create.csv', 'r' );
-
-$records = $reader->getRecords();
-
-foreach ( $records as $record ) {
-    echo "\n" . print_r( $record, true );
-}
-
+$writer = Writer::createFromPath( 'test.csv', 'w' );
+$writer->insertOne( ["foo"] );
 Foobar::hi();

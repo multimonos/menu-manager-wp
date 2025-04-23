@@ -6,6 +6,7 @@ use MenuManager\Database\db;
 use MenuManager\Database\Model\Node;
 use MenuManager\Database\PostType\MenuPost;
 use MenuManager\Task\ExportCsvTask;
+use MenuManager\Task\ExportExcelTask;
 use MenuManager\Wpcli\TextMenuPrinter;
 use WP_CLI;
 
@@ -21,6 +22,9 @@ class RootCommands {
      * [<csv_file>]
      * : The CSV file to write.
      *
+     * [--format=<format>]
+     * : Output format. Options: csv, excel. Default: csv.
+     *
      * ## EXAMPLES
      *
      *    wp mm export 666 export.csv
@@ -29,6 +33,8 @@ class RootCommands {
      */
     public function export( $args, $assoc_args ) {
         $menu_id = $args[0];
+        $dst = $args[1] ?? null;
+        $format = $assoc_args['format'] ?? 'csv';
 
         // menu
         $menu = MenuPost::find( $menu_id );
@@ -37,21 +43,29 @@ class RootCommands {
             WP_CLI::error( "Menu not found" );
         }
 
-        // target path
-        $dst = $args[1] ?? null;
-        $dst = empty( $dst )
-            ? "menu-export_{$menu->post_name}_{$menu->ID}__" . date( 'Ymd\THis' ) . '_utf8.csv'
-            : $dst;
+        // file stem
+        $filestem = "menu-export_{$menu->post_name}_{$menu->ID}__" . date( 'Ymd\THis' );
 
-        // action
-        $task = new ExportCsvTask();
-        $rs = $task->run( $menu, $dst );
+        if ( 'csv' === $format ) {
+            $path = empty( $dst ) ? $filestem . '.csv' : $dst;
+            $task = new ExportCsvTask();
+            $rs = $task->run( $menu, $path );
 
-        if ( ! $rs->ok() ) {
-            WP_CLI::error( $rs->getMessage() );
+            if ( ! $rs->ok() ) {
+                WP_CLI::error( $rs->getMessage() );
+            }
+            WP_CLI::success( $rs->getMessage() );
+
+        } else if ( 'excel' === $format ) {
+            $path = empty( $dst ) ? $filestem . '.xlsx' : $dst;
+            $task = new ExportExcelTask();
+            $rs = $task->run( $menu, $path );
+
+            if ( ! $rs->ok() ) {
+                WP_CLI::error( $rs->getMessage() );
+            }
+            WP_CLI::success( $rs->getMessage() );
         }
-
-        WP_CLI::success( $rs->getMessage() );
     }
 
 

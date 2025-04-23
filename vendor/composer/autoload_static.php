@@ -21,13 +21,18 @@ class ComposerStaticInit4f57482e5f15787524c4f7c6e4287e26
         'M' => 
         array (
             'MenuManager\\Vendor\\voku\\' => 24,
+            'MenuManager\\Vendor\\ZipStream\\' => 29,
             'MenuManager\\Vendor\\Symfony\\Polyfill\\Php80\\' => 42,
             'MenuManager\\Vendor\\Symfony\\Polyfill\\Mbstring\\' => 45,
             'MenuManager\\Vendor\\Symfony\\Contracts\\Translation\\' => 49,
             'MenuManager\\Vendor\\Symfony\\Component\\Translation\\' => 49,
             'MenuManager\\Vendor\\Psr\\SimpleCache\\' => 35,
+            'MenuManager\\Vendor\\Psr\\Http\\Message\\' => 36,
+            'MenuManager\\Vendor\\Psr\\Http\\Client\\' => 35,
             'MenuManager\\Vendor\\Psr\\Container\\' => 33,
             'MenuManager\\Vendor\\Psr\\Clock\\' => 29,
+            'MenuManager\\Vendor\\PhpOffice\\PhpSpreadsheet\\' => 44,
+            'MenuManager\\Vendor\\Matrix\\' => 26,
             'MenuManager\\Vendor\\League\\Csv\\' => 30,
             'MenuManager\\Vendor\\Kalnoy\\Nestedset\\' => 36,
             'MenuManager\\Vendor\\Illuminate\\Support\\' => 38,
@@ -38,6 +43,8 @@ class ComposerStaticInit4f57482e5f15787524c4f7c6e4287e26
             'MenuManager\\Vendor\\Illuminate\\Container\\' => 40,
             'MenuManager\\Vendor\\Illuminate\\Bus\\' => 34,
             'MenuManager\\Vendor\\Doctrine\\Inflector\\' => 38,
+            'MenuManager\\Vendor\\Composer\\Pcre\\' => 33,
+            'MenuManager\\Vendor\\Complex\\' => 27,
             'MenuManager\\Vendor\\Carbon\\Doctrine\\' => 35,
             'MenuManager\\Vendor\\Carbon\\' => 26,
             'MenuManager\\Vendor\\Brick\\Math\\' => 30,
@@ -49,6 +56,10 @@ class ComposerStaticInit4f57482e5f15787524c4f7c6e4287e26
         'MenuManager\\Vendor\\voku\\' => 
         array (
             0 => __DIR__ . '/..' . '/voku/portable-ascii/src/voku',
+        ),
+        'MenuManager\\Vendor\\ZipStream\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
         ),
         'MenuManager\\Vendor\\Symfony\\Polyfill\\Php80\\' => 
         array (
@@ -70,6 +81,15 @@ class ComposerStaticInit4f57482e5f15787524c4f7c6e4287e26
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
+        'MenuManager\\Vendor\\Psr\\Http\\Message\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'MenuManager\\Vendor\\Psr\\Http\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-client/src',
+        ),
         'MenuManager\\Vendor\\Psr\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
@@ -77,6 +97,14 @@ class ComposerStaticInit4f57482e5f15787524c4f7c6e4287e26
         'MenuManager\\Vendor\\Psr\\Clock\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/clock/src',
+        ),
+        'MenuManager\\Vendor\\PhpOffice\\PhpSpreadsheet\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
+        ),
+        'MenuManager\\Vendor\\Matrix\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
         ),
         'MenuManager\\Vendor\\League\\Csv\\' => 
         array (
@@ -120,6 +148,14 @@ class ComposerStaticInit4f57482e5f15787524c4f7c6e4287e26
         'MenuManager\\Vendor\\Doctrine\\Inflector\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector',
+        ),
+        'MenuManager\\Vendor\\Composer\\Pcre\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/composer/pcre/src',
+        ),
+        'MenuManager\\Vendor\\Complex\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/markbaker/complex/classes/src',
         ),
         'MenuManager\\Vendor\\Carbon\\Doctrine\\' => 
         array (
