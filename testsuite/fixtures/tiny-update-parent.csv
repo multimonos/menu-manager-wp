@@ -1,0 +1,5 @@
+"action","menu","page","uuid","parent_id","sort_order","type","item_id","title","prices","image_ids","is_new","is_glutensmart","is_organic","is_vegan","is_vegetarian","custom","description"
+"update","tiny","drink","27703","478","40","item","484","4.Penicillin  (2Oz)","16.50","28815","no","no","no","no","no","",""
+"update","tiny","drink","11081","478","50","item","485","5.Old Fashioned (2Oz)","15.75","25787","no","no","no","no","no","",""
+"update","tiny","drink","11084","478","60","item","486","6.Whisky Sour (2Oz)","14.25","25788","no","no","no","no","no","",""
+"update","tiny","drink","19346","478","70","item","487","7.Negroni (3Oz)","15.00","25786","no","no","no","no","no","",""

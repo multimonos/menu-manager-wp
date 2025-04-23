@@ -55,6 +55,7 @@ class ModifyMenuTask {
                 }
             }
 
+            $root->fixTree();
 //            // PAGE
 //            $pages = $items->groupBy( 'page' );
 //
@@ -141,12 +142,16 @@ class ModifyMenuTask {
             return;
         }
 
-        $node->fill( [
+        $data = [
             'type'        => NodeType::from( $row->type )->value, // must be valid
             'title'       => $row->title,
             'description' => $row->description,
             'sort_order'  => $row->sort_order,
-        ] );
+            'parent_id'   => $row->parent_id,
+        ];
+
+
+        $node->fill( $data );
 
         if ( $node->isDirty() ) {
             $node->save();
