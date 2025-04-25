@@ -1,7 +1,7 @@
 from mysql.connector.cursor import MySQLCursorDict
 import pytest
 
-from const import A_SLUG, AB_CSV, B_SLUG
+from const import A_SLUG, B_CSV, B_SLUG
 from plugin import (
     csv_exists,
     impex_count,
