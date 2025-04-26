@@ -47,6 +47,10 @@ class MenuPost extends Post {
                 'query_var'          => true,
                 'rewrite'            => ['slug' => 'menus'],
                 'capability_type'    => 'post',
+                'capabilities'       => [
+                    'create_posts' => 'do_not_allow',
+                ],
+                'map_meta_cap'       => true,
                 'has_archive'        => false,
                 'hierarchical'       => false,
                 'menu_position'      => null,
