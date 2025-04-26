@@ -26,7 +26,7 @@ class CloneMenuTask {
         $dst = MenuPost::find( $target_slug );
 
         if ( $dst instanceof \WP_Post ) {
-            return TaskResult::failure( "Target menu '${target_slug}' already exists." );
+            return TaskResult::failure( "Target menu '{$target_slug}' already exists." );
         }
 
         // guard : src menu must exist
