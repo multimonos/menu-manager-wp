@@ -3,10 +3,9 @@
  * Plugin Name: Menu Manager
  */
 
-use MenuManager\Admin\Admin;
-use MenuManager\Database\PostType\MenuPost;
-use MenuManager\Plugin\Activate;
-use MenuManager\Plugin\Deactivate;
+use MenuManager\Admin\AdminService;
+use MenuManager\Model\MenuPost;
+use MenuManager\Service\Plugin;
 use MenuManager\Wpcli\Commands\ImportCommands;
 use MenuManager\Wpcli\Commands\JobCommands;
 use MenuManager\Wpcli\Commands\MenuCommands;
@@ -30,14 +29,14 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 }
 
 // plugin
-register_activation_hook( __FILE__, [Activate::class, 'run'] );
-register_deactivation_hook( __FILE__, [Deactivate::class, 'run'] );
+register_activation_hook( __FILE__, [Plugin::class, 'activate'] );
+register_deactivation_hook( __FILE__, [Plugin::class, 'deactivate'] );
 
 function menu_manager_plugin() {
 
     MenuPost::init();
 
-    Admin::init();
+    AdminService::init();
 
     if ( is_admin() ) {
         require_once __DIR__ . '/test.php';

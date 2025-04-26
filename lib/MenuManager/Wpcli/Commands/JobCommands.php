@@ -3,8 +3,8 @@
 namespace MenuManager\Wpcli\Commands;
 
 
-use MenuManager\Database\db;
-use MenuManager\Database\Model\Job;
+use MenuManager\Model\Job;
+use MenuManager\Service\Database;
 use MenuManager\Task\JobRunTask;
 use MenuManager\Task\ValidateTask;
 use MenuManager\Wpcli\CliOutput;
@@ -29,7 +29,7 @@ class JobCommands {
     public function ls( $args, $assoc_args ) {
         $format = $assoc_args['format'] ?? 'table';
 
-        db::load();
+        Database::load();
 
         switch ( $format ) {
             case 'count':
@@ -110,7 +110,7 @@ class JobCommands {
      * @when after_wp_load
      */
     public function get( $args, $assoc_args ) {
-        db::load();
+        Database::load();
 
         $id = $args[0];
 
@@ -163,7 +163,7 @@ class JobCommands {
      * @when after_wp_load
      */
     public function rm( $args, $assoc_args ) {
-        db::load();
+        Database::load();
 
         $id = $args[0];
 

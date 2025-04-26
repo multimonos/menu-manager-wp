@@ -2,11 +2,11 @@
 
 namespace MenuManager\Task;
 
-use MenuManager\Database\db;
-use MenuManager\Database\Factory\ImportNodeFactory;
-use MenuManager\Database\Model\Impex;
-use MenuManager\Database\PostType\MenuPost;
-use MenuManager\Logger;
+use MenuManager\Model\Impex;
+use MenuManager\Model\MenuPost;
+use MenuManager\Service\Database;
+use MenuManager\Service\Factory\ImportNodeFactory;
+use MenuManager\Service\Logger;
 use MenuManager\Utils\NodeSortOrderManager;
 use MenuManager\Vendor\Illuminate\Support\Collection;
 
@@ -15,7 +15,7 @@ class CreateMenuTask {
 
     public function run( $menu_id, Collection $items ): bool {
 
-        db::load()->getConnection()->transaction( function () use ( $menu_id, $items ) {
+        Database::load()->getConnection()->transaction( function () use ( $menu_id, $items ) {
 
             $sorter = new NodeSortOrderManager();
 

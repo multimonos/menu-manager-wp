@@ -2,7 +2,7 @@
 
 namespace MenuManager\Utils;
 
-use MenuManager\Database\Model\Node;
+use MenuManager\Model\Node;
 
 class NodeSortOrderManager {
     const START = 10;

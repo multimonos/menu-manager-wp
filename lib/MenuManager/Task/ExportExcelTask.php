@@ -2,10 +2,10 @@
 
 namespace MenuManager\Task;
 
-use MenuManager\Database\db;
-use MenuManager\Database\Factory\ExportNodeFactory;
-use MenuManager\Database\Model\Impex;
-use MenuManager\Database\Model\Node;
+use MenuManager\Model\Impex;
+use MenuManager\Model\Node;
+use MenuManager\Service\Database;
+use MenuManager\Service\Factory\ExportNodeFactory;
 use MenuManager\Types\ExportMethod;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
 use MenuManager\Vendor\PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -15,7 +15,7 @@ class ExportExcelTask {
 
     public function run( ExportMethod $method, \WP_Post $menu, string $path ): TaskResult {
 
-        db::load()::connection()->enableQueryLog();
+        Database::load()::connection()->enableQueryLog();
 
         // PAGES
         $page_names = Node::findPageNames( $menu );
@@ -69,7 +69,7 @@ class ExportExcelTask {
             exit;
         }
 
-        $queries = db::load()::connection()->getQueryLog();
+        $queries = Database::load()::connection()->getQueryLog();
 
         return TaskResult::success( "Exported menu '" . $menu->post_name . "' to " . $path, [
             'queries' => count( $queries ) . ' queries',

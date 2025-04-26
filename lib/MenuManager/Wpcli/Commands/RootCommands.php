@@ -2,7 +2,7 @@
 
 namespace MenuManager\Wpcli\Commands;
 
-use MenuManager\Database\PostType\MenuPost;
+use MenuManager\Model\MenuPost;
 use MenuManager\Task\ExportCsvTask;
 use MenuManager\Task\ExportExcelTask;
 use MenuManager\Task\LoadTask;

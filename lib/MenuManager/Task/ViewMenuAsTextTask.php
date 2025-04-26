@@ -2,14 +2,14 @@
 
 namespace MenuManager\Task;
 
-use MenuManager\Database\db;
-use MenuManager\Database\Model\Node;
+use MenuManager\Model\Node;
+use MenuManager\Service\Database;
 use MenuManager\Vendor\Kalnoy\Nestedset\Collection;
 
 class ViewMenuAsTextTask {
     public function run( \WP_Post $menu, string $pagename = null ): TaskResult {
 
-        db::load()::connection()->enableQueryLog();
+        Database::load()::connection()->enableQueryLog();
 
         // TREE
         $root = empty( $page )
@@ -27,7 +27,7 @@ class ViewMenuAsTextTask {
         $this->print( $tree );
 
 
-        $queries = db::load()::connection()->getQueryLog();
+        $queries = Database::load()::connection()->getQueryLog();
 
         return TaskResult::success( count( $queries ) . ' queries' );
     }

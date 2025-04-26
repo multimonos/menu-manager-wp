@@ -1,12 +1,12 @@
 <?php
 
-namespace MenuManager\Database;
+namespace MenuManager\Service;
 
 use MenuManager\Vendor\Illuminate\Container\Container;
 use MenuManager\Vendor\Illuminate\Database\Capsule\Manager as Capsule;
 use MenuManager\Vendor\Illuminate\Events\Dispatcher;
 
-class db {
+class Database {
     protected static $capsule;
 
     public static function load(): Capsule {

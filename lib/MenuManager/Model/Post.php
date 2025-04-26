@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Database\PostType;
+namespace MenuManager\Model;
 
 use WP_Post;
 

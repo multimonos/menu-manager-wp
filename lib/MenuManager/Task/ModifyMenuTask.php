@@ -2,12 +2,12 @@
 
 namespace MenuManager\Task;
 
-use MenuManager\Database\db;
-use MenuManager\Database\Model\Impex;
-use MenuManager\Database\Model\ImpexAction;
-use MenuManager\Database\Model\Node;
-use MenuManager\Database\Model\NodeType;
-use MenuManager\Logger;
+use MenuManager\Model\Impex;
+use MenuManager\Model\ImpexAction;
+use MenuManager\Model\Node;
+use MenuManager\Model\NodeType;
+use MenuManager\Service\Database;
+use MenuManager\Service\Logger;
 use MenuManager\Vendor\Illuminate\Support\Collection;
 
 class ModifyMenuTask {
@@ -16,7 +16,7 @@ class ModifyMenuTask {
 //        $impex_meta = ImpexMeta::analyze( $rows );
 //        print_r( $impex_meta );
 
-        db::load()->getConnection()->transaction( function () use ( $menu, $rows ) {
+        Database::load()->getConnection()->transaction( function () use ( $menu, $rows ) {
 
             Logger::taskInfo( 'modify', 'menu=' . $menu->post_name . ', rows=' . $rows->count() );
 

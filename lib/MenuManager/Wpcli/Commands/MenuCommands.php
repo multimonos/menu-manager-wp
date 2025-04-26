@@ -3,7 +3,7 @@
 namespace MenuManager\Wpcli\Commands;
 
 
-use MenuManager\Database\PostType\MenuPost;
+use MenuManager\Model\MenuPost;
 use MenuManager\Task\CloneMenuTask;
 use MenuManager\Task\ViewMenuAsTextTask;
 use WP_CLI;

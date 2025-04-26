@@ -1,9 +1,7 @@
 <?php
 
-namespace MenuManager\Database\PostType;
+namespace MenuManager\Model;
 
-
-use MenuManager\Database\Model\MenuPage;
 
 class MenuPost extends Post {
 
@@ -48,7 +46,8 @@ class MenuPost extends Post {
                 'rewrite'            => ['slug' => 'menus'],
                 'capability_type'    => 'post',
                 'capabilities'       => [
-                    'create_posts' => 'do_not_allow',
+                    'create_posts'       => 'do_not_allow',
+                    'user_can_duplicate' => 'do_not_allow',
                 ],
                 'map_meta_cap'       => true,
                 'has_archive'        => false,

@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Database\Model;
+namespace MenuManager\Model;
 
 use MenuManager\Vendor\Illuminate\Support\Collection;
 

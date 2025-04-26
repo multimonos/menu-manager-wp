@@ -1,9 +1,9 @@
 <?php
 
-namespace MenuManager\Database\Model;
+namespace MenuManager\Model;
 
-use MenuManager\Database\db;
-use MenuManager\Logger;
+use MenuManager\Service\Database;
+use MenuManager\Service\Logger;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
 
@@ -74,14 +74,14 @@ class Impex extends Model {
     public static function createTable() {
         Logger::info( self::TABLE );
 
-        if ( ! db::load()::schema()->hasTable( self::TABLE ) ) {
+        if ( ! Database::load()::schema()->hasTable( self::TABLE ) ) {
             Logger::info( self::TABLE . ' table not found' );
         } else {
-            db::load()::schema()->dropIfExists( self::TABLE );
+            Database::load()::schema()->dropIfExists( self::TABLE );
             Logger::info( self::TABLE . ' table dropped' );
         }
 
-        db::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
+        Database::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
             $table->bigInteger( 'job_id' )->unsigned();
             $table->foreign( 'job_id' )->references( 'id' )->on( Job::TABLE )->onDelete( 'cascade' );

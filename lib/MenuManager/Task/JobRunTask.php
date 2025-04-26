@@ -2,10 +2,10 @@
 
 namespace MenuManager\Task;
 
-use MenuManager\Database\db;
-use MenuManager\Database\Model\Job;
-use MenuManager\Database\PostType\MenuPost;
-use MenuManager\Logger;
+use MenuManager\Model\Job;
+use MenuManager\Model\MenuPost;
+use MenuManager\Service\Database;
+use MenuManager\Service\Logger;
 
 class JobRunTask {
 
@@ -14,7 +14,7 @@ class JobRunTask {
 //    }
 
     public function run( $job_id ): TaskResult {
-        db::load();
+        Database::load();
 
         // guard : job
         $job = Job::find( $job_id );

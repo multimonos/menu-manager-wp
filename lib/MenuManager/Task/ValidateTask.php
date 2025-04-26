@@ -2,12 +2,12 @@
 
 namespace MenuManager\Task;
 
-use MenuManager\Database\db;
-use MenuManager\Database\Model\Impex;
-use MenuManager\Database\Model\ImpexMeta;
-use MenuManager\Database\Model\Job;
-use MenuManager\Database\Model\JobStatus;
-use MenuManager\Database\PostType\MenuPost;
+use MenuManager\Model\Impex;
+use MenuManager\Model\ImpexMeta;
+use MenuManager\Model\Job;
+use MenuManager\Model\JobStatus;
+use MenuManager\Model\MenuPost;
+use MenuManager\Service\Database;
 
 class ValidateTask {
 
@@ -37,7 +37,7 @@ class ValidateTask {
 
     public function run( $job_id ): TaskResult {
 
-        db::load();
+        Database::load();
 
         // ERRORS + WARNINGS
 

@@ -3,8 +3,8 @@
 namespace MenuManager\Wpcli\Commands;
 
 
-use MenuManager\Database\db;
-use MenuManager\Database\Model\Node;
+use MenuManager\Model\Node;
+use MenuManager\Service\Database;
 use MenuManager\Wpcli\CliOutput;
 use WP_CLI;
 
@@ -27,7 +27,7 @@ class NodeCommands {
     public function ls( $args, $assoc_args ) {
         $format = $assoc_args['format'] ?? 'table';
 
-        db::load();
+        Database::load();
 
         switch ( $format ) {
             case 'count':
@@ -77,7 +77,7 @@ class NodeCommands {
      * @when after_wp_load
      */
     public function get( $args, $assoc_args ) {
-        db::load();
+        Database::load();
 
         $id = $args[0];
 
@@ -105,7 +105,7 @@ class NodeCommands {
      * @when after_wp_load
      */
     public function rm( $args, $assoc_args ) {
-        db::load();
+        Database::load();
 
         $id = $args[0];
 

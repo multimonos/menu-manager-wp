@@ -1,11 +1,11 @@
 <?php
 
-namespace MenuManager\Database\Factory;
+namespace MenuManager\Service\Factory;
 
-use MenuManager\Database\Model\Impex;
-use MenuManager\Database\Model\Node;
-use MenuManager\Database\Model\NodeMeta;
-use MenuManager\Database\Model\NodeType;
+use MenuManager\Model\Impex;
+use MenuManager\Model\Node;
+use MenuManager\Model\NodeMeta;
+use MenuManager\Model\NodeType;
 
 class ImportNodeFactory {
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager;
+namespace MenuManager\Service;
 
 class Logger {
     const KEY = 'menu-manager';

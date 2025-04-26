@@ -2,17 +2,17 @@
 
 namespace MenuManager\Task;
 
-use MenuManager\Database\db;
-use MenuManager\Database\Model\Impex;
-use MenuManager\Database\Model\Job;
-use MenuManager\Logger;
+use MenuManager\Model\Impex;
+use MenuManager\Model\Job;
+use MenuManager\Service\Database;
+use MenuManager\Service\Logger;
 use MenuManager\Vendor\League\Csv\Reader;
 
 class LoadTask {
 
     public function run( string $path ): TaskResult {
 
-        $conn = db::load()->getConnection();
+        $conn = Database::load()->getConnection();
 
         $conn->beginTransaction();
 

@@ -2,13 +2,13 @@
 
 namespace MenuManager\Task;
 
-use MenuManager\Database\db;
-use MenuManager\Database\Model\Node;
-use MenuManager\Database\PostType\MenuPost;
+use MenuManager\Model\MenuPost;
+use MenuManager\Model\Node;
+use MenuManager\Service\Database;
 
 class CloneMenuTask {
     public function run( mixed $src_id_or_slug, string $target_slug ): TaskResult {
-        db::load()::connection()->enableQueryLog();
+        Database::load()::connection()->enableQueryLog();
 
         // Validate.
 
@@ -49,7 +49,7 @@ class CloneMenuTask {
         }
 
         try {
-            db::load()->getConnection()->transaction( function () use ( $root, $dst ) {
+            Database::load()->getConnection()->transaction( function () use ( $root, $dst ) {
                 $this->cloneNode( $dst, $root );
             } );
 
@@ -61,7 +61,7 @@ class CloneMenuTask {
 
 
         // Ok.
-        $queries = db::load()::connection()->getQueryLog();
+        $queries = Database::load()::connection()->getQueryLog();
         return TaskResult::success( "Cloned menu '{$src_id_or_slug}' -> '{$target_slug}'.", [
             count( $queries ) . " queries",
         ] );
