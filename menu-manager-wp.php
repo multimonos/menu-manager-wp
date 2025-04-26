@@ -3,6 +3,7 @@
  * Plugin Name: Menu Manager
  */
 
+use MenuManager\Admin\Admin;
 use MenuManager\Database\PostType\MenuPost;
 use MenuManager\Plugin\Activate;
 use MenuManager\Plugin\Deactivate;
@@ -33,7 +34,10 @@ register_activation_hook( __FILE__, [Activate::class, 'run'] );
 register_deactivation_hook( __FILE__, [Deactivate::class, 'run'] );
 
 function menu_manager_plugin() {
+
     MenuPost::init();
+
+    Admin::init();
 
     if ( is_admin() ) {
         require_once __DIR__ . '/test.php';
