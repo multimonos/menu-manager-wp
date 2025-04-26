@@ -2,16 +2,22 @@
 
 namespace MenuManager\Admin\Menu;
 
+use MenuManager\Admin\Types\AdminPage;
 use MenuManager\Model\MenuPost;
 
 
-class MenuListPage {
+class MenuListPage implements AdminPage {
 
     const POST_ROW_ACTIONS = [
+        MenuPreviewPage::class,
         ExportCsvAction::class,
         ExportExcelAction::class,
         CloneAction::class,
     ];
+
+    public static function id(): string {
+        return 'mm_menu_list';
+    }
 
     public static function init(): void {
 
@@ -49,6 +55,8 @@ class MenuListPage {
         // Remove "duplicate post" function created by Post Duplicator plugin.
         if ( MenuPost::POST_TYPE === get_post_type( $post ) ) {
             unset( $actions['duplicate_post'] );
+            unset( $actions['view'] );
+            unset( $actions['edit'] );
         }
         return $actions;
     }

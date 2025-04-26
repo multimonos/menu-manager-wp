@@ -14,10 +14,15 @@ class ExportCsvAction implements PostRowAction {
     }
 
     public static function link( \WP_Post $post ): string {
-        $nonce = wp_create_nonce( self::id() . '_' . $post->ID );
+        $url = admin_url( add_query_arg( [
+            'action'   => self::id(),
+            'post_id'  => $post->ID,
+            '_wpnonce' => wp_create_nonce( self::id() . '_' . $post->ID ),
+        ], 'admin-post.php' ) );
+
         return sprintf(
             '<a href="%s" aria-label="%s">%s</a>',
-            admin_url( sprintf( 'admin-post.php?action=' . self::id() . '&post_id=%s&_wpnonce=%s', $post->ID, $nonce ) ),
+            $url,
             esc_attr( sprintf( __( 'Export "%s" to CSV', 'menu-manager' ), $post->post_title ) ),
             __( 'Export CSV', 'menu-manager' )
         );
