@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Admin;
+namespace MenuManager\Admin\Types;
 
 interface PostRowAction {
 

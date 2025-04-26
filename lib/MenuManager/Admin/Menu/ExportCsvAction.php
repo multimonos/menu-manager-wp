@@ -2,7 +2,7 @@
 
 namespace MenuManager\Admin\Menu;
 
-use MenuManager\Admin\PostRowAction;
+use MenuManager\Admin\Types\PostRowAction;
 use MenuManager\Model\MenuPost;
 use MenuManager\Task\ExportCsvTask;
 use MenuManager\Types\ExportMethod;

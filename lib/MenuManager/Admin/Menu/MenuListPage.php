@@ -5,7 +5,7 @@ namespace MenuManager\Admin\Menu;
 use MenuManager\Model\MenuPost;
 
 
-class MenuService {
+class MenuListPage {
 
     const POST_ROW_ACTIONS = [
         ExportCsvAction::class,
