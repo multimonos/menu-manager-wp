@@ -29,27 +29,27 @@ class JobRunTask {
 //            return ActionResult::failure( "Job with status '" . $job->status . "' cannot be started.  Must be '" . Job::STATUS_CREATED . "'." );
 //        }
 
-        if ( 'import' === $job->type ) {
+//        if ( 'import' === $job->type ) {
 
-            // one import task per menu
+        // one import task per menu
 
-            $menus = JobPost::impexes( $job )->groupBy( 'menu' );
+        $menus = JobPost::impexes( $job )->groupBy( 'menu' );
 
-            $menus->each( function ( $rows, $menu_id ) {
+        $menus->each( function ( $rows, $menu_id ) {
 
-                $menu = MenuPost::find( $menu_id );
+            $menu = MenuPost::find( $menu_id );
 
-                if ( $menu === null ) {
-                    $create_menu = new CreateMenuTask();
-                    $create_menu->run( $menu_id, $rows );
+            if ( $menu === null ) {
+                $create_menu = new CreateMenuTask();
+                $create_menu->run( $menu_id, $rows );
 
-                } else {
-                    $modify_task = new ModifyMenuTask();
-                    $modify_task->run( $menu, $rows );
-                }
+            } else {
+                $modify_task = new ModifyMenuTask();
+                $modify_task->run( $menu, $rows );
+            }
 
-            } );
-        }
+        } );
+//        }
 
         return TaskResult::success( 'Done' );
     }

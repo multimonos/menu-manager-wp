@@ -26,7 +26,7 @@ class MenuCommands {
      */
     public function ls( $args, $assoc_args ) {
         $format = $assoc_args['format'] ?? 'json';
-        WP_CLI::runcommand( "post list --post_type=menus --format={$format}" );
+        WP_CLI::runcommand( sprintf( "post list --post_type=%s --format={$format}", MenuPost::POST_TYPE ) );
     }
 
     /**

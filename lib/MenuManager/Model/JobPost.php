@@ -73,6 +73,6 @@ class JobPost extends Post {
     }
 
     public static function impexes( \WP_Post $job ): Collection {
-        return Impex::where( 'job_id', $job->ID );
+        return Impex::where( 'job_id', $job->ID )->get();
     }
 }
