@@ -17,6 +17,7 @@ from plugin import (
     impex_count,
     impex_load,
     impex_menu_count,
+    job_count,
     job_exists,
     job_run,
     menu_exists,
@@ -43,6 +44,7 @@ def test_create_a(cursor: MySQLCursorDict):
     assert menu_exists(cursor, A_SLUG) == False
 
     # import data
+    assert job_count(cursor) == 1
     assert job_exists(cursor, 1)
     assert cli_success(job_run(1))
 
@@ -69,6 +71,7 @@ def test_create_b(cursor: MySQLCursorDict):
     assert menu_exists(cursor, B_SLUG) == False
 
     # import data
+    assert job_count(cursor) == 1
     assert job_exists(cursor, 1)
     assert cli_success(job_run(1))
 
@@ -98,6 +101,7 @@ def test_create_ab(cursor: MySQLCursorDict):
     assert menu_exists(cursor, B_SLUG) == False
 
     # import data
+    assert job_count(cursor) == 1
     assert job_exists(cursor, 1)
     assert cli_success(job_run(1))
 

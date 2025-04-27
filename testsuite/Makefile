@@ -3,6 +3,7 @@
 
 #
 # Various ways to run tests
+# Note that the "-n1" flag captures all output
 #
 serial:
 	pytest -xvs -n1 -m 'serial'
@@ -18,6 +19,9 @@ test-activation:
 
 test-load:
 	pytest -xvs -n1 ./test_load.py
+
+test-quickload:
+	pytest -xvs ./test_load.py::test_load_a
 
 test-create:
 	pytest -xvs -n1 ./test_create.py

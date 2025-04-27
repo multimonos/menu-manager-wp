@@ -1,10 +1,13 @@
 DATAPATH = "./data"
-MENU_TYPE = "menus"
 PLUGIN_NAME = "menu-manager-wp"
 
+# post types
+MENU_TYPE = "mm_menu"
+JOB_TYPE = "mm_job"
+
 # tables
-TBL_POSTS = "wp_posts"
-TBL_JOBS = "wp_mm_jobs"
+TBL_MENUS= "wp_posts"
+TBL_JOBS = "wp_posts"
 TBL_IMPEX = "wp_mm_impex"
 TBL_NODES = "wp_mm_node"
 TBL_NODEMETA = "wp_mm_node_meta"

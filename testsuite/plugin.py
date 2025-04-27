@@ -8,12 +8,13 @@ from mysql.connector.cursor import MySQLCursorDict
 
 from const import (
     MENU_TYPE,
+    JOB_TYPE,
     PLUGIN_NAME,
     TBL_IMPEX,
     TBL_JOBS,
     TBL_NODEMETA,
     TBL_NODES,
-    TBL_POSTS,
+    TBL_MENUS,
 )
 
 
@@ -54,7 +55,7 @@ def sql_print(sql: str) -> None:
 def wpcli(*args: str) -> CompletedProcess[str]:
     rs = run(["wp", *args], check=False, capture_output=True, text=True)
     print(
-        f"CLI  call='{' '.join(rs.args)}', returncode={rs.returncode}, stderr={rs.stderr}"
+        f"CLI  call='{' '.join(rs.args)}', returncode={rs.returncode}, stderr={rs.stderr}, stdout={rs.stdout[:30]}..."
     )
     return rs
 
@@ -79,9 +80,9 @@ def plugin_reboot(cursor) -> None:
 def plugin_clean(cursor: MySQLCursorDict) -> None:
     stmts = [
         f"set foreign_key_checks=0;",
-        f"delete from {TBL_POSTS} where post_type = '{MENU_TYPE}';",
+        f"delete from {TBL_MENUS} where post_type = '{MENU_TYPE}';",
         f"truncate {TBL_NODEMETA};",
-        f"truncate {TBL_JOBS};",
+        #         f"truncate {TBL_JOBS};",
         f"truncate {TBL_IMPEX};",
         f"truncate {TBL_NODES};",
         f"set foreign_key_checks=1;",
@@ -126,12 +127,12 @@ def tables_are_empty(cursor) -> bool:
 
 
 def menu_count(cursor: MySQLCursorDict) -> int:
-    sql = f"select count(*) as cnt from {TBL_POSTS} where post_type = '{MENU_TYPE}';"
+    sql = f"select count(*) as cnt from {TBL_MENUS} where post_type = '{MENU_TYPE}';"
     return sql_count(cursor, sql)
 
 
 def menu_exists(cursor: MySQLCursorDict, name: str) -> bool:
-    sql = f"select count(*) as cnt from {TBL_POSTS} where post_type = '{MENU_TYPE}' and post_name='{name}';"
+    sql = f"select count(*) as cnt from {TBL_MENUS} where post_type = '{MENU_TYPE}' and post_name='{name}';"
     return sql_count(cursor, sql) == 1
 
 
@@ -221,7 +222,8 @@ def impex_export(menu: str, target: str) -> CompletedProcess[str]:
 
 
 def job_count(cursor: MySQLCursorDict) -> int:
-    return sql_count(cursor, f"select count(*) as cnt from {TBL_JOBS};")
+    sql = f"select count(*) as cnt from {TBL_JOBS} where post_type = '{JOB_TYPE}';"
+    return sql_count(cursor, sql)
 
 
 def job_exists(cursor: MySQLCursorDict, id: int) -> bool:
@@ -242,6 +244,13 @@ def job_get(id: int) -> Job | None:
 
     except:
         return None
+
+
+def job_latest() -> Job | None:
+    rs = mmcli("job", "latest")
+    if rs.returncode != 0:
+        return None
+    return job_get(cast(int, rs.stdout.strip()))
 
 
 def job_run(id: int) -> CompletedProcess[str]:

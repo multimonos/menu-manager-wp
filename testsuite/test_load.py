@@ -1,3 +1,4 @@
+from typing import TypedDict
 from mysql.connector.cursor import MySQLCursorDict
 import pytest
 
@@ -10,12 +11,15 @@ from const import (
     B_CSV,
     B_SLUG,
 )
+from model import Job
 from plugin import (
     csv_exists,
     impex_count,
     impex_load,
     impex_menu_count,
+    job_count,
     job_exists,
+    job_latest,
     menu_exists,
     plugin_reboot,
     tables_are_empty,
@@ -30,6 +34,7 @@ def test_load_a(cursor: MySQLCursorDict):
     # reset
     plugin_reboot(cursor)
     assert tables_are_empty(cursor)
+    assert job_count(cursor) == 0
 
     # load success
     assert cli_success(impex_load(A_CSV))
@@ -42,7 +47,10 @@ def test_load_a(cursor: MySQLCursorDict):
     assert impex_menu_count(cursor, A_SLUG) == A_COUNT
 
     # job
-    assert job_exists(cursor, 1)
+    assert job_count(cursor) == 1
+    job = job_latest()
+    assert job is not None
+    assert job["post_title"] != ""
 
 
 @pytest.mark.serial
@@ -52,6 +60,7 @@ def test_load_b(cursor: MySQLCursorDict):
     # reset
     plugin_reboot(cursor)
     assert tables_are_empty(cursor)
+    assert job_count(cursor) == 0
 
     # load success
     assert cli_success(impex_load(B_CSV))
@@ -64,7 +73,7 @@ def test_load_b(cursor: MySQLCursorDict):
     assert impex_menu_count(cursor, B_SLUG) == B_COUNT
 
     # job
-    assert job_exists(cursor, 1)
+    assert job_count(cursor) == 1
 
 
 @pytest.mark.serial
@@ -74,6 +83,7 @@ def test_load_ab(cursor: MySQLCursorDict):
     # reset
     plugin_reboot(cursor)
     assert tables_are_empty(cursor)
+    assert job_count(cursor) == 0
 
     # load success
     assert cli_success(impex_load(AB_CSV))
@@ -90,4 +100,4 @@ def test_load_ab(cursor: MySQLCursorDict):
     assert impex_count(cursor) == A_COUNT + B_COUNT
 
     # job exists
-    assert job_exists(cursor, 1)
+    assert job_count(cursor) == 1
