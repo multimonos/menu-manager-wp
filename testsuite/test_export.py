@@ -20,7 +20,9 @@ from plugin import (
     impex_export,
     impex_load,
     impex_menu_count,
+    job_count,
     job_exists,
+    job_latest,
     job_run,
     menu_exists,
     node_count,
@@ -49,8 +51,10 @@ def test_export(cursor: MySQLCursorDict):
     assert menu_exists(cursor, B_SLUG) == False
 
     # import data
-    assert job_exists(cursor, 1)
-    assert cli_success(job_run(1))
+    assert job_count(cursor) == 1
+    job = job_latest()
+    assert job_exists(cursor, job["ID"])
+    assert cli_success(job_run(job["ID"]))
 
     # menus should exist
     assert menu_exists(cursor, A_SLUG)

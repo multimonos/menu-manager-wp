@@ -2,10 +2,10 @@ from typing import TypedDict
 
 
 class Job(TypedDict):
-    id: int
-    type: str
-    status: str
-    source: str
+    ID: int
+    post_title: str
+    post_name: str
+    post_status: str
 
 
 class Menu(TypedDict):

@@ -18,7 +18,9 @@ from plugin import (
     impex_count,
     impex_load,
     impex_menu_count,
+    job_count,
     job_exists,
+    job_latest,
     job_run,
     menu_exists,
     node_count,
@@ -40,8 +42,10 @@ def test_create_tiny_menu(cursor: MySQLCursorDict):
     assert cli_success(impex_load(TINY_CSV))
 
     # import data
-    assert job_exists(cursor, 1)
-    assert cli_success(job_run(1))
+    assert job_count(cursor) == 1
+    job = job_latest()
+    assert job_exists(cursor, job["ID"])
+    assert cli_success(job_run(job["ID"]))
 
     # menus should not exist
     assert menu_exists(cursor, "tiny")

@@ -231,11 +231,11 @@ def job_exists(cursor: MySQLCursorDict, id: int) -> bool:
     return sql_count(cursor, sql) == 1
 
 
-def job_get(id: int) -> Job | None:
+def job_get(id: int) -> Job:
     rs = mmcli("job", "get", str(id))
 
     if rs.returncode != 0:
-        return None
+        return cast(Job, {})
 
     try:
         raw: dict[str, str] = json.loads(rs.stdout.strip())
@@ -243,13 +243,11 @@ def job_get(id: int) -> Job | None:
         return o
 
     except:
-        return None
+        return cast(Job, {})
 
 
-def job_latest() -> Job | None:
+def job_latest() -> Job:
     rs = mmcli("job", "latest")
-    if rs.returncode != 0:
-        return None
     return job_get(cast(int, rs.stdout.strip()))
 
 

@@ -15,7 +15,9 @@ from plugin import (
     impex_count,
     impex_load,
     is_node,
+    job_count,
     job_exists,
+    job_latest,
     job_run,
     node_count,
     node_exists,
@@ -42,8 +44,10 @@ def test_update_price(cursor: MySQLCursorDict):
     assert impex_count(cursor) == A_COUNT
 
     # run
-    assert job_exists(cursor, 1)
-    assert cli_success(job_run(1))
+    assert job_count(cursor) == 1
+    job = job_latest()
+    assert job_exists(cursor, job["ID"])
+    assert cli_success(job_run(job["ID"]))
 
     # check
     assert node_exists(cursor, PATCH_ID)
@@ -60,8 +64,10 @@ def test_update_price(cursor: MySQLCursorDict):
     assert cli_success(impex_load(PATCH_PRICE_CSV))
 
     # run update
-    assert job_exists(cursor, 2)
-    assert cli_success(job_run(2))
+    assert job_count(cursor) == 2
+    job2 = job_latest()
+    assert job_exists(cursor, job2["ID"])
+    assert cli_success(job_run(job2["ID"]))
 
     # check
     assert node_exists(cursor, PATCH_ID)

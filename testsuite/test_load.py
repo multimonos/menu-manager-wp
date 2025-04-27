@@ -48,9 +48,7 @@ def test_load_a(cursor: MySQLCursorDict):
 
     # job
     assert job_count(cursor) == 1
-    job = job_latest()
-    assert job is not None
-    assert job["post_title"] != ""
+    assert job_latest()["post_name"] != ""
 
 
 @pytest.mark.serial
@@ -74,6 +72,7 @@ def test_load_b(cursor: MySQLCursorDict):
 
     # job
     assert job_count(cursor) == 1
+    assert job_latest()["post_name"] != ""
 
 
 @pytest.mark.serial
@@ -101,3 +100,4 @@ def test_load_ab(cursor: MySQLCursorDict):
 
     # job exists
     assert job_count(cursor) == 1
+    assert job_latest()["post_name"] != ""

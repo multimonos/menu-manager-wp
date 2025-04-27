@@ -19,6 +19,7 @@ from plugin import (
     impex_menu_count,
     job_count,
     job_exists,
+    job_latest,
     job_run,
     menu_exists,
     node_count,
@@ -45,8 +46,11 @@ def test_create_a(cursor: MySQLCursorDict):
 
     # import data
     assert job_count(cursor) == 1
-    assert job_exists(cursor, 1)
-    assert cli_success(job_run(1))
+    job = job_latest()
+    assert job["ID"] > 0
+
+    assert job_exists(cursor, job["ID"])
+    assert cli_success(job_run(job["ID"]))
 
     # menus should exist
     assert menu_exists(cursor, A_SLUG)
@@ -72,8 +76,10 @@ def test_create_b(cursor: MySQLCursorDict):
 
     # import data
     assert job_count(cursor) == 1
-    assert job_exists(cursor, 1)
-    assert cli_success(job_run(1))
+    job = job_latest()
+    assert job["ID"] > 0
+    assert job_exists(cursor, job["ID"])
+    assert cli_success(job_run(job["ID"]))
 
     # menus should exist
     assert menu_exists(cursor, B_SLUG)
@@ -102,8 +108,9 @@ def test_create_ab(cursor: MySQLCursorDict):
 
     # import data
     assert job_count(cursor) == 1
-    assert job_exists(cursor, 1)
-    assert cli_success(job_run(1))
+    job = job_latest()
+    assert job_exists(cursor, job["ID"])
+    assert cli_success(job_run(job["ID"]))
 
     # menus should exist
     assert menu_exists(cursor, A_SLUG)
