@@ -7,6 +7,7 @@ use WP_Post;
 class Post {
 
     const POST_TYPE = 'post';
+    const TABLE = 'wp_posts';
 
     public static function type() {
         return static::POST_TYPE;
@@ -31,6 +32,7 @@ class Post {
 
         $defaults = [
             'post_type'   => static::POST_TYPE,
+            'post_status' => 'publish',
             'numberposts' => -1,
         ];
 
@@ -41,7 +43,7 @@ class Post {
         return is_array( $posts ) ? $posts : [];
     }
 
-    public static function create( array $data ): mixed {
+    public static function create( array $data, array $meta = [] ): mixed {
         $ndata = array_merge( $data, [
             'post_type'   => static::POST_TYPE,
             'post_status' => 'publish',
@@ -50,10 +52,32 @@ class Post {
         $id = wp_insert_post( $ndata );
 
         if ( $id ) {
-            return self::find( $id );
+            return static::find( $id );
         }
 
         return $id;
+    }
+
+    public static function dropTable(): bool {
+        $query = new \WP_Query( [
+            'post_type'      => static::POST_TYPE,
+            'post_status'    => 'any',
+            'posts_per_page' => -1,
+            'fields'         => 'ids',
+            'no_found_rows'  => true,
+        ] );
+
+        if ( empty( $query->posts ) ) {
+            return true;
+        }
+
+        // bulk delete
+        $deleted = true;
+        foreach ( $query->posts as $post_id ) {
+            $deleted = $deleted && wp_delete_post( $post_id, true );
+        }
+
+        return $deleted;
     }
 
     public static function delete( $post_id, $force = true ): bool {

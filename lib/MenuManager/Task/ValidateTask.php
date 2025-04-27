@@ -4,8 +4,7 @@ namespace MenuManager\Task;
 
 use MenuManager\Model\Impex;
 use MenuManager\Model\ImpexMeta;
-use MenuManager\Model\Job;
-use MenuManager\Model\JobStatus;
+use MenuManager\Model\JobPost;
 use MenuManager\Model\MenuPost;
 use MenuManager\Service\Database;
 
@@ -60,7 +59,7 @@ class ValidateTask {
         $msg = [];
 
         // guard : job
-        $job = Job::find( $job_id );
+        $job = JobPost::find( $job_id );
 
         if ( $job === null ) {
             return TaskResult::failure( "Job not found '" . $job_id . "'" );
@@ -72,7 +71,7 @@ class ValidateTask {
 //        }
 
         // review the impex
-        $rows = $job->impexes;
+        $rows = JobPost::impexes( $job );
 
         // guard : row count
         if ( empty( $rows ) ) {
@@ -156,8 +155,8 @@ class ValidateTask {
 
         // valid
         if ( empty( $err ) ) {
-            $job->status = JobStatus::Validated;
-            $job->save();
+//            $job->status = JobStatus::Validated;
+//            $job->save();
             return TaskResult::success( 'Validated.', $this->collect() );
         }
 

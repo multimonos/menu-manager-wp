@@ -2,7 +2,7 @@
 
 namespace MenuManager\Task;
 
-use MenuManager\Model\Job;
+use MenuManager\Model\JobPost;
 use MenuManager\Model\MenuPost;
 use MenuManager\Service\Database;
 use MenuManager\Service\Logger;
@@ -17,13 +17,13 @@ class JobRunTask {
         Database::load();
 
         // guard : job
-        $job = Job::find( $job_id );
+        $job = JobPost::find( $job_id );
 
         if ( $job === null ) {
             return TaskResult::failure( "Job not found '" . $job_id . "'" );
         }
 
-        Logger::taskInfo( 'run', 'job=' . $job->id );
+        Logger::taskInfo( 'run', 'job=' . $job->ID );
         // guard : job status
 //        if ( ! $this->canStart( $job ) ) {
 //            return ActionResult::failure( "Job with status '" . $job->status . "' cannot be started.  Must be '" . Job::STATUS_CREATED . "'." );
@@ -33,7 +33,7 @@ class JobRunTask {
 
             // one import task per menu
 
-            $menus = $job->impexes->groupBy( 'menu' );
+            $menus = JobPost::impexes( $job )->groupBy( 'menu' );
 
             $menus->each( function ( $rows, $menu_id ) {
 

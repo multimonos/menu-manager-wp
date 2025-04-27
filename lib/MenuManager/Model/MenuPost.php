@@ -5,7 +5,7 @@ namespace MenuManager\Model;
 
 class MenuPost extends Post {
 
-    const POST_TYPE = 'menus';
+    const POST_TYPE = 'mm_menu';
 
     public static function init() {
         add_action( 'init', function () {

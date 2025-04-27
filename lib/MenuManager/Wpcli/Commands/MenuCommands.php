@@ -16,7 +16,7 @@ class MenuCommands {
      * ## OPTIONS
      *
      * [--format=<format>]
-     * : Output format. Options: table, ids. Default: table.
+     * : Output format. Options: table, ids. Default: json.
      *
      * ## EXAMPLES
      *
@@ -25,7 +25,7 @@ class MenuCommands {
      * @when after_wp_load
      */
     public function ls( $args, $assoc_args ) {
-        $format = $assoc_args['format'] ?? 'table';
+        $format = $assoc_args['format'] ?? 'json';
         WP_CLI::runcommand( "post list --post_type=menus --format={$format}" );
     }
 

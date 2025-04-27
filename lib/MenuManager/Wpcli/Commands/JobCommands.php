@@ -3,11 +3,9 @@
 namespace MenuManager\Wpcli\Commands;
 
 
-use MenuManager\Model\Job;
-use MenuManager\Service\Database;
+use MenuManager\Model\JobPost;
 use MenuManager\Task\JobRunTask;
 use MenuManager\Task\ValidateTask;
-use MenuManager\Wpcli\CliOutput;
 use WP_CLI;
 
 class JobCommands {
@@ -18,7 +16,7 @@ class JobCommands {
      * ## OPTIONS
      *
      * [--format=<format>]
-     * : Output format. Options: table, ids. Default: table.
+     * : Output format. Options: table, ids,json. Default: json.
      *
      * ## EXAMPLES
      *
@@ -27,46 +25,51 @@ class JobCommands {
      * @when after_wp_load
      */
     public function ls( $args, $assoc_args ) {
-        $format = $assoc_args['format'] ?? 'table';
-
-        Database::load();
-
-        switch ( $format ) {
-            case 'count':
-                WP_CLI::line( Job::all()->pluck( 'id' )->count() );
-                break;
-
-            case 'ids':
-                $ids = Job::all()->pluck( 'id' )->join( ' ' );
-                WP_CLI::line( $ids );
-                break;
-
-            default:
-            case 'table':
-
-                $data = Job::all()->transform( function ( $x ) {
-                    return [
-                        'id'         => $x->id,
-                        'type'       => $x->type,
-                        'status'     => $x->status,
-                        'source'     => $x->source,
-                        'created_at' => $x->created_at,
-                    ];
-                } )->toArray();
-
-                $maxlen_source = array_reduce(
-                    $data,
-                    fn( $max, $item ) => max( $max, strlen( $item['source'] ) ),
-                    0
-                );
-
-                CliOutput::table(
-                    [5, 10, 10, $maxlen_source, 20],
-                    ['id', 'type', 'status', 'source', 'created_at'],
-                    $data,
-                );
-                break;
-        }
+        $format = $assoc_args['format'] ?? 'json';
+        $cmd = sprintf( "post list --post_type=%s --format=%s", JobPost::POST_TYPE, $format );
+        WP_CLI::runcommand( $cmd );
+//        return;
+//
+//        $format = $assoc_args['format'] ?? 'table';
+//
+//        Database::load();
+//
+//        switch ( $format ) {
+//            case 'count':
+//                WP_CLI::line( Job::all()->pluck( 'id' )->count() );
+//                break;
+//
+//            case 'ids':
+//                $ids = Job::all()->pluck( 'id' )->join( ' ' );
+//                WP_CLI::line( $ids );
+//                break;
+//
+//            default:
+//            case 'table':
+//
+//                $data = Job::all()->transform( function ( $x ) {
+//                    return [
+//                        'id'         => $x->id,
+//                        'type'       => $x->type,
+//                        'status'     => $x->status,
+//                        'source'     => $x->source,
+//                        'created_at' => $x->created_at,
+//                    ];
+//                } )->toArray();
+//
+//                $maxlen_source = array_reduce(
+//                    $data,
+//                    fn( $max, $item ) => max( $max, strlen( $item['source'] ) ),
+//                    0
+//                );
+//
+//                CliOutput::table(
+//                    [5, 10, 10, $maxlen_source, 20],
+//                    ['id', 'type', 'status', 'source', 'created_at'],
+//                    $data,
+//                );
+//                break;
+//        }
     }
 
     /**
@@ -84,15 +87,11 @@ class JobCommands {
      * @when after_wp_load
      */
     public function validate( $args, $assoc_args ) {
+        $id = $args[0];
 
-        // job get
-        $job_id = $args[0];
-
-        // guard : job status
         $task = new ValidateTask();
-        $rs = $task->run( $job_id );
+        $rs = $task->run( $id );
 
-        // guard : err
         if ( ! $rs->ok() ) {
             WP_CLI::error( $rs->getMessage() . "\n" . print_r( $rs->getData(), true ) );
         }
@@ -104,33 +103,44 @@ class JobCommands {
      *
      * ## OPTIONS
      *
-     * <id>
+     * <job_id>
      * : The id of the job ot get.
      *
      * @when after_wp_load
      */
     public function get( $args, $assoc_args ) {
-        Database::load();
-
         $id = $args[0];
 
-        $job = Job::find( $id );
+        if ( is_numeric( $id ) ) {
+            WP_CLI::runcommand( "post get {$id} --format=json" );
+        } else {
+            $post = JobPost::find( $id );
 
-        // failed
-        if ( $job === null ) {
-            WP_CLI::error( "Job not found id=" . $id );
+            if ( $post instanceof \WP_Post ) {
+                WP_CLI::runcommand( "post get {$post->ID} --format=json" );
+            } else {
+                WP_CLI::error( "Job not found '$id'." );
+            }
         }
-
-        echo $job->toJson();
     }
 
+    /**
+     * Get most recently created job.
+     *
+     * ## OPTIONS
+     *
+     * @when after_wp_load
+     */
+    public function latest( $args, $assoc_args ) {
+        WP_CLI::runcommand( sprintf( "post list --post_type=%s --orderby=date --order=desc --posts_per_page=1 --format=ids", JobPost::POST_TYPE ) );
+    }
 
     /**
      * Run an import job.
      *
      * ## OPTIONS
      *
-     * <id>
+     * <job_id>
      * : The job to run.
      *
      * ## EXAMPLES
@@ -140,10 +150,10 @@ class JobCommands {
      * @when after_wp_load
      */
     public function run( $args, $assoc_args ) {
-        $job_id = $args[0];
+        $id = $args[0];
 
         $task = new JobRunTask();
-        $rs = $task->run( $job_id );
+        $rs = $task->run( $id );
 
         if ( ! $rs->ok() ) {
             WP_CLI::error( $rs->getMessage() );
@@ -163,21 +173,12 @@ class JobCommands {
      * @when after_wp_load
      */
     public function rm( $args, $assoc_args ) {
-        Database::load();
-
         $id = $args[0];
 
-        $obj = Job::find( $id );
-
-        // failed
-        if ( $obj === null ) {
-            WP_CLI::error( "Node not found id=" . $id );
+        if ( ! is_numeric( $id ) ) {
+            WP_CLI::error( "Delete requires a numeric id." );
         }
 
-        if ( ! $obj->delete() ) {
-            WP_CLI::error( "Failed to delete Job id=" . $id );
-        }
-
-        WP_CLI::success( 'Job deleted id=' . $id );
+        WP_CLI::runcommand( "post delete {$id} --force" );
     }
 }
