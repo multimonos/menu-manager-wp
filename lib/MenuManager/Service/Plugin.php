@@ -56,7 +56,7 @@ class Plugin {
         $conn = Database::load()->getConnection();
         $conn->statement( 'SET foreign_key_checks=0;' );
         array_map(
-            fn( $model ) => Database::load()::schema()->dropIfExists( $model::TABLE ),
+            fn( $model ) => Database::load()::schema()->dropIfExists( $model::table() ),
             self::CUSTOM_MODELS
         );
         $conn->statement( 'SET foreign_key_checks=1;' );

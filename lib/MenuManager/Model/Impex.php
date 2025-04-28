@@ -23,7 +23,6 @@ enum ImpexBoolean: string {
 
 class Impex extends Model {
 
-    const TABLE = 'mm_impex';
     protected $table = 'mm_impex';
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
@@ -71,17 +70,21 @@ class Impex extends Model {
         'description',
     ];
 
-    public static function createTable() {
-        Logger::info( self::TABLE );
+    public static function table(): string {
+        return (new static)->getTable();
+    }
 
-        if ( ! Database::load()::schema()->hasTable( self::TABLE ) ) {
-            Logger::info( self::TABLE . ' table not found' );
+    public static function createTable() {
+        Logger::info( self::table() );
+
+        if ( ! Database::load()::schema()->hasTable( self::table() ) ) {
+            Logger::info( self::table() . ' table not found' );
         } else {
-            Database::load()::schema()->dropIfExists( self::TABLE );
-            Logger::info( self::TABLE . ' table dropped' );
+            Database::load()::schema()->dropIfExists( self::table() );
+            Logger::info( self::table() . ' table dropped' );
         }
 
-        Database::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
+        Database::load()::schema()->create( self::table(), function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
             $table->bigInteger( 'job_id' )->unsigned();
             $table->foreign( 'job_id' )->references( 'id' )->on( 'posts' )->onDelete( 'cascade' );
@@ -106,7 +109,7 @@ class Impex extends Model {
             $table->dateTime( 'updated_at' )->useCurrent();
         } );
 
-        Logger::info( self::TABLE . ' table created' );
+        Logger::info( self::table() . ' table created' );
     }
 
     public static function isType( string $type, array $allowed ): bool {

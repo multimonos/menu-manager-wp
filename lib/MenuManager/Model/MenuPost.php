@@ -5,7 +5,9 @@ namespace MenuManager\Model;
 
 class MenuPost extends Post {
 
-    const POST_TYPE = 'mm_menu';
+    public static function type() {
+        return 'mm_menu';
+    }
 
     public static function init() {
         add_action( 'init', function () {
@@ -19,7 +21,7 @@ class MenuPost extends Post {
                 'new_item'              => __( 'New Menu', 'menu-manager' ),
                 'edit_item'             => __( 'Edit Menu', 'menu-manager' ),
                 'view_item'             => __( 'View Menu', 'menu-manager' ),
-                'all_items'             => __( 'All Menus', 'menu-manager' ),
+                'all_items'             => __( 'Menus', 'menu-manager' ),
                 'search_items'          => __( 'Search Menus', 'menu-manager' ),
                 'parent_item_colon'     => __( 'Parent Menus:', 'menu-manager' ),
                 'not_found'             => __( 'No menus found.', 'menu-manager' ),
@@ -61,7 +63,7 @@ class MenuPost extends Post {
                 'show_in_rest'       => false, // disable gutenberg
             ];
 
-            register_post_type( self::POST_TYPE, $args );
+            register_post_type( self::type(), $args );
         } );
     }
 

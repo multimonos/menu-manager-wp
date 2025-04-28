@@ -26,7 +26,7 @@ class JobCommands {
      */
     public function ls( $args, $assoc_args ) {
         $format = $assoc_args['format'] ?? 'json';
-        $cmd = sprintf( "post list --post_type=%s --format=%s", JobPost::POST_TYPE, $format );
+        $cmd = sprintf( "post list --post_type=%s --format=%s", JobPost::type(), $format );
         WP_CLI::runcommand( $cmd );
 //        return;
 //
@@ -132,7 +132,7 @@ class JobCommands {
      * @when after_wp_load
      */
     public function latest( $args, $assoc_args ) {
-        WP_CLI::runcommand( sprintf( "post list --post_type=%s --orderby=date --order=desc --posts_per_page=1 --format=ids", JobPost::POST_TYPE ) );
+        WP_CLI::runcommand( sprintf( "post list --post_type=%s --orderby=date --order=desc --posts_per_page=1 --format=ids", JobPost::type() ) );
     }
 
     /**

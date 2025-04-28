@@ -7,7 +7,9 @@ use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
 
 class JobPost extends Post {
 
-    const POST_TYPE = 'mm_job';
+    public static function type() {
+        return 'mm_job';
+    }
 
     public static function init() {
         add_action( 'init', function () {
@@ -21,7 +23,7 @@ class JobPost extends Post {
                 'new_item'              => __( 'New Job', 'job-manager' ),
                 'edit_item'             => __( 'Edit Job', 'job-manager' ),
                 'view_item'             => __( 'View Job', 'job-manager' ),
-                'all_items'             => __( 'All Jobs', 'job-manager' ),
+                'all_items'             => __( 'Jobs', 'job-manager' ),
                 'search_items'          => __( 'Search Jobs', 'job-manager' ),
                 'parent_item_colon'     => __( 'Parent Jobs:', 'job-manager' ),
                 'not_found'             => __( 'No jobs found.', 'job-manager' ),
@@ -43,8 +45,8 @@ class JobPost extends Post {
                 'public'             => false,
                 'publicly_queryable' => false,
                 'show_ui'            => true,
-                'show_in_job'        => true,
-                'query_var'          => true,
+                'show_in_menu'       => 'edit.php?post_type=' . MenuPost::type(), // show under menus nav
+                'query_var'          => false,
                 'rewrite'            => ['slug' => 'jobs'],
                 'capability_type'    => 'post',
                 'capabilities'       => [
@@ -61,14 +63,15 @@ class JobPost extends Post {
                 'show_in_rest'       => false, // disable gutenberg
             ];
 
-            register_post_type( self::POST_TYPE, $args );
+            register_post_type( self::type(), $args );
         } );
     }
 
-    public static function create( array $data, array $meta = [] ): mixed {
+    public static function create( array $data, array $meta = [] ): ?\WP_Post {
         return parent::create( array_merge(
             ['post_name' => wp_generate_uuid4()],
-            $data
+            $data,
+            $meta,
         ) );
     }
 

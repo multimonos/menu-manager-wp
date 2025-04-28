@@ -80,7 +80,7 @@ class LoadTask {
 
             $conn->commit();
 
-            return TaskResult::success( "Loaded: {$path}" );
+            return TaskResult::success( "Loaded: {$path}", ['job' => $job] );
 
         } catch (Exception $e) {
             $conn->rollBack();

@@ -29,7 +29,6 @@ class Node extends Model {
 
     use NodeTrait;
 
-    const TABLE = 'mm_node';
     protected $table = 'mm_node';
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
@@ -48,17 +47,21 @@ class Node extends Model {
         'sort_order',
     ];
 
-    public static function createTable() {
-        Logger::info( self::TABLE );
+    public static function table(): string {
+        return (new static)->getTable();
+    }
 
-        if ( ! Database::load()::schema()->hasTable( self::TABLE ) ) {
-            Logger::info( self::TABLE . ' table not found' );
+    public static function createTable() {
+        Logger::info( self::table() );
+
+        if ( ! Database::load()::schema()->hasTable( self::table() ) ) {
+            Logger::info( self::table() . ' table not found' );
         } else {
-            Database::load()::schema()->dropIfExists( self::TABLE );
-            Logger::info( self::TABLE . ' table dropped' );
+            Database::load()::schema()->dropIfExists( self::table() );
+            Logger::info( self::table() . ' table dropped' );
         }
 
-        Database::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
+        Database::load()::schema()->create( self::table(), function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
             $table->bigInteger( 'menu_id' )->unsigned();
             $table->foreign( 'menu_id' )->references( 'ID' )->on( 'posts' )->onDelete( 'cascade' );
@@ -72,7 +75,7 @@ class Node extends Model {
             $table->dateTime( 'updated_at' )->useCurrent();
         } );
 
-        Logger::info( self::TABLE . ' table created' );
+        Logger::info( self::table() . ' table created' );
     }
 
     protected function getScopeAttributes() {

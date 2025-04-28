@@ -9,7 +9,6 @@ use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
 
 class NodeMeta extends Model {
 
-    const TABLE = 'mm_node_meta';
     protected $table = 'mm_node_meta';
 
     const CREATED_AT = 'created_at';
@@ -22,20 +21,24 @@ class NodeMeta extends Model {
         'image_ids',
     ];
 
-    public static function createTable() {
-        Logger::info( self::TABLE );
+    public static function table(): string {
+        return (new static)->getTable();
+    }
 
-        if ( ! Database::load()::schema()->hasTable( self::TABLE ) ) {
-            Logger::info( self::TABLE . ' table not found' );
+    public static function createTable() {
+        Logger::info( self::table() );
+
+        if ( ! Database::load()::schema()->hasTable( self::table() ) ) {
+            Logger::info( self::table() . ' table not found' );
         } else {
-            Database::load()::schema()->dropIfExists( self::TABLE );
-            Logger::info( self::TABLE . ' table dropped' );
+            Database::load()::schema()->dropIfExists( self::table() );
+            Logger::info( self::table() . ' table dropped' );
         }
 
-        Database::load()::schema()->create( self::TABLE, function ( Blueprint $table ) {
+        Database::load()::schema()->create( self::table(), function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
             $table->bigInteger( 'node_id' )->unsigned();
-            $table->foreign( 'node_id' )->references( 'id' )->on( Node::TABLE )->onDelete( 'cascade' );
+            $table->foreign( 'node_id' )->references( 'id' )->on( Node::table() )->onDelete( 'cascade' );
             $table->string( 'tags' )->nullable();
             $table->string( 'prices' )->nullable();
             $table->string( 'image_ids' )->nullable();
@@ -43,7 +46,7 @@ class NodeMeta extends Model {
             $table->dateTime( 'updated_at' )->useCurrent();
         } );
 
-        Logger::info( self::TABLE . ' table created' );
+        Logger::info( self::table() . ' table created' );
     }
 
     public function node() {
