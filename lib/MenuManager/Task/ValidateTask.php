@@ -71,7 +71,7 @@ class ValidateTask {
 //        }
 
         // review the impex
-        $rows = JobPost::impexes( $job );
+        $rows = $job->impexes();
 
         // guard : row count
         if ( empty( $rows ) ) {
@@ -120,7 +120,7 @@ class ValidateTask {
             } else { // menu exists
                 // existing menu must have at least one action
                 if ( $meta->actions->count() === 0 ) {
-                    $err[] = "No actions set for '{$menu->post_name}' menu import.";
+                    $err[] = "No actions set for '{$menu->post->post_name}' menu import.";
                 }
             }
 

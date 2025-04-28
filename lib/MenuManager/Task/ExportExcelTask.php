@@ -13,7 +13,7 @@ use MenuManager\Vendor\PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ExportExcelTask {
 
-    public function run( ExportMethod $method, \WP_Post $menu, string $path ): TaskResult {
+    public function run( ExportMethod $method, MenuPost $menu, string $path ): TaskResult {
 
         Database::load()::connection()->enableQueryLog();
 
@@ -21,7 +21,7 @@ class ExportExcelTask {
         $page_names = Node::findPageNames( $menu );
 
         if ( empty( $page_names ) ) {
-            return TaskResult::failure( "No pages found for menu '{$menu}." );
+            return TaskResult::failure( "No pages found for menu '{$menu->post->post_name}." );
         }
 
         // DATA
@@ -71,7 +71,7 @@ class ExportExcelTask {
 
         $queries = Database::load()::connection()->getQueryLog();
 
-        return TaskResult::success( "Exported menu '" . $menu->post_name . "' to " . $path, [
+        return TaskResult::success( "Exported menu '" . $menu->post->post_name . "' to " . $path, [
             'queries' => count( $queries ) . ' queries',
         ] );
     }

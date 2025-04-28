@@ -5,7 +5,7 @@ namespace MenuManager\Model;
 
 class MenuPost extends Post {
 
-    public static function type() {
+    public static function type(): string {
         return 'mm_menu';
     }
 

@@ -72,12 +72,12 @@ class RootCommands {
         // menu
         $menu = MenuPost::find( $menu_id );
 
-        if ( ! $menu instanceof \WP_Post ) {
+        if ( $menu === null ) {
             WP_CLI::error( "Menu not found" );
         }
 
         // file stem
-        $filestem = "menu-export_{$menu->post_name}_{$menu->ID}__" . date( 'Ymd\THis' );
+        $filestem = "menu-export_{$menu->post->post_name}_{$menu->post->ID}__" . date( 'Ymd\THis' );
 
         if ( 'csv' === $format ) {
             $path = empty( $dst ) ? $filestem . '.csv' : $dst;

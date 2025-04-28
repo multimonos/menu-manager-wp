@@ -22,10 +22,10 @@ class CreateMenuTask {
             // MENU
             $menu = MenuPost::create( ['post_title' => $menu_id, 'post_name' => $menu_id] );
 
-            if ( ! $menu instanceof \WP_Post ) {
+            if ( $menu === null ) {
                 return false;
             }
-            Logger::taskInfo( 'create', 'menu=' . $menu->post_name );
+            Logger::taskInfo( 'create', 'menu=' . $menu->post->post_name );
 
             // ROOT
             $root = ImportNodeFactory::createRootNode( $menu );

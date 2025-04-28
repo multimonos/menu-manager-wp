@@ -23,7 +23,7 @@ class JobRunTask {
             return TaskResult::failure( "Job not found '" . $job_id . "'" );
         }
 
-        Logger::taskInfo( 'run', 'job=' . $job->ID );
+        Logger::taskInfo( 'run', 'job=' . $job->post->ID );
         // guard : job status
 //        if ( ! $this->canStart( $job ) ) {
 //            return ActionResult::failure( "Job with status '" . $job->status . "' cannot be started.  Must be '" . Job::STATUS_CREATED . "'." );
@@ -33,7 +33,7 @@ class JobRunTask {
 
         // one import task per menu
 
-        $menus = JobPost::impexes( $job )->groupBy( 'menu' );
+        $menus = $job->impexes()->groupBy( 'menu' );
 
         $menus->each( function ( $rows, $menu_id ) {
 

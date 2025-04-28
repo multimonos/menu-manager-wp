@@ -60,7 +60,7 @@ class MenuPreviewPage implements AdminPage, PostRowAction {
 
         // Get the menu and display it in a custom format
         $menu = get_post( $menu_id );
-        if ( ! $menu || $menu->post_type !== MenuPost::POST_TYPE ) {
+        if ( ! $menu || $menu->post_type !== MenuPost::type() ) {
             wp_die( __( 'Menu not found.', 'menu-manager' ) );
         }
 
@@ -75,14 +75,14 @@ class MenuPreviewPage implements AdminPage, PostRowAction {
             $menu = get_post( $menu_id );
         }
 
-        if ( ! $menu || $menu->post_type !== MenuPost::POST_TYPE ) {
+        if ( ! $menu || $menu->post_type !== MenuPost::type() ) {
             wp_die( __( 'Menu not found.', 'menu-manager' ) );
         }
 
         // preview
         $task = new ViewMenuAsTextTask();
         echo '<pre>';
-        $task->run( $menu );
+        $task->run( intval( $_GET['menu_id'] ) );
         echo '</pre>';
     }
 }

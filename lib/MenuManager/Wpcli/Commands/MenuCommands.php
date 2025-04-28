@@ -50,13 +50,12 @@ class MenuCommands {
         if ( is_numeric( $id ) ) {
             WP_CLI::runcommand( "post get {$id} --format=json" );
         } else {
-            $post = MenuPost::find( $id );
+            $menu = MenuPost::find( $id );
 
-            if ( $post instanceof \WP_Post ) {
-                WP_CLI::runcommand( "post get {$post->ID} --format=json" );
-            } else {
+            if ( $menu === null ) {
                 WP_CLI::error( "Menu not found '$id'." );
             }
+            WP_CLI::runcommand( "post get {$menu->post->ID} --format=json" );
         }
     }
 
@@ -133,15 +132,8 @@ class MenuCommands {
         $id = $args[0];
         $pagename = $args[1] ?? null;
 
-        // menu
-        $menu = MenuPost::find( $id );
-
-        if ( ! $menu ) {
-            WP_CLI::error( "Menu not found '{$id}'." );
-        }
-
         $task = new ViewMenuAsTextTask();
-        $rs = $task->run( $menu, $pagename );
+        $rs = $task->run( $id, $pagename );
 
         if ( ! $rs->ok() ) {
             WP_CLI::error( $rs->getMessage() );

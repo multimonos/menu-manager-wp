@@ -3,6 +3,7 @@
 namespace MenuManager\Task;
 
 use MenuManager\Model\Impex;
+use MenuManager\Model\MenuPost;
 use MenuManager\Model\Node;
 use MenuManager\Service\Database;
 use MenuManager\Service\Factory\ExportNodeFactory;
@@ -45,7 +46,7 @@ class CsvWriterFactory {
 
 class ExportCsvTask {
 
-    public function run( ExportMethod $method, \WP_Post $menu, string $path ): TaskResult {
+    public function run( ExportMethod $method, MenuPost $menu, string $path ): TaskResult {
 
         Database::load()::connection()->enableQueryLog();
 
@@ -87,7 +88,7 @@ class ExportCsvTask {
         }
 
         // Other
-        return TaskResult::success( "Exported menu '" . $menu->post_name . "' to " . $path, [
+        return TaskResult::success( "Exported menu '" . $menu->post->post_name . "' to " . $path, [
             'queries' => count( $queries ) . ' queries',
         ] );
     }

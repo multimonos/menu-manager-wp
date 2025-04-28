@@ -47,13 +47,13 @@ class ExportExcelAction implements PostRowAction {
         }
 
         // Get the menu
-        $menu = get_post( $post_id );
-        if ( ! $menu || $menu->post_type !== MenuPost::POST_TYPE ) {
+        $menu = MenuPost::find( $post_id );
+        if ( $menu === null ) {
             wp_die( __( 'Menu not found.', 'menu-manager' ) );
         }
 
         // export
-        $path = "menu-export_{$menu->post_name}_{$menu->ID}__" . date( 'Ymd\THis' ) . '.xlsx';
+        $path = "menu-export_{$menu->post->post_name}_{$menu->post->ID}__" . date( 'Ymd\THis' ) . '.xlsx';
         $task = new ExportExcelTask();
         $rs = $task->run( ExportMethod::Download, $menu, $path );
         exit;

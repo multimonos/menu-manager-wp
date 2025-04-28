@@ -7,7 +7,7 @@ use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
 
 class JobPost extends Post {
 
-    public static function type() {
+    public static function type(): string {
         return 'mm_job';
     }
 
@@ -67,7 +67,7 @@ class JobPost extends Post {
         } );
     }
 
-    public static function create( array $data, array $meta = [] ): ?\WP_Post {
+    public static function create( array $data, array $meta = [] ): ?static {
         return parent::create( array_merge(
             ['post_name' => wp_generate_uuid4()],
             $data,
@@ -75,7 +75,7 @@ class JobPost extends Post {
         ) );
     }
 
-    public static function impexes( \WP_Post $job ): Collection {
-        return Impex::where( 'job_id', $job->ID )->get();
+    public function impexes(): Collection {
+        return Impex::where( 'job_id', $this->post->ID )->get();
     }
 }

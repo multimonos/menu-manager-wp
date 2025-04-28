@@ -55,7 +55,7 @@ class LoadTask {
 
                 // impex insert
                 Impex::create( [
-                    'job_id'         => $job->ID,
+                    'job_id'         => $job->post->ID,
                     'action'         => $record['action'],
                     'uuid'           => empty( $record['uuid'] ) ? null : $record['uuid'],
                     'parent_id'      => empty( $record['parent_id'] ) ? null : $record['parent_id'],

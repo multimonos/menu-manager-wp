@@ -2,12 +2,19 @@
 
 namespace MenuManager\Task;
 
+use MenuManager\Model\MenuPost;
 use MenuManager\Model\Node;
 use MenuManager\Service\Database;
 use MenuManager\Vendor\Kalnoy\Nestedset\Collection;
 
 class ViewMenuAsTextTask {
-    public function run( \WP_Post $menu, string $pagename = null ): TaskResult {
+    public function run( int|string $menu_id, string $pagename = null ): TaskResult {
+
+        $menu = MenuPost::find( $menu_id );
+
+        if ( $menu === null ) {
+            return TaskResult::failure( "Menu not found '{$menu_id}'." );
+        }
 
         Database::load()::connection()->enableQueryLog();
 
@@ -19,13 +26,13 @@ class ViewMenuAsTextTask {
         $tree = Node::getSortedMenu( $menu, $root );
 
         if ( ! $tree || $tree->count() === 0 ) {
-            return TaskResult::failure( "Menu tree not found or is empty '" . trim( $menu->ID . ' ' . $pagename ) . "'." );
+            return TaskResult::failure( "Menu tree not found or is empty '" . trim( $menu->post->ID . ' ' . $pagename ) . "'." );
         }
 
         // print
-        echo "\nMenu={$menu->post_name}" . (! empty( $pagename ) ? '/' . $pagename : '');
-        $this->print( $tree );
+        echo "\nMenu={$menu->post->post_name}" . (! empty( $pagename ) ? '/' . $pagename : '');
 
+        $this->print( $tree );
 
         $queries = Database::load()::connection()->getQueryLog();
 

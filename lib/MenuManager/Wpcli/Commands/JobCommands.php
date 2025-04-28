@@ -114,13 +114,12 @@ class JobCommands {
         if ( is_numeric( $id ) ) {
             WP_CLI::runcommand( "post get {$id} --format=json" );
         } else {
-            $post = JobPost::find( $id );
+            $job = JobPost::find( $id );
 
-            if ( $post instanceof \WP_Post ) {
-                WP_CLI::runcommand( "post get {$post->ID} --format=json" );
-            } else {
+            if ( $job === null ) {
                 WP_CLI::error( "Job not found '$id'." );
             }
+            WP_CLI::runcommand( "post get {$job->post->ID} --format=json" );
         }
     }
 

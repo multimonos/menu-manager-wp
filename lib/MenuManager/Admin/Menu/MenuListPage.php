@@ -38,7 +38,7 @@ class MenuListPage implements AdminPage {
     }
 
     public function add_post_row_actions( $actions, $post ) {
-        if ( $post->post_type !== MenuPost::POST_TYPE ) {
+        if ( $post->post_type !== MenuPost::type() ) {
             return $actions;
         }
 
@@ -53,7 +53,7 @@ class MenuListPage implements AdminPage {
 
     public function maybe_remove_duplicate_post_action( $actions, $post ) {
         // Remove "duplicate post" function created by Post Duplicator plugin.
-        if ( MenuPost::POST_TYPE === get_post_type( $post ) ) {
+        if ( MenuPost::type() === get_post_type( $post ) ) {
             unset( $actions['duplicate_post'] );
             unset( $actions['view'] );
             unset( $actions['edit'] );

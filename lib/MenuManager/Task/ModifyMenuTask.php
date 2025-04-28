@@ -4,6 +4,7 @@ namespace MenuManager\Task;
 
 use MenuManager\Model\Impex;
 use MenuManager\Model\ImpexAction;
+use MenuManager\Model\MenuPost;
 use MenuManager\Model\Node;
 use MenuManager\Model\NodeType;
 use MenuManager\Service\Database;
@@ -11,20 +12,20 @@ use MenuManager\Service\Logger;
 use MenuManager\Vendor\Illuminate\Support\Collection;
 
 class ModifyMenuTask {
-    public function run( \WP_Post $menu, Collection $rows ) {
+    public function run( MenuPost $menu, Collection $rows ) {
 //
 //        $impex_meta = ImpexMeta::analyze( $rows );
 //        print_r( $impex_meta );
 
         Database::load()->getConnection()->transaction( function () use ( $menu, $rows ) {
 
-            Logger::taskInfo( 'modify', 'menu=' . $menu->post_name . ', rows=' . $rows->count() );
+            Logger::taskInfo( 'modify', 'menu=' . $menu->post->post_name . ', rows=' . $rows->count() );
 
             // ROOT
             $root = Node::findRootNode( $menu );
 
             if ( $root === null ) {
-                return TaskResult::failure( 'Root node not found menu_id=' . $menu->ID );
+                return TaskResult::failure( 'Root node not found menu_id=' . $menu->post->ID );
             }
 
 

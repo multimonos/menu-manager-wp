@@ -2,32 +2,38 @@
 
 namespace MenuManager\Model;
 
-use WP_Post;
-
 class Post {
+
+    public \WP_Post $post;
+
+    public function __construct( \WP_Post $post ) {
+        $this->post = $post;
+    }
 
     public static function table(): string {
         global $wpdb;
         return $wpdb->posts;
     }
 
-    public static function type() {
+    public static function type(): string {
         return 'post';
     }
 
-    public static function find( mixed $id_or_slug ): ?\WP_Post {
+    public static function find( mixed $id_or_slug ): ?static {
 
         // by id
         if ( is_numeric( $id_or_slug ) ) {
             $post = get_post( (int)$id_or_slug );
             return ($post && $post->post_type === static::type())
-                ? $post
+                ? new static( $post )
                 : null;
         }
 
         // by slug
         $post = get_page_by_path( $id_or_slug, OBJECT, static::type() );
-        return $post instanceof WP_Post ? $post : null;
+        return $post instanceof \WP_Post
+            ? new static( $post )
+            : null;
     }
 
     public static function all( array $query = [] ): array {
@@ -45,11 +51,7 @@ class Post {
         return is_array( $posts ) ? $posts : [];
     }
 
-    public static function evolve( \WP_Post $post ): \WP_Post {
-        return $post;
-    }
-
-    public static function create( array $data, array $meta = [] ): ?\WP_Post {
+    public static function create( array $data, array $meta = [] ): ?static {
         // Create post
         $post_defaults = [
             'post_type'   => static::type(),
@@ -66,31 +68,24 @@ class Post {
         }
 
         // Set meta.
-        foreach ( $meta as $field => $value ) {
-            update_post_meta( $id, $field, $value );
-        }
+//        foreach ( $meta as $field => $value ) {
+//            update_post_meta( $id, $field, $value ); // @todo
+//        }
 
         return static::find( $id );
     }
 
-    public static function update( \WP_Post $post, array $data, array $meta = [] ): ?\WP_Post {
+    public function update( array $data, array $meta = [] ): ?static {
         // Update.
-        $update_data = array_merge( ['ID' => $post->ID], $data );
+        $post_data = array_merge( ['ID' => $this->post->ID], $data );
 
-        $rs = wp_update_post( $update_data );
+        $rs = wp_update_post( $post_data );
 
-        // Early exit
         if ( is_wp_error( $rs ) ) {
             return null;
         }
 
-        // Set meta.
-        foreach ( $meta as $field => $value ) {
-            update_post_meta( $id, $field, $value );
-        }
-
-        // Refresh
-        return static::find( $post->ID );
+        return self::find( $rs );
     }
 
     public static function dropTable(): bool {
@@ -115,8 +110,12 @@ class Post {
         return $deleted;
     }
 
-    public static function delete( $post_id, $force = true ): bool {
-        $rs = wp_delete_post( $post_id, $force );
-        return $rs instanceof \WP_Post;
+    public static function deleteByPostId( $post_id, bool $force = true ): bool {
+        return wp_delete_post( $post_id, $force ) instanceof \WP_Post;
+
+    }
+
+    public function delete( $force = true ): bool {
+        return static::deleteByPostId( $this->post->ID, $force );
     }
 }

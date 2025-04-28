@@ -4,6 +4,7 @@ namespace MenuManager\Service\Factory;
 
 use MenuManager\Model\Impex;
 use MenuManager\Model\ImpexBoolean;
+use MenuManager\Model\MenuPost;
 use MenuManager\Model\Node;
 use MenuManager\Model\NodeType;
 
@@ -13,7 +14,7 @@ class ExportNodeFactory {
         return $val === true ? ImpexBoolean::True : ImpexBoolean::False;
     }
 
-    public static function createRow( \WP_Post $menu, string $page, Node $node ): ?array {
+    public static function createRow( MenuPost $menu, string $page, Node $node ): ?array {
 
         $simple_types = [
             NodeType::Item,
@@ -35,11 +36,11 @@ class ExportNodeFactory {
         return null;
     }
 
-    public static function createCategoryRow( \WP_Post $menu, string $page, Node $node ): array {
+    public static function createCategoryRow( MenuPost $menu, string $page, Node $node ): array {
 
         return [
             'action'         => '',
-            'menu'           => $menu->post_name,
+            'menu'           => $menu->post->post_name,
             'page'           => $page,
             'uuid'           => $node->uuid,
             'parent_id'      => $node->parent_id,
@@ -59,10 +60,10 @@ class ExportNodeFactory {
         ];
     }
 
-    public static function createMenuitemRow( \WP_Post $menu, string $page, Node $node ): array {
+    public static function createMenuitemRow( MenuPost $menu, string $page, Node $node ): array {
         return [
             'action'         => '',
-            'menu'           => $menu->post_name,
+            'menu'           => $menu->post->post_name,
             'page'           => $page,
             'uuid'           => $node->uuid,
             'parent_id'      => $node->parent_id,

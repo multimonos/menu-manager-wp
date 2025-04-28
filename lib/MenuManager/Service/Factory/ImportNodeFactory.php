@@ -3,17 +3,18 @@
 namespace MenuManager\Service\Factory;
 
 use MenuManager\Model\Impex;
+use MenuManager\Model\MenuPost;
 use MenuManager\Model\Node;
 use MenuManager\Model\NodeMeta;
 use MenuManager\Model\NodeType;
 
 class ImportNodeFactory {
 
-    public static function createRootNode( \WP_Post $menu ): Node {
+    public static function createRootNode( MenuPost $menu ): Node {
         $root = new Node( [
-            'menu_id'    => $menu->ID,
+            'menu_id'    => $menu->post->ID,
             'type'       => NodeType::Root->value,
-            'title'      => 'menu.' . $menu->post_name,
+            'title'      => 'menu.' . $menu->post->post_name,
             'sort_order' => 0,
         ] );
 
@@ -24,9 +25,9 @@ class ImportNodeFactory {
         return $root;
     }
 
-    public static function createPageNode( \WP_Post $menu, Node $root, string $page_slug ): Node {
+    public static function createPageNode( MenuPost $menu, Node $root, string $page_slug ): Node {
         $page = new Node( [
-            'menu_id'   => $menu->ID,
+            'menu_id'   => $menu->post->ID,
             'parent_id' => $root->id,
             'type'      => NodeType::Page,
             'title'     => $page_slug,
@@ -39,9 +40,9 @@ class ImportNodeFactory {
         return $page;
     }
 
-    public static function createCategoryNode( \WP_Post $menu, Impex $row, Node $parent = null ): Node {
+    public static function createCategoryNode( MenuPost $menu, Impex $row, Node $parent = null ): Node {
         $node = new Node( [
-            'menu_id'     => $menu->ID,
+            'menu_id'     => $menu->post->ID,
             'uuid'        => $row->uuid,
             'title'       => $row->title,
             'type'        => $row->type,
@@ -68,10 +69,10 @@ class ImportNodeFactory {
         return $node;
     }
 
-    public static function createMenuitemNode( \WP_Post $menu, Impex $row, Node $parent = null ): Node {
+    public static function createMenuitemNode( MenuPost $menu, Impex $row, Node $parent = null ): Node {
 
         $node = new Node( [
-            'menu_id'     => $menu->ID,
+            'menu_id'     => $menu->post->ID,
             'uuid'        => $row->uuid,
             'type'        => NodeType::from( $row->type ),
             'title'       => $row->title,

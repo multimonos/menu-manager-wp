@@ -16,7 +16,7 @@ class CloneAction implements PostRowAction {
     public static function link( \WP_Post $post ): string {
         $url = admin_url( add_query_arg( [
             'action'   => self::id(),
-            'post_id'  => $post->ID,
+            'menu_id'  => $post->ID,
             '_wpnonce' => wp_create_nonce( self::id() . '_' . $post->ID ),
         ], 'admin-post.php' ) );
 
@@ -35,26 +35,26 @@ class CloneAction implements PostRowAction {
         }
 
         // Verify parameters
-        if ( ! isset( $_GET['post_id'] ) || ! isset( $_GET['_wpnonce'] ) ) {
+        if ( ! isset( $_GET['menu_id'] ) || ! isset( $_GET['_wpnonce'] ) ) {
             wp_die( __( 'Missing required parameters.', 'menu-manager' ) );
         }
 
-        $post_id = intval( $_GET['post_id'] );
+        $menu_id = intval( $_GET['menu_id'] );
 
         // Verify nonce
-        if ( ! wp_verify_nonce( $_GET['_wpnonce'], self::id() . '_' . $post_id ) ) {
+        if ( ! wp_verify_nonce( $_GET['_wpnonce'], self::id() . '_' . $menu_id ) ) {
             wp_die( __( 'Security check failed.', 'menu-manager' ) );
         }
 
         // Get the menu
-        $menu = get_post( $post_id );
-        if ( ! $menu || $menu->post_type !== MenuPost::POST_TYPE ) {
+        $menu = MenuPost::find( $menu_id );
+        if ( $menu === null ) {
             wp_die( __( 'Menu not found.', 'menu-manager' ) );
         }
 
         // export
-        $src = $menu->post_name;
-        $dst = $menu->post_name . '-copy';
+        $src = $menu->post->post_name;
+        $dst = $menu->post->post_name . '-copy';
 
         $task = new CloneMenuTask();
         $rs = $task->run( $src, $dst );
@@ -65,7 +65,7 @@ class CloneAction implements PostRowAction {
             NoticeService::error( $rs->getMessage() );
         }
 
-        wp_redirect( admin_url( 'edit.php?post_type=' . MenuPost::POST_TYPE ) );
+        wp_redirect( admin_url( 'edit.php?post_type=' . MenuPost::type() ) );
 
     }
 }
