@@ -19,6 +19,10 @@ class Post {
         return 'post';
     }
 
+    public static function isType( mixed $obj ): bool {
+        return $obj instanceof \WP_Post && $obj->post_type === static::type();
+    }
+
     public static function find( mixed $id_or_slug ): ?static {
 
         // by id

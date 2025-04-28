@@ -2,22 +2,32 @@
 
 namespace MenuManager\Admin\Menu;
 
-use MenuManager\Admin\Types\PostRowAction;
+use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Model\Menu;
 use MenuManager\Task\ExportCsvTask;
 use MenuManager\Types\ExportMethod;
 
-class ExportCsvAction implements PostRowAction {
+class ExportCsvMenuAction implements AdminPostLinkAction {
 
-    public static function id(): string {
-        return 'export_menu_csv';
+    public function id(): string {
+        return 'mm_export_csv';
     }
 
-    public static function link( \WP_Post $post ): string {
+    public function register(): void {
+        add_action( 'admin_post_' . $this->id(), [$this, 'handle'] );
+
+        add_filter( 'post_row_actions', function ( $actions, $post ) {
+            return Menu::isType( $post )
+                ? $actions + [$this->id() => $this->link( $post )]
+                : $actions;
+        }, 10, 2 );
+    }
+
+    public function link( \WP_Post $post ): string {
         $url = admin_url( add_query_arg( [
-            'action'   => self::id(),
+            'action'   => $this->id(),
             'menu_id'  => $post->ID,
-            '_wpnonce' => wp_create_nonce( self::id() . '_' . $post->ID ),
+            '_wpnonce' => wp_create_nonce( $this->id() . '_' . $post->ID ),
         ], 'admin-post.php' ) );
 
         return sprintf(
@@ -28,7 +38,7 @@ class ExportCsvAction implements PostRowAction {
         );
     }
 
-    public static function handle(): void {
+    public function handle(): void {
         // Check if user is allowed
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_die( __( 'You do not have sufficient permissions to access this page.', 'menu-manager' ) );
@@ -42,7 +52,7 @@ class ExportCsvAction implements PostRowAction {
         $menu_id = intval( $_GET['menu_id'] );
 
         // Verify nonce
-        if ( ! wp_verify_nonce( $_GET['_wpnonce'], self::id() . '_' . $menu_id ) ) {
+        if ( ! wp_verify_nonce( $_GET['_wpnonce'], $this->id() . '_' . $menu_id ) ) {
             wp_die( __( 'Security check failed.', 'menu-manager' ) );
         }
 
