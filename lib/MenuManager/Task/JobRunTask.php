@@ -2,8 +2,8 @@
 
 namespace MenuManager\Task;
 
-use MenuManager\Model\JobPost;
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Job;
+use MenuManager\Model\Menu;
 use MenuManager\Service\Database;
 use MenuManager\Service\Logger;
 
@@ -17,7 +17,7 @@ class JobRunTask {
         Database::load();
 
         // guard : job
-        $job = JobPost::find( $job_id );
+        $job = Job::find( $job_id );
 
         if ( $job === null ) {
             return TaskResult::failure( "Job not found '" . $job_id . "'" );
@@ -37,7 +37,7 @@ class JobRunTask {
 
         $menus->each( function ( $rows, $menu_id ) {
 
-            $menu = MenuPost::find( $menu_id );
+            $menu = Menu::find( $menu_id );
 
             if ( $menu === null ) {
                 $create_menu = new CreateMenuTask();

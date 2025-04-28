@@ -3,8 +3,8 @@
 namespace MenuManager\Service;
 
 use MenuManager\Model\Impex;
-use MenuManager\Model\JobPost;
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Job;
+use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
 use MenuManager\Model\NodeMeta;
 
@@ -16,8 +16,8 @@ class Plugin {
     ];
 
     const POST_MODELS = [
-        JobPost::class,
-        MenuPost::class,
+        Job::class,
+        Menu::class,
     ];
 
     public static function activate() {

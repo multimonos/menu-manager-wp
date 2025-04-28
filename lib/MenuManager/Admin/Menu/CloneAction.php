@@ -4,7 +4,7 @@ namespace MenuManager\Admin\Menu;
 
 use MenuManager\Admin\Service\NoticeService;
 use MenuManager\Admin\Types\PostRowAction;
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Menu;
 use MenuManager\Task\CloneMenuTask;
 
 class CloneAction implements PostRowAction {
@@ -47,7 +47,7 @@ class CloneAction implements PostRowAction {
         }
 
         // Get the menu
-        $menu = MenuPost::find( $menu_id );
+        $menu = Menu::find( $menu_id );
         if ( $menu === null ) {
             wp_die( __( 'Menu not found.', 'menu-manager' ) );
         }
@@ -65,7 +65,7 @@ class CloneAction implements PostRowAction {
             NoticeService::error( $rs->getMessage() );
         }
 
-        wp_redirect( admin_url( 'edit.php?post_type=' . MenuPost::type() ) );
+        wp_redirect( admin_url( 'edit.php?post_type=' . Menu::type() ) );
 
     }
 }

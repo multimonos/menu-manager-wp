@@ -5,7 +5,7 @@ namespace MenuManager\Model;
 
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
 
-class JobPost extends Post {
+class Job extends Post {
 
     public static function type(): string {
         return 'mm_job';
@@ -45,7 +45,7 @@ class JobPost extends Post {
                 'public'             => false,
                 'publicly_queryable' => false,
                 'show_ui'            => true,
-                'show_in_menu'       => 'edit.php?post_type=' . MenuPost::type(), // show under menus nav
+                'show_in_menu'       => 'edit.php?post_type=' . Menu::type(), // show under menus nav
                 'query_var'          => false,
                 'rewrite'            => ['slug' => 'jobs'],
                 'capability_type'    => 'post',

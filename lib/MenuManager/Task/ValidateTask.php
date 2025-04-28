@@ -4,8 +4,8 @@ namespace MenuManager\Task;
 
 use MenuManager\Model\Impex;
 use MenuManager\Model\ImpexMeta;
-use MenuManager\Model\JobPost;
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Job;
+use MenuManager\Model\Menu;
 use MenuManager\Service\Database;
 
 class ValidateTask {
@@ -59,7 +59,7 @@ class ValidateTask {
         $msg = [];
 
         // guard : job
-        $job = JobPost::find( $job_id );
+        $job = Job::find( $job_id );
 
         if ( $job === null ) {
             return TaskResult::failure( "Job not found '" . $job_id . "'" );
@@ -107,7 +107,7 @@ class ValidateTask {
             ];
 
             $menu_id = $meta->menuIds->first();
-            $menu = MenuPost::find( $menu_id );
+            $menu = Menu::find( $menu_id );
 
             if ( $menu === null ) { // menu does not exist
 

@@ -3,14 +3,14 @@
 namespace MenuManager\Service\Factory;
 
 use MenuManager\Model\Impex;
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
 use MenuManager\Model\NodeMeta;
 use MenuManager\Model\NodeType;
 
 class ImportNodeFactory {
 
-    public static function createRootNode( MenuPost $menu ): Node {
+    public static function createRootNode( Menu $menu ): Node {
         $root = new Node( [
             'menu_id'    => $menu->post->ID,
             'type'       => NodeType::Root->value,
@@ -25,7 +25,7 @@ class ImportNodeFactory {
         return $root;
     }
 
-    public static function createPageNode( MenuPost $menu, Node $root, string $page_slug ): Node {
+    public static function createPageNode( Menu $menu, Node $root, string $page_slug ): Node {
         $page = new Node( [
             'menu_id'   => $menu->post->ID,
             'parent_id' => $root->id,
@@ -40,7 +40,7 @@ class ImportNodeFactory {
         return $page;
     }
 
-    public static function createCategoryNode( MenuPost $menu, Impex $row, Node $parent = null ): Node {
+    public static function createCategoryNode( Menu $menu, Impex $row, Node $parent = null ): Node {
         $node = new Node( [
             'menu_id'     => $menu->post->ID,
             'uuid'        => $row->uuid,
@@ -69,7 +69,7 @@ class ImportNodeFactory {
         return $node;
     }
 
-    public static function createMenuitemNode( MenuPost $menu, Impex $row, Node $parent = null ): Node {
+    public static function createMenuitemNode( Menu $menu, Impex $row, Node $parent = null ): Node {
 
         $node = new Node( [
             'menu_id'     => $menu->post->ID,

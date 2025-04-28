@@ -3,7 +3,7 @@
 namespace MenuManager\Model;
 
 
-class MenuPost extends Post {
+class Menu extends Post {
 
     public static function type(): string {
         return 'mm_menu';

@@ -3,7 +3,7 @@
 namespace MenuManager\Wpcli\Commands;
 
 
-use MenuManager\Model\JobPost;
+use MenuManager\Model\Job;
 use MenuManager\Task\JobRunTask;
 use MenuManager\Task\ValidateTask;
 use WP_CLI;
@@ -26,7 +26,7 @@ class JobCommands {
      */
     public function ls( $args, $assoc_args ) {
         $format = $assoc_args['format'] ?? 'json';
-        $cmd = sprintf( "post list --post_type=%s --format=%s", JobPost::type(), $format );
+        $cmd = sprintf( "post list --post_type=%s --format=%s", Job::type(), $format );
         WP_CLI::runcommand( $cmd );
 //        return;
 //
@@ -114,7 +114,7 @@ class JobCommands {
         if ( is_numeric( $id ) ) {
             WP_CLI::runcommand( "post get {$id} --format=json" );
         } else {
-            $job = JobPost::find( $id );
+            $job = Job::find( $id );
 
             if ( $job === null ) {
                 WP_CLI::error( "Job not found '$id'." );
@@ -131,7 +131,7 @@ class JobCommands {
      * @when after_wp_load
      */
     public function latest( $args, $assoc_args ) {
-        WP_CLI::runcommand( sprintf( "post list --post_type=%s --orderby=date --order=desc --posts_per_page=1 --format=ids", JobPost::type() ) );
+        WP_CLI::runcommand( sprintf( "post list --post_type=%s --orderby=date --order=desc --posts_per_page=1 --format=ids", Job::type() ) );
     }
 
     /**

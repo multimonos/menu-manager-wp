@@ -3,7 +3,7 @@
 namespace MenuManager\Task;
 
 use MenuManager\Model\Impex;
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Menu;
 use MenuManager\Service\Database;
 use MenuManager\Service\Factory\ImportNodeFactory;
 use MenuManager\Service\Logger;
@@ -20,7 +20,7 @@ class CreateMenuTask {
             $sorter = new NodeSortOrderManager();
 
             // MENU
-            $menu = MenuPost::create( ['post_title' => $menu_id, 'post_name' => $menu_id] );
+            $menu = Menu::create( ['post_title' => $menu_id, 'post_name' => $menu_id] );
 
             if ( $menu === null ) {
                 return false;

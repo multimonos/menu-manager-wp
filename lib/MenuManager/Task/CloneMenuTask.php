@@ -2,7 +2,7 @@
 
 namespace MenuManager\Task;
 
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
 use MenuManager\Service\Database;
 
@@ -23,14 +23,14 @@ class CloneMenuTask {
         }
 
         // guard : target menu exists
-        $dst = MenuPost::find( $target_slug );
+        $dst = Menu::find( $target_slug );
 
-        if ( $dst instanceof MenuPost ) {
+        if ( $dst instanceof Menu ) {
             return TaskResult::failure( "Target menu '{$target_slug}' already exists." );
         }
 
         // guard : src menu must exist
-        $src = MenuPost::find( $src_id_or_slug );
+        $src = Menu::find( $src_id_or_slug );
 
         if ( $src === null ) {
             return TaskResult::failure( "Source menu '{$src_id_or_slug}' not found." );
@@ -43,7 +43,7 @@ class CloneMenuTask {
         }
 
         // create dst
-        $dst = MenuPost::create( ['post_title' => $target_slug, 'post_name' => $target_slug] );
+        $dst = Menu::create( ['post_title' => $target_slug, 'post_name' => $target_slug] );
         if ( $dst === null ) {
             return TaskResult::failure( "Failed to create target ment '{$target_slug}'." );
         }
@@ -55,7 +55,7 @@ class CloneMenuTask {
 
         } catch (\Throwable $e) {
             // cleanup
-            MenuPost::deleteByPostId( $dst->ID );
+            Menu::deleteByPostId( $dst->ID );
             return TaskResult::failure( "Clone failed.  " . $e->getMessage() );
         }
 
@@ -67,7 +67,7 @@ class CloneMenuTask {
         ] );
     }
 
-    protected function cloneNode( MenuPost $menu, Node $node, Node $parent = null ) {
+    protected function cloneNode( Menu $menu, Node $node, Node $parent = null ) {
         // Node
         $newNode = $node->replicate( ['id', '_lft', '_rgt', 'parent_id', 'depth'] );
         $newNode->menu_id = $menu->post->ID;

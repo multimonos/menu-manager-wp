@@ -4,8 +4,8 @@
  */
 
 use MenuManager\Admin\AdminService;
-use MenuManager\Model\JobPost;
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Job;
+use MenuManager\Model\Menu;
 use MenuManager\Service\Plugin;
 use MenuManager\Wpcli\Commands\ImportCommands;
 use MenuManager\Wpcli\Commands\JobCommands;
@@ -35,8 +35,8 @@ register_deactivation_hook( __FILE__, [Plugin::class, 'deactivate'] );
 
 function menu_manager_plugin() {
 
-    MenuPost::init();
-    JobPost::init();
+    Menu::init();
+    Job::init();
 
     AdminService::init();
 

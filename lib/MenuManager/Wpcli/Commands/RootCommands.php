@@ -2,7 +2,7 @@
 
 namespace MenuManager\Wpcli\Commands;
 
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Menu;
 use MenuManager\Task\ExportCsvTask;
 use MenuManager\Task\ExportExcelTask;
 use MenuManager\Task\LoadTask;
@@ -70,7 +70,7 @@ class RootCommands {
         $format = $assoc_args['format'] ?? 'csv';
 
         // menu
-        $menu = MenuPost::find( $menu_id );
+        $menu = Menu::find( $menu_id );
 
         if ( $menu === null ) {
             WP_CLI::error( "Menu not found" );

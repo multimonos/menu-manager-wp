@@ -4,7 +4,7 @@ namespace MenuManager\Admin\Menu;
 
 use MenuManager\Admin\Types\AdminPage;
 use MenuManager\Admin\Types\PostRowAction;
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Menu;
 use MenuManager\Task\ViewMenuAsTextTask;
 
 
@@ -60,7 +60,7 @@ class MenuPreviewPage implements AdminPage, PostRowAction {
 
         // Get the menu and display it in a custom format
         $menu = get_post( $menu_id );
-        if ( ! $menu || $menu->post_type !== MenuPost::type() ) {
+        if ( ! $menu || $menu->post_type !== Menu::type() ) {
             wp_die( __( 'Menu not found.', 'menu-manager' ) );
         }
 
@@ -75,7 +75,7 @@ class MenuPreviewPage implements AdminPage, PostRowAction {
             $menu = get_post( $menu_id );
         }
 
-        if ( ! $menu || $menu->post_type !== MenuPost::type() ) {
+        if ( ! $menu || $menu->post_type !== Menu::type() ) {
             wp_die( __( 'Menu not found.', 'menu-manager' ) );
         }
 

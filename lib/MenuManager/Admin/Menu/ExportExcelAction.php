@@ -3,7 +3,7 @@
 namespace MenuManager\Admin\Menu;
 
 use MenuManager\Admin\Types\PostRowAction;
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Menu;
 use MenuManager\Task\ExportExcelTask;
 use MenuManager\Types\ExportMethod;
 
@@ -47,7 +47,7 @@ class ExportExcelAction implements PostRowAction {
         }
 
         // Get the menu
-        $menu = MenuPost::find( $post_id );
+        $menu = Menu::find( $post_id );
         if ( $menu === null ) {
             wp_die( __( 'Menu not found.', 'menu-manager' ) );
         }

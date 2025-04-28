@@ -4,8 +4,8 @@ namespace MenuManager\Admin\Job;
 
 use MenuManager\Admin\Service\NoticeService;
 use MenuManager\Admin\Types\AdminPage;
-use MenuManager\Model\JobPost;
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Job;
+use MenuManager\Model\Menu;
 use MenuManager\Task\LoadTask;
 
 class JobCreatePage implements AdminPage {
@@ -22,7 +22,7 @@ class JobCreatePage implements AdminPage {
 
     public function admin_menu_hook() {
         add_submenu_page(
-            'edit.php?post_type=' . MenuPost::type(),
+            'edit.php?post_type=' . Menu::type(),
             'Upload',
             'Upload',
             'manage_options',
@@ -56,7 +56,7 @@ class JobCreatePage implements AdminPage {
 //        exit;
 
         $redirect_url = admin_url( add_query_arg( [
-            'post_type' => MenuPost::type(),
+            'post_type' => Menu::type(),
             'page'      => self::id(),
         ], 'edit.php' ) );
 
@@ -98,9 +98,9 @@ class JobCreatePage implements AdminPage {
         if ( $rs->ok() ) {
             $job = $rs->getData()['job'] ?? null;
 
-            if ( $job instanceof JobPost ) {
+            if ( $job instanceof Job ) {
                 $job = $job->update( ['post_title' => sprintf( '#%s -- %s', $job->post->ID, $_FILES['mm_impex_file']['name'] )] );
-                if ( $job instanceof JobPost ) {
+                if ( $job instanceof Job ) {
                     NoticeService::success( sprintf( "Created job %s", $job->post->post_title ) );
                 }
             } else {
@@ -112,7 +112,7 @@ class JobCreatePage implements AdminPage {
         }
 
         wp_redirect( admin_url( add_query_arg( [
-            'post_type' => MenuPost::type(),
+            'post_type' => Menu::type(),
             'page'      => self::id(),
         ], 'edit.php' ) ) );
     }

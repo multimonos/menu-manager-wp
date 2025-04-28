@@ -96,27 +96,27 @@ class Node extends Model {
         return $this;
     }
 
-    public static function countForMenu( MenuPost $menu ): int {
+    public static function countForMenu( Menu $menu ): int {
         return Node::where( 'menu_id', $menu->post->ID )
             ->whereNotIn( 'type', [NodeType::Root->value, NodeType::Page->value] )
             ->count();
     }
 
-    public static function findRootNode( MenuPost $menu ): ?Node {
+    public static function findRootNode( Menu $menu ): ?Node {
         $node = Node::where( 'menu_id', $menu->post->ID )
             ->where( 'type', NodeType::Root->value )
             ->first();
         return $node;
     }
 
-    public static function findPageNames( MenuPost $menu ): Collection {
+    public static function findPageNames( Menu $menu ): Collection {
         $root = self::findRootNode( $menu );
         return is_null( $root )
             ? new Collection()
             : $root->children->pluck( 'title' )->map( fn( $x ) => mb_strtolower( $x ) );
     }
 
-    public static function findPageNode( MenuPost $menu, string $page ): ?Node {
+    public static function findPageNode( Menu $menu, string $page ): ?Node {
         $node = Node::where( 'menu_id', $menu->post->ID )
             ->where( 'type', NodeType::Page->value )
             ->where( 'title', $page )
@@ -124,7 +124,7 @@ class Node extends Model {
         return $node;
     }
 
-    public static function getSortedMenu( MenuPost $menu, Node $parent ): ?NestedSetCollection {
+    public static function getSortedMenu( Menu $menu, Node $parent ): ?NestedSetCollection {
 
         $tree = Node::scoped( ['menu_id' => $menu->post->ID] )
             // ->defaultOrder() // must not be present

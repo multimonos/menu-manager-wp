@@ -7,7 +7,8 @@
 #
 #
 debug:
-	pytest -xvs ./test_create.py::test_create_a
+	pytest -xvs ./test_clone.py
+	#pytest -xvs ./test_create.py::test_create_a
 
 serial:
 	pytest -xvs -n1 -m 'serial'

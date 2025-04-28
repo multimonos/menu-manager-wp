@@ -3,7 +3,7 @@
 namespace MenuManager\Task;
 
 use MenuManager\Model\Impex;
-use MenuManager\Model\JobPost;
+use MenuManager\Model\Job;
 use MenuManager\Service\Database;
 use MenuManager\Service\Logger;
 use MenuManager\Vendor\League\Csv\Reader;
@@ -33,7 +33,7 @@ class LoadTask {
             }
 
             // job
-            $job = JobPost::create( [
+            $job = Job::create( [
                 'post_title' => 'import ' . $path,
 //                'type'   => 'import', // @todo create these meta props
 //                'status' => 'created', // @todo create these meta props

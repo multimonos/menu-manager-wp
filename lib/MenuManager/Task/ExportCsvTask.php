@@ -3,7 +3,7 @@
 namespace MenuManager\Task;
 
 use MenuManager\Model\Impex;
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
 use MenuManager\Service\Database;
 use MenuManager\Service\Factory\ExportNodeFactory;
@@ -46,7 +46,7 @@ class CsvWriterFactory {
 
 class ExportCsvTask {
 
-    public function run( ExportMethod $method, MenuPost $menu, string $path ): TaskResult {
+    public function run( ExportMethod $method, Menu $menu, string $path ): TaskResult {
 
         Database::load()::connection()->enableQueryLog();
 

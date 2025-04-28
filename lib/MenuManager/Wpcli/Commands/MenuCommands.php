@@ -3,7 +3,7 @@
 namespace MenuManager\Wpcli\Commands;
 
 
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Menu;
 use MenuManager\Task\CloneMenuTask;
 use MenuManager\Task\ViewMenuAsTextTask;
 use WP_CLI;
@@ -26,7 +26,7 @@ class MenuCommands {
      */
     public function ls( $args, $assoc_args ) {
         $format = $assoc_args['format'] ?? 'json';
-        WP_CLI::runcommand( sprintf( "post list --post_type=%s --format={$format}", MenuPost::type() ) );
+        WP_CLI::runcommand( sprintf( "post list --post_type=%s --format={$format}", Menu::type() ) );
     }
 
     /**
@@ -50,7 +50,7 @@ class MenuCommands {
         if ( is_numeric( $id ) ) {
             WP_CLI::runcommand( "post get {$id} --format=json" );
         } else {
-            $menu = MenuPost::find( $id );
+            $menu = Menu::find( $id );
 
             if ( $menu === null ) {
                 WP_CLI::error( "Menu not found '$id'." );

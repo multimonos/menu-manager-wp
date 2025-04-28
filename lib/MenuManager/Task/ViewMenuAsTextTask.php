@@ -2,7 +2,7 @@
 
 namespace MenuManager\Task;
 
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
 use MenuManager\Service\Database;
 use MenuManager\Vendor\Kalnoy\Nestedset\Collection;
@@ -10,7 +10,7 @@ use MenuManager\Vendor\Kalnoy\Nestedset\Collection;
 class ViewMenuAsTextTask {
     public function run( int|string $menu_id, string $pagename = null ): TaskResult {
 
-        $menu = MenuPost::find( $menu_id );
+        $menu = Menu::find( $menu_id );
 
         if ( $menu === null ) {
             return TaskResult::failure( "Menu not found '{$menu_id}'." );

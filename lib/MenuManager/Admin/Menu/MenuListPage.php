@@ -3,7 +3,7 @@
 namespace MenuManager\Admin\Menu;
 
 use MenuManager\Admin\Types\AdminPage;
-use MenuManager\Model\MenuPost;
+use MenuManager\Model\Menu;
 
 
 class MenuListPage implements AdminPage {
@@ -38,7 +38,7 @@ class MenuListPage implements AdminPage {
     }
 
     public function add_post_row_actions( $actions, $post ) {
-        if ( $post->post_type !== MenuPost::type() ) {
+        if ( $post->post_type !== Menu::type() ) {
             return $actions;
         }
 
@@ -53,7 +53,7 @@ class MenuListPage implements AdminPage {
 
     public function maybe_remove_duplicate_post_action( $actions, $post ) {
         // Remove "duplicate post" function created by Post Duplicator plugin.
-        if ( MenuPost::type() === get_post_type( $post ) ) {
+        if ( Menu::type() === get_post_type( $post ) ) {
             unset( $actions['duplicate_post'] );
             unset( $actions['view'] );
             unset( $actions['edit'] );

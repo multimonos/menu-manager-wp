@@ -3,6 +3,7 @@
 namespace MenuManager\Task;
 
 use MenuManager\Model\Impex;
+use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
 use MenuManager\Service\Database;
 use MenuManager\Service\Factory\ExportNodeFactory;
@@ -13,7 +14,7 @@ use MenuManager\Vendor\PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ExportExcelTask {
 
-    public function run( ExportMethod $method, MenuPost $menu, string $path ): TaskResult {
+    public function run( ExportMethod $method, Menu $menu, string $path ): TaskResult {
 
         Database::load()::connection()->enableQueryLog();
 
