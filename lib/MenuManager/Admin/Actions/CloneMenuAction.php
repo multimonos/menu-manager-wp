@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Admin\Menu;
+namespace MenuManager\Admin\Actions;
 
 use MenuManager\Admin\Service\NoticeService;
 use MenuManager\Admin\Types\AdminPostLinkAction;
@@ -64,7 +64,7 @@ class CloneMenuAction implements AdminPostLinkAction {
 
         // export
         $src = $menu->post->post_name;
-        $dst = $menu->post->post_name . '-copy';
+        $dst = $menu->post->post_name . '-' . uniqid();
 
         $task = new CloneMenuTask();
         $rs = $task->run( $src, $dst );

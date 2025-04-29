@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Admin\Menu;
+namespace MenuManager\Admin\Actions;
 
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Model\Menu;

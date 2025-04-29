@@ -1,16 +1,16 @@
 <?php
 
-namespace MenuManager\Admin\Menu;
+namespace MenuManager\Admin\Actions;
 
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Model\Menu;
-use MenuManager\Task\ExportCsvTask;
+use MenuManager\Task\ExportExcelTask;
 use MenuManager\Types\ExportMethod;
 
-class ExportCsvMenuAction implements AdminPostLinkAction {
+class ExportExcelMenuAction implements AdminPostLinkAction {
 
     public function id(): string {
-        return 'mm_export_csv';
+        return 'mm_export_excel';
     }
 
     public function register(): void {
@@ -23,6 +23,7 @@ class ExportCsvMenuAction implements AdminPostLinkAction {
         }, 10, 2 );
     }
 
+
     public function link( \WP_Post $post ): string {
         $url = admin_url( add_query_arg( [
             'action'   => $this->id(),
@@ -33,8 +34,8 @@ class ExportCsvMenuAction implements AdminPostLinkAction {
         return sprintf(
             '<a href="%s" aria-label="%s">%s</a>',
             $url,
-            esc_attr( sprintf( __( 'Export "%s" to CSV', 'menu-manager' ), $post->post_title ) ),
-            __( 'Export CSV', 'menu-manager' )
+            esc_attr( sprintf( __( 'Export "%s" to Excel', 'menu-manager' ), $post->post_title ) ),
+            __( 'Export Excel', 'menu-manager' )
         );
     }
 
@@ -63,8 +64,8 @@ class ExportCsvMenuAction implements AdminPostLinkAction {
         }
 
         // export
-        $path = "menu-export_{$menu->post->post_name}_{$menu->post->ID}__" . date( 'Ymd\THis' ) . '.csv';
-        $task = new ExportCsvTask();
+        $path = "menu-export_{$menu->post->post_name}_{$menu->post->ID}__" . date( 'Ymd\THis' ) . '.xlsx';
+        $task = new ExportExcelTask();
         $rs = $task->run( ExportMethod::Download, $menu, $path );
         exit;
     }

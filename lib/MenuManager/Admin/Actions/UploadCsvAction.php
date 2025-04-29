@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Admin\Job;
+namespace MenuManager\Admin\Actions;
 
 use MenuManager\Admin\Service\NoticeService;
 use MenuManager\Admin\Types\AdminPostFormAction;
