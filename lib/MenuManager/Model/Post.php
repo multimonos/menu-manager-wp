@@ -4,9 +4,12 @@ namespace MenuManager\Model;
 
 class Post {
 
+    public $id;
     public \WP_Post $post;
 
     public function __construct( \WP_Post $post ) {
+        $this->id = $post->ID;
+        $post->id = $post->ID;
         $this->post = $post;
     }
 

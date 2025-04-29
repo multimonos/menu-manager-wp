@@ -13,11 +13,16 @@ use MenuManager\Wpcli\Commands\MenuCommands;
 use MenuManager\Wpcli\Commands\NodeCommands;
 use MenuManager\Wpcli\Commands\RootCommands;
 
-require_once __DIR__ . '/vendor/scoper-autoload.php';
-
+// guard
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
+
+// autoload
+require_once __DIR__ . '/vendor/scoper-autoload.php';
+
+// paths
+define( 'MENU_MANAGER_URL', plugins_url( '', __FILE__ ) );
 
 // wp cli'
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
@@ -34,15 +39,9 @@ register_activation_hook( __FILE__, [Plugin::class, 'activate'] );
 register_deactivation_hook( __FILE__, [Plugin::class, 'deactivate'] );
 
 function menu_manager_plugin() {
-
     Menu::init();
     Job::init();
-
     AdminService::init();
-
-    if ( is_admin() ) {
-        require_once __DIR__ . '/test.php';
-    }
 }
 
 menu_manager_plugin();

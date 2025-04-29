@@ -19,18 +19,12 @@ class MenuPageService implements AdminPage {
 
     public static function init(): void {
 
-        $svc = new self;
-
-        // ask post row actions to intialize themselves
-        array_map(
-            fn( $action ) => $action->register(),
-            [
-                new CloneMenuAction(),
-                new ExportCsvMenuAction(),
-                new ExportExcelMenuAction(),
-                new PreviewMenuAction(),
-            ]
-        );
+        EditScreenHelper::registerAdminPostActions( [
+            new CloneMenuAction(),
+            new ExportCsvMenuAction(),
+            new ExportExcelMenuAction(),
+            new PreviewMenuAction(),
+        ] );
 
         EditScreenHelper::removePostRowActions( Menu::type(), [
             'duplicate_post',

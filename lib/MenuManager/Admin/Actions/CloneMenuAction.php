@@ -2,7 +2,7 @@
 
 namespace MenuManager\Admin\Actions;
 
-use MenuManager\Admin\Service\NoticeService;
+use MenuManager\Admin\Service\UserInterface\NoticeService;
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Model\Menu;
 use MenuManager\Task\CloneMenuTask;
@@ -26,7 +26,7 @@ class CloneMenuAction implements AdminPostLinkAction {
     public function link( \WP_Post $post ): string {
         $url = admin_url( add_query_arg( [
             'action'   => $this->id(),
-            'menu_id'  => $post->ID,
+            'post_id'  => $post->ID,
             '_wpnonce' => wp_create_nonce( $this->id() . '_' . $post->ID ),
         ], 'admin-post.php' ) );
 
@@ -45,19 +45,19 @@ class CloneMenuAction implements AdminPostLinkAction {
         }
 
         // Verify parameters
-        if ( ! isset( $_GET['menu_id'] ) || ! isset( $_GET['_wpnonce'] ) ) {
+        if ( ! isset( $_GET['post_id'] ) || ! isset( $_GET['_wpnonce'] ) ) {
             wp_die( __( 'Missing required parameters.', 'menu-manager' ) );
         }
 
-        $menu_id = intval( $_GET['menu_id'] );
+        $post_id = intval( $_GET['post_id'] );
 
         // Verify nonce
-        if ( ! wp_verify_nonce( $_GET['_wpnonce'], $this->id() . '_' . $menu_id ) ) {
+        if ( ! wp_verify_nonce( $_GET['_wpnonce'], $this->id() . '_' . $post_id ) ) {
             wp_die( __( 'Security check failed.', 'menu-manager' ) );
         }
 
         // Get the menu
-        $menu = Menu::find( $menu_id );
+        $menu = Menu::find( $post_id );
         if ( $menu === null ) {
             wp_die( __( 'Menu not found.', 'menu-manager' ) );
         }

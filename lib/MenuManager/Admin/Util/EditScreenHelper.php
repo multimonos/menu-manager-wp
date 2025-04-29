@@ -3,6 +3,8 @@
 namespace MenuManager\Admin\Util;
 
 
+use MenuManager\Admin\Types\AdminPostAction;
+
 class EditScreenHelper {
     public static function isEditScreen( string $post_type ): bool {
 
@@ -58,4 +60,12 @@ class EditScreenHelper {
         add_filter( "manage_edit-{$post_type}_sortable_columns", $callback );
     }
 
+    public static function registerAdminPostActions( mixed $actions ): void {
+        foreach ( $actions as $action ) {
+            if ( ! in_array( AdminPostAction::class, class_implements( $action ) ) ) {
+                continue;
+            }
+            $action->register();
+        }
+    }
 }

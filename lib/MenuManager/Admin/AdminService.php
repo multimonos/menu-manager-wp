@@ -5,12 +5,17 @@ namespace MenuManager\Admin;
 use MenuManager\Admin\Service\ImpexPageService;
 use MenuManager\Admin\Service\JobPageService;
 use MenuManager\Admin\Service\MenuPageService;
-use MenuManager\Admin\Service\NoticeService;
+use MenuManager\Admin\Service\UserInterface\NoticeService;
+use MenuManager\Admin\Service\UserInterface\SpinnerService;
 
 class AdminService {
     public static function init(): void {
-        add_action( 'admin_notices', [NoticeService::class, 'show'] );
 
+        //User interface
+        SpinnerService::init();
+        NoticeService::init();
+
+        // Types services
         MenuPageService::init();
         ImpexPageService::init();
         JobPageService::init();
