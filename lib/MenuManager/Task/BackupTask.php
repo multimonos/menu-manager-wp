@@ -6,6 +6,7 @@ use MenuManager\Model\Backup;
 use MenuManager\Model\Node;
 use MenuManager\Model\NodeMeta;
 use MenuManager\Service\Database;
+use MenuManager\Service\Filesystem;
 use MenuManager\Service\Logger;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Builder;
 
@@ -17,6 +18,7 @@ class BackupTask {
     ];
 
     public function run(): TaskResult {
+        // Dependencies
         Database::load();
 
         // Target
@@ -99,9 +101,10 @@ class BackupTask {
     }
 
     protected function createBackupDirectoryIfNotExists( $dirpath ): void {
-        if ( ! file_exists( $dirpath ) ) {
+        $fs = Filesystem::get();
+        if ( ! $fs->exists( $dirpath ) ) {
             Logger::taskInfo( 'backup', 'creating ' . $dirpath );
-            wp_mkdir_p( $dirpath );
+            $fs->mkdir( $dirpath );
         }
     }
 
