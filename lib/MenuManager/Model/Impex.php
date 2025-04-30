@@ -2,6 +2,7 @@
 
 namespace MenuManager\Model;
 
+use MenuManager\Model\Traits\ModelExtras;
 use MenuManager\Service\Database;
 use MenuManager\Service\Logger;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;

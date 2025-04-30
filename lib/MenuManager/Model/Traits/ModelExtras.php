@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Model;
+namespace MenuManager\Model\Traits;
 
 trait  ModelExtras {
     public static function table(): string {
