@@ -41,10 +41,11 @@ class BackupTask {
         $this->writeln( $f, "/*!40101 SET NAMES utf8 */;" );
         $this->writeln( $f, "" );
         $this->writeln( $f, "SET sql_mode='NO_AUTO_VALUE_ON_ZERO';" );
-        $this->writeln( $f, "" );
-        $this->writeln( $f, "" );
+        $this->writeln( $f, "\n" );
         $this->writeln( $f, "SET FOREIGN_KEY_CHECKS = 0;" );
+        $this->writeln( $f, "\n" );
         $this->writeln( $f, "START TRANSACTION;" );
+        $this->writeln( $f, "\n" );
 
         // Collect + write sql.
         foreach ( $this->models as $model ) {
@@ -78,6 +79,7 @@ class BackupTask {
         $this->writeln( $f, "" );
         $this->writeln( $f, "" );
         $this->writeln( $f, "COMMIT;" );
+        $this->writeln( $f, "\n" );
         $this->writeln( $f, "SET FOREIGN_KEY_CHECKS = 1;" );
         $this->writeln( $f, "" );
         $this->writeln( $f, "# End of data" );
