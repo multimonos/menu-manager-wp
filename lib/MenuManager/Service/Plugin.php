@@ -2,6 +2,8 @@
 
 namespace MenuManager\Service;
 
+use MenuManager\Admin\AdminService;
+use MenuManager\Model\Backup;
 use MenuManager\Model\Impex;
 use MenuManager\Model\Job;
 use MenuManager\Model\Menu;
@@ -13,12 +15,24 @@ class Plugin {
         Impex::class,
         NodeMeta::class,
         Node::class,
+        Backup::class,
     ];
 
     const POST_MODELS = [
         Job::class,
         Menu::class,
     ];
+
+    public static function load(): void {
+        // Initialize post models
+        array_map(
+            fn( $post_model ) => $post_model::init(),
+            self::POST_MODELS
+        );
+
+        // Admin
+        AdminService::init();
+    }
 
     public static function activate() {
         Logger::taskInfo( 'plugin', 'activating...' );

@@ -23,6 +23,8 @@ enum ImpexBoolean: string {
 
 class Impex extends Model {
 
+    use ModelExtras;
+
     protected $table = 'mm_impex';
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
@@ -70,9 +72,6 @@ class Impex extends Model {
         'description',
     ];
 
-    public static function table(): string {
-        return (new static)->getTable();
-    }
 
     public static function createTable() {
         Logger::info( self::table() );

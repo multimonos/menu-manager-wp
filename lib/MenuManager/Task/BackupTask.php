@@ -1,0 +1,154 @@
+<?php
+
+namespace MenuManager\Task;
+
+use MenuManager\Model\Backup;
+use MenuManager\Model\Node;
+use MenuManager\Model\NodeMeta;
+use MenuManager\Service\Database;
+use MenuManager\Service\Logger;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Builder;
+
+
+class BackupTask {
+    protected $models = [
+        Node::class,
+        NodeMeta::class,
+    ];
+
+    public function run(): TaskResult {
+        Database::load();
+
+        // Target
+        $dirpath = Backup::pathFor( '' );
+        $this->createBackupDirectoryIfNotExists( $dirpath );
+        $filename = wp_generate_uuid4() . '.sql';
+        $target = trailingslashit( $dirpath ) . $filename;
+
+        // Open file.
+        if ( ! $f = fopen( $target, 'w' ) ) {
+            return TaskResult::failure( 'Failed to write backup to ' . $target );
+        };
+
+        // Open sql.
+        $this->writeln( $f, "#" );
+        $this->writeln( $f, "# Menu Manager MySQL data backup" );
+        $this->writeln( $f, "#" );
+        $this->writeln( $f, "# Generated: " . date( 'r' ) );
+        $this->writeln( $f, "#" );
+        $this->writeln( $f, "" );
+        $this->writeln( $f, "" );
+        $this->writeln( $f, "/*!40101 SET NAMES utf8 */;" );
+        $this->writeln( $f, "" );
+        $this->writeln( $f, "SET sql_mode='NO_AUTO_VALUE_ON_ZERO';" );
+        $this->writeln( $f, "" );
+        $this->writeln( $f, "" );
+        $this->writeln( $f, "SET FOREIGN_KEY_CHECKS = 0;" );
+        $this->writeln( $f, "START TRANSACTION;" );
+
+        // Collect + write sql.
+        foreach ( $this->models as $model ) {
+
+            $this->writeln( $f, "# --------------------------------------------------------" );
+            $this->writeln( $f, "# Table `{$model::wptable()}`" );
+            $this->writeln( $f, "#" );
+
+
+            if ( $model::query()->count() > 0 ) {
+                $this->writeln( $f, "" );
+                $this->writeln( $f, "# Delete any existing data in `{$model::wptable()}`" );
+                $this->writeln( $f, "" );
+                $this->writeln( $f, "TRUNCATE TABLE `{$model::wptable()}`;" );
+                $this->writeln( $f, "" );
+                $this->writeln( $f, "# Data contents of `{$model::wptable()}`" );
+                $this->streamEloquentInsert( $f, 500, $model::query() );
+            } else {
+                $this->writeln( $f, "# No data" );
+            }
+
+            $this->writeln( $f, "" );
+            $this->writeln( $f, "#" );
+            $this->writeln( $f, "# End table `{$model::wptable()}`" );
+            $this->writeln( $f, "# --------------------------------------------------------" );
+            $this->writeln( $f, "" );
+            $this->writeln( $f, "" );
+        }
+
+        // Close sql.
+        $this->writeln( $f, "" );
+        $this->writeln( $f, "" );
+        $this->writeln( $f, "COMMIT;" );
+        $this->writeln( $f, "SET FOREIGN_KEY_CHECKS = 1;" );
+        $this->writeln( $f, "" );
+        $this->writeln( $f, "# End of data" );
+        $this->writeln( $f, "# --------------------------------------------------------" );
+
+        // Close file.
+        fclose( $f );
+
+        if ( file_exists( $target ) ) {
+            Backup::create( ['filename' => $filename] );
+        }
+        return TaskResult::success( "Backup created {$target}.", ['target' => $target] );
+    }
+
+    protected function writeln( $f, $str ): void {
+        fwrite( $f, $str . "\n" );
+    }
+
+    protected function createBackupDirectoryIfNotExists( $dirpath ): void {
+        if ( ! file_exists( $dirpath ) ) {
+            Logger::taskInfo( 'backup', 'creating ' . $dirpath );
+            wp_mkdir_p( $dirpath );
+        }
+    }
+
+    /**
+     * @param resource $handle
+     * @param int $chunkSize
+     * @param Builder $query
+     * @return void
+     */
+    protected function streamEloquentInsert( $handle, int $chunkSize, Builder $query ): void {
+        $pdo = Database::load()->getConnection()->getPdo();
+
+        $firstChunk = true;
+        $firstRow = true;
+
+        $query->chunk( $chunkSize, function ( $models ) use ( &$firstChunk, &$firstRow, $pdo, $handle ) {
+
+            foreach ( $models as $model ) {
+                $attrs = $model->attributesForInsert();
+                $cols = array_keys( $attrs );
+
+                // INSERT INTO ...
+                if ( $firstChunk ) {
+                    $table = $model::wptable();
+                    $columns = join( ', ', array_map( fn( $x ) => "`{$x}`", $cols ) );
+                    $this->writeln( $handle, sprintf( "INSERT INTO `%s` (%s) VALUES", $table, $columns ) );
+                    $firstChunk = false;
+                }
+
+                // VALUES ...
+                $quoted = array_map( fn( $x ) => $this->quote( $pdo, $x ), array_values( $attrs ) );
+                $value_str = join( ', ', $quoted );
+                $comma = $firstRow ? '' : ',';
+                $this->writeln( $handle, sprintf( "%s (%s)", $comma, $value_str ) );
+
+                $firstRow = false;
+            }
+
+            $this->writeln( $handle, ';' );
+
+        } );
+    }
+
+    protected function quote( $pdo, mixed $value ): string {
+        return match (true) {
+            is_null( $value ) => 'NULL',
+            is_bool( $value ) => $value ? '1' : '0',
+            is_numeric( $value ) => (string)$value,
+            default => $pdo->quote( (string)$value ),
+        };
+    }
+}

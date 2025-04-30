@@ -28,6 +28,7 @@ enum NodeType: string {
 class Node extends Model {
 
     use NodeTrait;
+    use ModelExtras;
 
     protected $table = 'mm_node';
     const CREATED_AT = 'created_at';
@@ -46,10 +47,6 @@ class Node extends Model {
         'description',
         'sort_order',
     ];
-
-    public static function table(): string {
-        return (new static)->getTable();
-    }
 
     public static function createTable() {
         Logger::info( self::table() );

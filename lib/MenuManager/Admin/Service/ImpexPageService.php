@@ -30,8 +30,8 @@ class ImpexPageService implements AdminPage {
 
         add_action( 'admin_menu', fn() => add_submenu_page(
             'edit.php?post_type=' . Menu::type(),
-            'Impex',
-            'Impex',
+            'Import / Export',
+            'Import / Export',
             'manage_options',
             self::id(),
             [$svc, 'handle']

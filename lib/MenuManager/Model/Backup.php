@@ -3,25 +3,26 @@
 namespace MenuManager\Model;
 
 use MenuManager\Service\Database;
+use MenuManager\Service\Filesystem;
 use MenuManager\Service\Logger;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
 
-class NodeMeta extends Model {
+class Backup extends Model {
 
     use ModelExtras;
 
-    protected $table = 'mm_node_meta';
-
+    protected $table = 'mm_backup';
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
     protected $fillable = [
-        'node_id',
-        'tags',
-        'prices',
-        'image_ids',
+        'filename',
     ];
+
+    public static function pathFor( string $filename ): string {
+        return trailingslashit( wp_upload_dir()['basedir'] . '/mm-backup/' ) . $filename;
+    }
 
     public static function createTable() {
         Logger::info( self::table() );
@@ -35,11 +36,7 @@ class NodeMeta extends Model {
 
         Database::load()::schema()->create( self::table(), function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
-            $table->bigInteger( 'node_id' )->unsigned();
-            $table->foreign( 'node_id' )->references( 'id' )->on( Node::table() )->onDelete( 'cascade' );
-            $table->string( 'tags' )->nullable();
-            $table->string( 'prices' )->nullable();
-            $table->string( 'image_ids' )->nullable();
+            $table->string( 'filename' )->nullable();
             $table->dateTime( 'created_at' )->useCurrent();
             $table->dateTime( 'updated_at' )->useCurrent();
         } );
@@ -47,11 +44,17 @@ class NodeMeta extends Model {
         Logger::info( self::table() . ' table created' );
     }
 
-    public function node() {
-        return $this->belongsTo( Node::class, 'node_id' );
-    }
+    public function delete() {
+        $filepath = self::pathFor( $this->filename );
 
-    public function hasTag( string $name ): bool {
-        return empty( $this->tags ) ? false : in_array( $name, explode( ',', $this->tags ) );
+        $fs = Filesystem::get();
+
+        $rs = parent::delete();
+
+        if ( $rs && $fs->exists( $filepath ) ) {
+            $fs->delete( $filepath );
+        }
+
+        return $rs;
     }
 }

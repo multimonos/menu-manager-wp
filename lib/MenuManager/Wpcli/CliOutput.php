@@ -25,4 +25,23 @@ class CliOutput {
             WP_CLI::line( sprintf( $sep_fmt, ...$sep_values ) );
         }
     }
+
+    public static function maxLengths( array $data ): ?array {
+        if ( empty( $data ) ) {
+            return null;
+        }
+
+        $keys = array_keys( $data[0] );
+
+        if ( empty( $keys ) ) {
+            return null;
+        }
+
+        $max = [];
+        foreach ( $keys as $k ) {
+            $max[$k] = max( array_map( 'strlen', array_column( $data, $k ) ) ) + 3;
+        }
+
+        return $max;
+    }
 }

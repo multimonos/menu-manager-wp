@@ -28,48 +28,6 @@ class JobCommands {
         $format = $assoc_args['format'] ?? 'json';
         $cmd = sprintf( "post list --post_type=%s --format=%s", Job::type(), $format );
         WP_CLI::runcommand( $cmd );
-//        return;
-//
-//        $format = $assoc_args['format'] ?? 'table';
-//
-//        Database::load();
-//
-//        switch ( $format ) {
-//            case 'count':
-//                WP_CLI::line( Job::all()->pluck( 'id' )->count() );
-//                break;
-//
-//            case 'ids':
-//                $ids = Job::all()->pluck( 'id' )->join( ' ' );
-//                WP_CLI::line( $ids );
-//                break;
-//
-//            default:
-//            case 'table':
-//
-//                $data = Job::all()->transform( function ( $x ) {
-//                    return [
-//                        'id'         => $x->id,
-//                        'type'       => $x->type,
-//                        'status'     => $x->status,
-//                        'source'     => $x->source,
-//                        'created_at' => $x->created_at,
-//                    ];
-//                } )->toArray();
-//
-//                $maxlen_source = array_reduce(
-//                    $data,
-//                    fn( $max, $item ) => max( $max, strlen( $item['source'] ) ),
-//                    0
-//                );
-//
-//                CliOutput::table(
-//                    [5, 10, 10, $maxlen_source, 20],
-//                    ['id', 'type', 'status', 'source', 'created_at'],
-//                    $data,
-//                );
-//                break;
-//        }
     }
 
     /**

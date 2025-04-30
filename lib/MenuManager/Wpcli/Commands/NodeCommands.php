@@ -50,14 +50,10 @@ class NodeCommands {
                     ];
                 } )->toArray();
 
-                $maxlen = array_reduce(
-                    $data,
-                    fn( $max, $item ) => max( $max, strlen( $item['title'] ) ),
-                    0
-                );
+                $widths = CliOutput::maxLengths( $data );
 
                 CliOutput::table(
-                    [6, 16, $maxlen],
+                    $widths,
                     ['id', 'type', 'title'],
                     $data,
                 );
