@@ -15,6 +15,11 @@ class UploadCsvAction implements AdminPostFormAction {
         return 'mm_upload';
     }
 
+    public function name(): string {
+        return __( 'Upload', 'menu-manager' );
+    }
+
+
     public function register(): void {
         add_action( 'admin_post_' . $this->id(), [$this, 'handle'] );
     }

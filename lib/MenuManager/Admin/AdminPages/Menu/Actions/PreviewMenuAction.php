@@ -13,6 +13,10 @@ class PreviewMenuAction implements AdminPostLinkAction {
         return 'mm_preview_menu';
     }
 
+    public function name(): string {
+        return __( 'Preview', 'menu-manager' );
+    }
+
     public function link( Model|Post|\WP_Post $post ): string {
 
         $url = admin_url( add_query_arg( [

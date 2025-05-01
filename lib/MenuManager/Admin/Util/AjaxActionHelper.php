@@ -82,6 +82,18 @@ class AjaxActionHelper {
         return $model;
     }
 
+    public static function findPostOrFail( string $model_class ): ?Post {
+        $id = intval( $_POST['post_id'] );
+
+        $model = $model_class::find( $id );
+
+        if ( $model === null ) {
+            wp_send_json_error( ['message' => "Record #{$model_id} not found."] );
+        }
+
+        return $model;
+    }
+
     public static function sendResult( TaskResult $result, string $success_message = '' ): void {
         if ( ! $result->ok() ) {
             wp_send_json_error( ['message' => $result->getMessage()] );

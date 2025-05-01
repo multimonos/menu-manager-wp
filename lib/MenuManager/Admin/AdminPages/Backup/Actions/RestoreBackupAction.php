@@ -14,7 +14,7 @@ class RestoreBackupAction implements AdminPostLinkAction {
         return 'mm_backup_restore';
     }
 
-    public function name() {
+    public function name(): string {
         return __( 'Restore', 'menu-manager' );
     }
 

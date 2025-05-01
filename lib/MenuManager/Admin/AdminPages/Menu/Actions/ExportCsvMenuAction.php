@@ -15,6 +15,10 @@ class ExportCsvMenuAction implements AdminPostLinkAction {
         return 'mm_export_csv';
     }
 
+    public function name(): string {
+        return __( 'Export CSV', 'menu-manager' );
+    }
+
     public function register(): void {
         add_action( 'admin_post_' . $this->id(), [$this, 'handle'] );
 
