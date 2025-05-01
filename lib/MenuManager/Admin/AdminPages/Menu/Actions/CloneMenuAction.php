@@ -85,6 +85,5 @@ class CloneMenuAction implements AdminPostLinkAction {
         }
 
         wp_redirect( admin_url( 'edit.php?post_type=' . Menu::type() ) );
-
     }
 }

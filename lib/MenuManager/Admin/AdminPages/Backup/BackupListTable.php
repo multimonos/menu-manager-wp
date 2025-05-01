@@ -76,6 +76,4 @@ class BackupListTable extends \WP_List_Table {
     function column_created_at( $item ) {
         return $item->created_at;
     }
-
-
 }

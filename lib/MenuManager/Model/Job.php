@@ -7,6 +7,8 @@ use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
 
 class Job extends Post {
 
+    // @todo this should be custom table not a post type
+
     public static function type(): string {
         return 'mm_job';
     }

@@ -43,41 +43,8 @@ class RestoreBackupAction implements AdminPostLinkAction {
     }
 
     public function script(): void {
-        ?>
-        <script id="js-<?php echo $this->id(); ?>">
-        jQuery( function ( $ ) {
-
-            const onSuccess = function ( res ) {
-                window.dispatchEvent( new Event( 'mm-spinner-hide' ) )
-                if ( res.success ) {
-                    window.dispatchEvent( new CustomEvent( 'mm-success', { detail: { message: res.data.message } } ) )
-                } else {
-                    window.dispatchEvent( new CustomEvent( 'mm-error', { detail: { message: res.data.message } } ) )
-                }
-            }
-
-            const onFailure = function ( e ) {
-                console.error( 'err', { e } )
-                window.dispatchEvent( new Event( 'mm-spinner-hide' ) )
-                window.dispatchEvent( new CustomEvent( 'mm-error', { detail: { message: 'Failed yo' } } ) )
-            }
-
-            $( '.<?php echo AjaxActionHelper::linkClass( $this );?>' ).on( 'click', function ( e ) {
-                e.preventDefault();
-
-                if ( ! confirm( 'Are you sure ... this action cannot be undone?' ) ) {
-                    return;
-                }
-                const payload = {
-                    action: '<?php echo $this->id();?>',
-                    post_id: $( this ).data( 'post-id' ),
-                    _wpnonce: $( this ).data( 'nonce' )
-                }
-
-                $.post( '<?php echo admin_url( 'admin-ajax.php' ); ?>', payload, onSuccess ).fail( onFailure )
-            } )
-        } );
-        </script>
-        <?php
+        // Use the default javascript.
+        $confirm = true;
+        AjaxActionHelper::script( $this, $confirm );
     }
 }

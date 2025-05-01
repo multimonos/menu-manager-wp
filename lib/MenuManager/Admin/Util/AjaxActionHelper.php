@@ -104,4 +104,47 @@ class AjaxActionHelper {
     }
 
 
+    public static function script( AdminPostAction $action, bool $confirm = false ): void {
+        /* default workflow that blocks ui while ajax happens and optionally requires user to confirm request */
+        ?>
+        <script id="js-<?php echo $action->id(); ?>">
+        jQuery( function ( $ ) {
+
+            const onSuccess = function ( res ) {
+                window.dispatchEvent( new Event( 'mm-spinner-hide' ) )
+
+                if ( res.success ) {
+                    window.dispatchEvent( new CustomEvent( 'mm-success', { detail: { message: res.data.message } } ) )
+                } else {
+                    window.dispatchEvent( new CustomEvent( 'mm-error', { detail: { message: res.data.message } } ) )
+                }
+            }
+
+            const onFailure = function ( e ) {
+                console.error( 'err', { e } )
+                window.dispatchEvent( new Event( 'mm-spinner-hide' ) )
+                window.dispatchEvent( new CustomEvent( 'mm-error', { detail: { message: 'Failed yo' } } ) )
+            }
+
+            $( '.<?php echo AjaxActionHelper::linkClass( $action );?>' ).on( 'click', function ( e ) {
+                e.preventDefault();
+
+                <?php if($confirm):?>
+                if ( ! confirm( 'Are you sure ... this action cannot be undone?' ) ) {
+                    return;
+                }
+                <?php endif; ?>
+
+                const payload = {
+                    action: '<?php echo $action->id();?>',
+                    post_id: $( this ).data( 'post-id' ),
+                    _wpnonce: $( this ).data( 'nonce' )
+                }
+
+                $.post( '<?php echo admin_url( 'admin-ajax.php' ); ?>', payload, onSuccess ).fail( onFailure )
+            } )
+        } );
+        </script>
+        <?php
+    }
 }
