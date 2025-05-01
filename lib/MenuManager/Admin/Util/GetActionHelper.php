@@ -71,7 +71,19 @@ class GetActionHelper {
     public static function findOrRedirect( string $model_class ): ?Model {
         Database::load();
 
-        $id = intval( $_GET['post_id'] );
+        $id = intval( $_GET['post_id'] ?? 0 );
+
+        $model = $model_class::find( $id );
+
+        if ( $model === null ) {
+            NoticeService::errorRedirect( "Record #{$id} not found.", wp_get_referer() );
+        }
+
+        return $model;
+    }
+
+    public static function findPostOrRedirect( string $model_class ): ?Post {
+        $id = intval( $_GET['post_id'] ?? 0 );
 
         $model = $model_class::find( $id );
 

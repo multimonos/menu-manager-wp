@@ -3,6 +3,7 @@
 namespace MenuManager\Admin\AdminPages\Menu\Actions;
 
 use MenuManager\Admin\Types\AdminPostLinkAction;
+use MenuManager\Admin\Util\GetActionHelper;
 use MenuManager\Model\Menu;
 use MenuManager\Model\Post;
 use MenuManager\Tasks\Menu\ExportMenuAsCsvTask;
@@ -20,7 +21,7 @@ class ExportCsvMenuAction implements AdminPostLinkAction {
     }
 
     public function register(): void {
-        add_action( 'admin_post_' . $this->id(), [$this, 'handle'] );
+        GetActionHelper::registerHandler( $this );
 
         add_filter( 'post_row_actions', function ( $actions, $post ) {
             return Menu::isType( $post )
@@ -29,44 +30,16 @@ class ExportCsvMenuAction implements AdminPostLinkAction {
         }, 10, 2 );
     }
 
-    public function link( Model|Post|\WP_Post $post ): string {
-        $url = admin_url( add_query_arg( [
-            'action'   => $this->id(),
-            'menu_id'  => $post->ID,
-            '_wpnonce' => wp_create_nonce( $this->id() . '_' . $post->ID ),
-        ], 'admin-post.php' ) );
-
-        return sprintf(
-            '<a href="%s" aria-label="%s">%s</a>',
-            $url,
-            esc_attr( sprintf( __( 'Export "%s" to CSV', 'menu-manager' ), $post->post_title ) ),
-            __( 'Export CSV', 'menu-manager' )
-        );
+    public function link( Model|Post|\WP_Post $model ): string {
+        return GetActionHelper::createLink( $this, $model );
     }
 
     public function handle(): void {
-        // Check if user is allowed
-        if ( ! current_user_can( 'manage_options' ) ) {
-            wp_die( __( 'You do not have sufficient permissions to access this page.', 'menu-manager' ) );
-        }
+        // Validate
+        GetActionHelper::validateOrFail( $this );
 
-        // Verify parameters
-        if ( ! isset( $_GET['menu_id'] ) || ! isset( $_GET['_wpnonce'] ) ) {
-            wp_die( __( 'Missing required parameters.', 'menu-manager' ) );
-        }
-
-        $menu_id = intval( $_GET['menu_id'] );
-
-        // Verify nonce
-        if ( ! wp_verify_nonce( $_GET['_wpnonce'], $this->id() . '_' . $menu_id ) ) {
-            wp_die( __( 'Security check failed.', 'menu-manager' ) );
-        }
-
-        // Get the menu
-        $menu = Menu::find( $menu_id );
-        if ( $menu === null ) {
-            wp_die( __( 'Menu not found.', 'menu-manager' ) );
-        }
+        // Get model.
+        $menu = GetActionHelper::findPostOrRedirect( Menu::class );
 
         // export
         $path = "menu-export_{$menu->post->post_name}_{$menu->post->ID}__" . date( 'Ymd\THis' ) . '.csv';
