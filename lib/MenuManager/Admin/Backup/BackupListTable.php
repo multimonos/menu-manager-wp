@@ -2,47 +2,58 @@
 
 namespace MenuManager\Admin\Backup;
 
+use MenuManager\Admin\Backup\Actions\DeleteBackupAction;
+use MenuManager\Admin\Backup\Actions\RestoreBackupAction;
 use MenuManager\Model\Backup;
 use MenuManager\Service\Database;
 
 class BackupListTable extends \WP_List_Table {
 
     protected RestoreBackupAction $restoreAction;
-    protected $deleteAction;
+    protected DeleteBackupAction $deleteAction;
 
     public function __construct( $args = array() ) {
         parent::__construct( $args );
 
         $this->restoreAction = new RestoreBackupAction();
+        $this->deleteAction = new DeleteBackupAction();
+    }
 
+    function prepare_items() {
+        // Core list definition.
+        $this->_column_headers = [$this->get_columns(), $this->get_hidden_columns(), $this->get_sortable_columns()];
 
+        // Initialize items.
+        Database::load();
+        $items = Backup::query();
+
+        if ( isset( $_GET['created_at'] ) ) {
+            $items->orderBy( 'created_at', $_GET['order'] ?? 'desc' );
+        } else {
+            $items->orderBy( 'id', $_GET['order'] ?? 'desc' );
+
+        }
+        $this->items = $items->get()->all();
     }
 
     function get_columns() {
         return [
-            'cb'       => '<input type="checkbox" />',
-            'filename' => 'File',
-            'created'  => 'Created At',
+            'cb'         => '<input type="checkbox" />',
+            'filename'   => 'File',
+            'id'         => 'ID',
+            'created_at' => 'Created At',
         ];
     }
 
-    function prepare_items() {
-        Database::load();
+    public function get_hidden_columns() {
+        return [];
+    }
 
-        $per_page = 10;
-        $columns = $this->get_columns();
-        $hidden = [];
-        $sortable = [];
-
-        $this->_column_headers = [
-            $columns,
-            $hidden,
-            $sortable,
+    public function get_sortable_columns() {
+        return [
+            'id'         => ['id', false],
+            'created_at' => ['created_at', false],
         ];
-
-        $models = Backup::all()->all();
-        $this->items = $models;
-
     }
 
     function column_cb( $item ) {
@@ -52,16 +63,19 @@ class BackupListTable extends \WP_List_Table {
     function column_filename( $item ) {
         $actions = [
             'restore' => $this->restoreAction->link( $item ),
-            'delete'  => sprintf( '<a href="?page=%s&action=delete&id=%d" onclick="return confirm(\'Are you sure?\')">Delete</a>', esc_attr( $_REQUEST['page'] ), $item->id ),
+            'delete'  => $this->deleteAction->link( $item ),
         ];
 
         return esc_html( $item->filename ) . ' ' . $this->row_actions( $actions );
     }
 
-    function column_created( $item ) {
+    function column_id( $item ) {
+        return $item->id;
+    }
+
+    function column_created_at( $item ) {
         return $item->created_at;
     }
 
 
-    // Add other column_* functions as needed
 }

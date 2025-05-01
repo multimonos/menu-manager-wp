@@ -1,12 +1,13 @@
 <?php
 
-namespace MenuManager\Task;
+namespace MenuManager\Task\Backup;
 
 use MenuManager\Model\Backup;
 use MenuManager\Service\Database;
 use MenuManager\Service\Filesystem;
+use MenuManager\Task\TaskResult;
 
-class RestoreTask {
+class RestoreBackupTask {
     public function run( int $id ): TaskResult {
         // Dependencies
         $fs = Filesystem::get();

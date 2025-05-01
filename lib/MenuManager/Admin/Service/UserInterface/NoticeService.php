@@ -31,7 +31,7 @@ class NoticeService {
         self::set( self::SUCCESS, $message );
     }
 
-    public static function successRedirect( string $message, string $url ): void {
+    public static function successRedirect( string $message, string $url = null ): void {
         self::set( self::SUCCESS, $message, $url );
     }
 
@@ -39,7 +39,7 @@ class NoticeService {
         self::set( self::ERROR, $message );
     }
 
-    public static function errorRedirect( string $message, string $url ): void {
+    public static function errorRedirect( string $message, string $url = null ): void {
         self::set( self::ERROR, $message, $url );
     }
 
@@ -47,7 +47,7 @@ class NoticeService {
         self::set( self::WARNING, $message );
     }
 
-    public static function warningRedirect( string $message, $url ): void {
+    public static function warningRedirect( string $message, string $url = null ): void {
         self::set( self::WARNING, $message, $url );
     }
 

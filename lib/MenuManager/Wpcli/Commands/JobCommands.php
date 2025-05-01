@@ -6,6 +6,7 @@ namespace MenuManager\Wpcli\Commands;
 use MenuManager\Model\Job;
 use MenuManager\Task\JobRunTask;
 use MenuManager\Task\ValidateTask;
+use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
 class JobCommands {
@@ -50,10 +51,7 @@ class JobCommands {
         $task = new ValidateTask();
         $rs = $task->run( $id );
 
-        if ( ! $rs->ok() ) {
-            WP_CLI::error( $rs->getMessage() . "\n" . print_r( $rs->getData(), true ) );
-        }
-        WP_CLI::success( $rs->getMessage() . "\n" . print_r( $rs->getData(), true ) );
+        CommandHelper::sendTaskResult( $rs );
     }
 
     /**
@@ -112,10 +110,7 @@ class JobCommands {
         $task = new JobRunTask();
         $rs = $task->run( $id );
 
-        if ( ! $rs->ok() ) {
-            WP_CLI::error( $rs->getMessage() );
-        }
-        WP_CLI::success( $rs->getMessage() );
+        CommandHelper::sendTaskResult( $rs );
     }
 
 

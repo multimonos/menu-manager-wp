@@ -5,7 +5,9 @@ namespace MenuManager\Admin\Actions;
 use MenuManager\Admin\Service\UserInterface\NoticeService;
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Model\Menu;
+use MenuManager\Model\Post;
 use MenuManager\Task\CloneMenuTask;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
 class CloneMenuAction implements AdminPostLinkAction {
 
@@ -23,7 +25,8 @@ class CloneMenuAction implements AdminPostLinkAction {
         }, 10, 2 );
     }
 
-    public function link( \WP_Post $post ): string {
+    public function link( Model|Post|\WP_Post $post ): string {
+
         $url = admin_url( add_query_arg( [
             'action'   => $this->id(),
             'post_id'  => $post->ID,
@@ -39,6 +42,7 @@ class CloneMenuAction implements AdminPostLinkAction {
     }
 
     public function handle(): void {
+//        GetActionHelper::validateOrFail( $this, true );
         // Check if user is allowed
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_die( __( 'You do not have sufficient permissions to access this page.', 'menu-manager' ) );
@@ -57,6 +61,7 @@ class CloneMenuAction implements AdminPostLinkAction {
         }
 
         // Get the menu
+        $post_id = intval( $_GET['post_id'] );
         $menu = Menu::find( $post_id );
         if ( $menu === null ) {
             wp_die( __( 'Menu not found.', 'menu-manager' ) );

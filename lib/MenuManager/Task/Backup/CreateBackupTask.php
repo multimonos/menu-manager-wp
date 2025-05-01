@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Task;
+namespace MenuManager\Task\Backup;
 
 use MenuManager\Model\Backup;
 use MenuManager\Model\Node;
@@ -8,10 +8,11 @@ use MenuManager\Model\NodeMeta;
 use MenuManager\Service\Database;
 use MenuManager\Service\Filesystem;
 use MenuManager\Service\Logger;
+use MenuManager\Task\TaskResult;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Builder;
 
 
-class BackupTask {
+class CreateBackupTask {
     protected $models = [
         Node::class,
         NodeMeta::class,

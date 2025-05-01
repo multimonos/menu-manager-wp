@@ -7,6 +7,7 @@ use MenuManager\Task\ExportCsvTask;
 use MenuManager\Task\ExportExcelTask;
 use MenuManager\Task\LoadTask;
 use MenuManager\Types\ExportMethod;
+use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
 class RootCommands {
@@ -37,11 +38,7 @@ class RootCommands {
         $task = new LoadTask();
         $rs = $task->run( $path );
 
-        // guard : err
-        if ( ! $rs->ok() ) {
-            WP_CLI::error( $rs->getMessage() );
-        }
-        WP_CLI::success( $rs->getMessage() );
+        CommandHelper::sendTaskResult( $rs );
     }
 
     /**
@@ -84,20 +81,14 @@ class RootCommands {
             $task = new ExportCsvTask();
             $rs = $task->run( ExportMethod::File, $menu, $path );
 
-            if ( ! $rs->ok() ) {
-                WP_CLI::error( $rs->getMessage() );
-            }
-            WP_CLI::success( $rs->getMessage() );
+            CommandHelper::sendTaskResult( $rs );
 
         } else if ( 'excel' === $format ) {
             $path = empty( $dst ) ? $filestem . '.xlsx' : $dst;
             $task = new ExportExcelTask();
             $rs = $task->run( ExportMethod::File, $menu, $path );
 
-            if ( ! $rs->ok() ) {
-                WP_CLI::error( $rs->getMessage() );
-            }
-            WP_CLI::success( $rs->getMessage() );
+            CommandHelper::sendTaskResult( $rs );
         }
     }
 

@@ -4,7 +4,9 @@ namespace MenuManager\Admin\Actions;
 
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Model\Job;
+use MenuManager\Model\Post;
 use MenuManager\Task\JobRunTask;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
 class JobRunAction implements AdminPostLinkAction {
 
@@ -35,7 +37,7 @@ class JobRunAction implements AdminPostLinkAction {
         add_action( 'admin_enqueue_scripts', [$this, 'enqueueScripts'], 10, 1 );
     }
 
-    public function link( \WP_Post $post ): string {
+    public function link( Model|Post|\WP_Post $post ): string {
 
         $nonce = wp_create_nonce( $this->id() . '_' . $post->ID );
 

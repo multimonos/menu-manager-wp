@@ -4,8 +4,10 @@ namespace MenuManager\Admin\Actions;
 
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Model\Menu;
+use MenuManager\Model\Post;
 use MenuManager\Task\ExportCsvTask;
 use MenuManager\Types\ExportMethod;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
 class ExportCsvMenuAction implements AdminPostLinkAction {
 
@@ -23,7 +25,7 @@ class ExportCsvMenuAction implements AdminPostLinkAction {
         }, 10, 2 );
     }
 
-    public function link( \WP_Post $post ): string {
+    public function link( Model|Post|\WP_Post $post ): string {
         $url = admin_url( add_query_arg( [
             'action'   => $this->id(),
             'menu_id'  => $post->ID,

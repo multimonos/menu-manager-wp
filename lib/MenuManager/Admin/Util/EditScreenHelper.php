@@ -46,6 +46,14 @@ class EditScreenHelper {
         }, 9998, 2 );
     }
 
+    public static function registerAdminPostActions( mixed $actions ): void {
+        foreach ( $actions as $action ) {
+            if ( method_exists( $action, 'register' ) ) {
+                $action->register();
+            }
+        }
+    }
+
     public static function columnTitles( string $post_type, callable $callback ) {
         add_filter( "manage_edit-{$post_type}_columns", $callback );
     }
@@ -56,13 +64,5 @@ class EditScreenHelper {
 
     public static function sortableColumns( string $post_type, callable $callback ) {
         add_filter( "manage_edit-{$post_type}_sortable_columns", $callback );
-    }
-
-    public static function registerAdminPostActions( mixed $actions ): void {
-        foreach ( $actions as $action ) {
-            if ( method_exists( $action, 'register' ) ) {
-                $action->register();
-            }
-        }
     }
 }

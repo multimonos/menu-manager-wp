@@ -4,9 +4,11 @@ namespace MenuManager\Wpcli\Commands;
 
 use MenuManager\Model\Backup;
 use MenuManager\Service\Database;
-use MenuManager\Task\BackupTask;
-use MenuManager\Task\RestoreTask;
+use MenuManager\Task\Backup\CreateBackupTask;
+use MenuManager\Task\Backup\DeleteBackupTask;
+use MenuManager\Task\Backup\RestoreBackupTask;
 use MenuManager\Wpcli\CliOutput;
+use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
 class BackupCommands {
@@ -24,7 +26,7 @@ class BackupCommands {
 
         $format = $assoc_args['format'] ?? 'default';
 
-        $task = new BackupTask();
+        $task = new CreateBackupTask();
         $rs = $task->run();
 
         if ( ! $rs->ok() ) {
@@ -98,13 +100,10 @@ class BackupCommands {
 
         $id = intval( $args[0] ?? -1 );
 
-        $task = new RestoreTask();
+        $task = new RestoreBackupTask();
         $rs = $task->run( $id );
 
-        if ( ! $rs->ok() ) {
-            WP_CLI::error( $rs->getMessage() );
-        }
-        WP_CLI::success( $rs->getMessage() );
+        CommandHelper::sendTaskResult( $rs );
     }
 
     /**
@@ -122,18 +121,10 @@ class BackupCommands {
 
         $id = intval( $args[0] ?? -1 );
 
-        $backup = Backup::find( $id );
+        $task = new DeleteBackupTask();
+        $rs = $task->run( $id );
 
-        // failed
-        if ( $backup === null ) {
-            WP_CLI::error( "Backup not found id=" . $id );
-        }
-
-        if ( ! $backup->delete() ) {
-            WP_CLI::error( "Failed to delete Backup id=" . $id );
-        }
-
-        WP_CLI::success( 'Backup deleted id=' . $id );
+        CommandHelper::sendTaskResult( $rs );
     }
 
     /**

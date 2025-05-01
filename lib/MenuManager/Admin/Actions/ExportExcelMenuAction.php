@@ -4,8 +4,10 @@ namespace MenuManager\Admin\Actions;
 
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Model\Menu;
+use MenuManager\Model\Post;
 use MenuManager\Task\ExportExcelTask;
 use MenuManager\Types\ExportMethod;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
 class ExportExcelMenuAction implements AdminPostLinkAction {
 
@@ -24,7 +26,7 @@ class ExportExcelMenuAction implements AdminPostLinkAction {
     }
 
 
-    public function link( \WP_Post $post ): string {
+    public function link( Model|Post|\WP_Post $post ): string {
         $url = admin_url( add_query_arg( [
             'action'   => $this->id(),
             'menu_id'  => $post->ID,

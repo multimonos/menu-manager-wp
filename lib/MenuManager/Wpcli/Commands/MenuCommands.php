@@ -6,6 +6,7 @@ namespace MenuManager\Wpcli\Commands;
 use MenuManager\Model\Menu;
 use MenuManager\Task\CloneMenuTask;
 use MenuManager\Task\ViewMenuAsTextTask;
+use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
 class MenuCommands {
@@ -83,10 +84,7 @@ class MenuCommands {
         $task = new CloneMenuTask();
         $rs = $task->run( $src, $dst );
 
-        if ( ! $rs->ok() ) {
-            WP_CLI::error( $rs->getMessage() );
-        }
-        WP_CLI::success( $rs->getMessage() );
+        CommandHelper::sendTaskResult( $rs );
     }
 
 
@@ -135,9 +133,6 @@ class MenuCommands {
         $task = new ViewMenuAsTextTask();
         $rs = $task->run( $id, $pagename );
 
-        if ( ! $rs->ok() ) {
-            WP_CLI::error( $rs->getMessage() );
-        }
-        WP_CLI::success( $rs->getMessage() );
+        CommandHelper::sendTaskResult( $rs );
     }
 }
