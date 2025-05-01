@@ -11,12 +11,19 @@ use MenuManager\Wpcli\Commands\MenuCommands;
 use MenuManager\Wpcli\Commands\NodeCommands;
 use MenuManager\Wpcli\Commands\RootCommands;
 
-// guard
+// Guard all of it!
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// autoload
+// Admin Deps
+if ( is_admin() ) {
+    if ( ! class_exists( 'WP_List_Table' ) ) {
+        require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+    }
+}
+
+// Autoload
 require_once __DIR__ . '/vendor/scoper-autoload.php';
 
 // paths

@@ -103,8 +103,8 @@ class BackupTask {
     protected function createBackupDirectoryIfNotExists( $dirpath ): void {
         $fs = Filesystem::get();
         if ( ! $fs->exists( $dirpath ) ) {
-            Logger::taskInfo( 'backup', 'creating ' . $dirpath );
             $fs->mkdir( $dirpath );
+            Logger::taskInfo( 'backup', 'created ' . $dirpath );
         }
     }
 
@@ -140,6 +140,7 @@ class BackupTask {
                 $comma = $firstRow ? '' : ',';
                 $this->writeln( $handle, sprintf( "%s (%s)", $comma, $value_str ) );
 
+                // LOOP ctrls
                 $firstRow = false;
             }
 

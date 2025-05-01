@@ -3,8 +3,6 @@
 namespace MenuManager\Admin\Util;
 
 
-use MenuManager\Admin\Types\AdminPostAction;
-
 class EditScreenHelper {
     public static function isEditScreen( string $post_type ): bool {
 
@@ -62,10 +60,9 @@ class EditScreenHelper {
 
     public static function registerAdminPostActions( mixed $actions ): void {
         foreach ( $actions as $action ) {
-            if ( ! in_array( AdminPostAction::class, class_implements( $action ) ) ) {
-                continue;
+            if ( method_exists( $action, 'register' ) ) {
+                $action->register();
             }
-            $action->register();
         }
     }
 }
