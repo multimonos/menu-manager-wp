@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Admin\Menu\Actions;
+namespace MenuManager\Admin\AdminPages\Menu\Actions;
 
 use MenuManager\Admin\Service\NoticeService;
 use MenuManager\Admin\Types\AdminPostLinkAction;

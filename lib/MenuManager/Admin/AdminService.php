@@ -2,10 +2,10 @@
 
 namespace MenuManager\Admin;
 
-use MenuManager\Admin\Backup\BackupService;
-use MenuManager\Admin\Impex\ImpexPageService;
-use MenuManager\Admin\Job\JobPageService;
-use MenuManager\Admin\Menu\MenuPageService;
+use MenuManager\Admin\AdminPages\Backup\BackupPageService;
+use MenuManager\Admin\AdminPages\Impex\ImpexPageService;
+use MenuManager\Admin\AdminPages\Job\JobPageService;
+use MenuManager\Admin\AdminPages\Menu\MenuPageService;
 use MenuManager\Admin\Service\NoticeService;
 use MenuManager\Admin\Service\SpinnerService;
 
@@ -21,7 +21,7 @@ class AdminService {
         MenuPageService::init();
         ImpexPageService::init();
         JobPageService::init();
-        BackupService::init();
+        BackupPageService::init();
 
         add_action( 'admin_head', function () {
             echo '<style>

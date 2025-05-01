@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Admin\Backup\Actions;
+namespace MenuManager\Admin\AdminPages\Backup\Actions;
 
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Admin\Util\AjaxActionHelper;

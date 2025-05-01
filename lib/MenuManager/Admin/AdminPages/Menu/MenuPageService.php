@@ -1,11 +1,11 @@
 <?php
 
-namespace MenuManager\Admin\Menu;
+namespace MenuManager\Admin\AdminPages\Menu;
 
-use MenuManager\Admin\Menu\Actions\CloneMenuAction;
-use MenuManager\Admin\Menu\Actions\ExportCsvMenuAction;
-use MenuManager\Admin\Menu\Actions\ExportExcelMenuAction;
-use MenuManager\Admin\Menu\Actions\PreviewMenuAction;
+use MenuManager\Admin\AdminPages\Menu\Actions\CloneMenuAction;
+use MenuManager\Admin\AdminPages\Menu\Actions\ExportCsvMenuAction;
+use MenuManager\Admin\AdminPages\Menu\Actions\ExportExcelMenuAction;
+use MenuManager\Admin\AdminPages\Menu\Actions\PreviewMenuAction;
 use MenuManager\Admin\Types\AdminPage;
 use MenuManager\Admin\Util\EditScreenHelper;
 use MenuManager\Model\Menu;

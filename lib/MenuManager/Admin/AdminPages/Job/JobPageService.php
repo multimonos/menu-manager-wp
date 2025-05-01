@@ -1,8 +1,8 @@
 <?php
 
-namespace MenuManager\Admin\Job;
+namespace MenuManager\Admin\AdminPages\Job;
 
-use MenuManager\Admin\Job\Actions\JobRunAction;
+use MenuManager\Admin\AdminPages\Job\Actions\JobRunAction;
 use MenuManager\Admin\Types\AdminPage;
 use MenuManager\Admin\Util\EditScreenHelper;
 use MenuManager\Model\Job;

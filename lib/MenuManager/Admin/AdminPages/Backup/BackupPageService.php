@@ -1,14 +1,14 @@
 <?php
 
-namespace MenuManager\Admin\Backup;
+namespace MenuManager\Admin\AdminPages\Backup;
 
-use MenuManager\Admin\Backup\Actions\DeleteBackupAction;
-use MenuManager\Admin\Backup\Actions\RestoreBackupAction;
+use MenuManager\Admin\AdminPages\Backup\Actions\DeleteBackupAction;
+use MenuManager\Admin\AdminPages\Backup\Actions\RestoreBackupAction;
 use MenuManager\Admin\Types\AdminPage;
 use MenuManager\Admin\Util\EditScreenHelper;
 use MenuManager\Model\Menu;
 
-class BackupService implements AdminPage {
+class BackupPageService implements AdminPage {
     public static function id(): string {
         return 'mm_backup';
     }

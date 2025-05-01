@@ -1,8 +1,8 @@
 <?php
 
-namespace MenuManager\Admin\Impex;
+namespace MenuManager\Admin\AdminPages\Impex;
 
-use MenuManager\Admin\Impex\Actions\UploadCsvAction;
+use MenuManager\Admin\AdminPages\Impex\Actions\UploadCsvAction;
 use MenuManager\Admin\Types\AdminPage;
 use MenuManager\Model\Menu;
 

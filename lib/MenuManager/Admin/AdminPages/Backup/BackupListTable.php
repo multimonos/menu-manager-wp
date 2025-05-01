@@ -1,9 +1,9 @@
 <?php
 
-namespace MenuManager\Admin\Backup;
+namespace MenuManager\Admin\AdminPages\Backup;
 
-use MenuManager\Admin\Backup\Actions\DeleteBackupAction;
-use MenuManager\Admin\Backup\Actions\RestoreBackupAction;
+use MenuManager\Admin\AdminPages\Backup\Actions\DeleteBackupAction;
+use MenuManager\Admin\AdminPages\Backup\Actions\RestoreBackupAction;
 use MenuManager\Model\Backup;
 use MenuManager\Service\Database;
 
@@ -66,7 +66,7 @@ class BackupListTable extends \WP_List_Table {
             'delete'  => $this->deleteAction->link( $item ),
         ];
 
-        return esc_html( $item->filename ) . ' ' . $this->row_actions( $actions );
+        return esc_html( $item->filename ) . ' BackupListTable.php' . $this->row_actions( $actions );
     }
 
     function column_id( $item ) {

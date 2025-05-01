@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Admin\Job\Actions;
+namespace MenuManager\Admin\AdminPages\Job\Actions;
 
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Model\Job;

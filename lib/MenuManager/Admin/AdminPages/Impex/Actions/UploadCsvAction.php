@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Admin\Impex\Actions;
+namespace MenuManager\Admin\AdminPages\Impex\Actions;
 
 use MenuManager\Admin\Service\NoticeService;
 use MenuManager\Admin\Types\AdminPostFormAction;
