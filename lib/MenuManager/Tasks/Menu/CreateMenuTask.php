@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Task;
+namespace MenuManager\Tasks\Menu;
 
 use MenuManager\Model\Impex;
 use MenuManager\Model\Menu;

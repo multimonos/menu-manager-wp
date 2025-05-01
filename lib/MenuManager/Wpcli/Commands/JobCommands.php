@@ -4,8 +4,8 @@ namespace MenuManager\Wpcli\Commands;
 
 
 use MenuManager\Model\Job;
-use MenuManager\Task\JobRunTask;
-use MenuManager\Task\ValidateTask;
+use MenuManager\Tasks\Impex\ValidateTask;
+use MenuManager\Tasks\Job\JobRunTask;
 use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 

@@ -1,10 +1,11 @@
 <?php
 
-namespace MenuManager\Task;
+namespace MenuManager\Tasks\Menu;
 
 use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
 use MenuManager\Service\Database;
+use MenuManager\Tasks\TaskResult;
 
 class CloneMenuTask {
     public function run( mixed $src_id_or_slug, string $target_slug ): TaskResult {

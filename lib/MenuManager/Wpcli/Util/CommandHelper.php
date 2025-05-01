@@ -2,7 +2,7 @@
 
 namespace MenuManager\Wpcli\Util;
 
-use MenuManager\Task\TaskResult;
+use MenuManager\Tasks\TaskResult;
 use WP_CLI;
 
 class CommandHelper {

@@ -1,11 +1,11 @@
 <?php
 
-namespace MenuManager\Task\Backup;
+namespace MenuManager\Tasks\Backup;
 
 use MenuManager\Model\Backup;
 use MenuManager\Service\Database;
 use MenuManager\Service\Filesystem;
-use MenuManager\Task\TaskResult;
+use MenuManager\Tasks\TaskResult;
 
 class RestoreBackupTask {
     public function run( int $id ): TaskResult {

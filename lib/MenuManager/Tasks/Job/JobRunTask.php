@@ -1,11 +1,14 @@
 <?php
 
-namespace MenuManager\Task;
+namespace MenuManager\Tasks\Job;
 
 use MenuManager\Model\Job;
 use MenuManager\Model\Menu;
 use MenuManager\Service\Database;
 use MenuManager\Service\Logger;
+use MenuManager\Tasks\Menu\CreateMenuTask;
+use MenuManager\Tasks\Menu\ModifyMenuTask;
+use MenuManager\Tasks\TaskResult;
 
 class JobRunTask {
 

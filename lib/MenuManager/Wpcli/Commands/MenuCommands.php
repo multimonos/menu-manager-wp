@@ -4,8 +4,8 @@ namespace MenuManager\Wpcli\Commands;
 
 
 use MenuManager\Model\Menu;
-use MenuManager\Task\CloneMenuTask;
-use MenuManager\Task\ViewMenuAsTextTask;
+use MenuManager\Tasks\Menu\CloneMenuTask;
+use MenuManager\Tasks\Menu\PrintTextMenuTask;
 use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
@@ -130,7 +130,7 @@ class MenuCommands {
         $id = $args[0];
         $pagename = $args[1] ?? null;
 
-        $task = new ViewMenuAsTextTask();
+        $task = new PrintTextMenuTask();
         $rs = $task->run( $id, $pagename );
 
         CommandHelper::sendTaskResult( $rs );

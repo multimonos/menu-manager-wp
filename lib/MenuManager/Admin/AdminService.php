@@ -3,11 +3,11 @@
 namespace MenuManager\Admin;
 
 use MenuManager\Admin\Backup\BackupService;
-use MenuManager\Admin\Service\ImpexPageService;
-use MenuManager\Admin\Service\JobPageService;
-use MenuManager\Admin\Service\MenuPageService;
-use MenuManager\Admin\Service\UserInterface\NoticeService;
-use MenuManager\Admin\Service\UserInterface\SpinnerService;
+use MenuManager\Admin\Impex\ImpexPageService;
+use MenuManager\Admin\Job\JobPageService;
+use MenuManager\Admin\Menu\MenuPageService;
+use MenuManager\Admin\Service\NoticeService;
+use MenuManager\Admin\Service\SpinnerService;
 
 class AdminService {
     public static function init(): void {

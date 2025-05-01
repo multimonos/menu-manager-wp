@@ -1,18 +1,19 @@
 <?php
 
-namespace MenuManager\Task;
+namespace MenuManager\Tasks\Menu;
 
 use MenuManager\Model\Impex;
 use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
 use MenuManager\Service\Database;
 use MenuManager\Service\Factory\ExportNodeFactory;
+use MenuManager\Tasks\TaskResult;
 use MenuManager\Types\ExportMethod;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
 use MenuManager\Vendor\PhpOffice\PhpSpreadsheet\Spreadsheet;
 use MenuManager\Vendor\PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class ExportExcelTask {
+class ExportMenuAsExcelTask {
 
     public function run( ExportMethod $method, Menu $menu, string $path ): TaskResult {
 

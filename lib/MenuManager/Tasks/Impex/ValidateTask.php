@@ -1,12 +1,13 @@
 <?php
 
-namespace MenuManager\Task;
+namespace MenuManager\Tasks\Impex;
 
 use MenuManager\Model\Impex;
 use MenuManager\Model\ImpexMeta;
 use MenuManager\Model\Job;
 use MenuManager\Model\Menu;
 use MenuManager\Service\Database;
+use MenuManager\Tasks\TaskResult;
 
 class ValidateTask {
 

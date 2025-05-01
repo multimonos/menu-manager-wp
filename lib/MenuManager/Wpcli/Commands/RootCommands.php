@@ -3,9 +3,9 @@
 namespace MenuManager\Wpcli\Commands;
 
 use MenuManager\Model\Menu;
-use MenuManager\Task\ExportCsvTask;
-use MenuManager\Task\ExportExcelTask;
-use MenuManager\Task\LoadTask;
+use MenuManager\Tasks\Impex\LoadTask;
+use MenuManager\Tasks\Menu\ExportMenuAsCsvTask;
+use MenuManager\Tasks\Menu\ExportMenuAsExcelTask;
 use MenuManager\Types\ExportMethod;
 use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
@@ -78,14 +78,14 @@ class RootCommands {
 
         if ( 'csv' === $format ) {
             $path = empty( $dst ) ? $filestem . '.csv' : $dst;
-            $task = new ExportCsvTask();
+            $task = new ExportMenuAsCsvTask();
             $rs = $task->run( ExportMethod::File, $menu, $path );
 
             CommandHelper::sendTaskResult( $rs );
 
         } else if ( 'excel' === $format ) {
             $path = empty( $dst ) ? $filestem . '.xlsx' : $dst;
-            $task = new ExportExcelTask();
+            $task = new ExportMenuAsExcelTask();
             $rs = $task->run( ExportMethod::File, $menu, $path );
 
             CommandHelper::sendTaskResult( $rs );

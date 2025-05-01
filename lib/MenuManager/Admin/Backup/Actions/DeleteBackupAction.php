@@ -6,7 +6,7 @@ use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Admin\Util\GetActionHelper;
 use MenuManager\Model\Backup;
 use MenuManager\Model\Post;
-use MenuManager\Task\Backup\DeleteBackupTask;
+use MenuManager\Tasks\Backup\DeleteBackupTask;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
 class DeleteBackupAction implements AdminPostLinkAction {

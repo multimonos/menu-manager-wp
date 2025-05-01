@@ -1,19 +1,19 @@
 <?php
 
-namespace MenuManager\Task;
+namespace MenuManager\Tasks\Menu;
 
 use MenuManager\Model\Impex;
 use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
 use MenuManager\Service\Database;
 use MenuManager\Service\Factory\ExportNodeFactory;
+use MenuManager\Tasks\TaskResult;
 use MenuManager\Types\ExportMethod;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
 use MenuManager\Vendor\League\Csv\AbstractCsv;
 use MenuManager\Vendor\League\Csv\Bom;
 use MenuManager\Vendor\League\Csv\Writer;
 use SplTempFileObject;
-
 
 class CsvWriterFactory {
     public static function create( ExportMethod $mode, string $path ): AbstractCsv {
@@ -44,7 +44,7 @@ class CsvWriterFactory {
     }
 }
 
-class ExportCsvTask {
+class ExportMenuAsCsvTask {
 
     public function run( ExportMethod $method, Menu $menu, string $path ): TaskResult {
 

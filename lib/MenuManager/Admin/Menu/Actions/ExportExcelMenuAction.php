@@ -1,11 +1,11 @@
 <?php
 
-namespace MenuManager\Admin\Actions;
+namespace MenuManager\Admin\Menu\Actions;
 
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Model\Menu;
 use MenuManager\Model\Post;
-use MenuManager\Task\ExportExcelTask;
+use MenuManager\Tasks\Menu\ExportMenuAsExcelTask;
 use MenuManager\Types\ExportMethod;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
@@ -67,7 +67,7 @@ class ExportExcelMenuAction implements AdminPostLinkAction {
 
         // export
         $path = "menu-export_{$menu->post->post_name}_{$menu->post->ID}__" . date( 'Ymd\THis' ) . '.xlsx';
-        $task = new ExportExcelTask();
+        $task = new ExportMenuAsExcelTask();
         $rs = $task->run( ExportMethod::Download, $menu, $path );
         exit;
     }

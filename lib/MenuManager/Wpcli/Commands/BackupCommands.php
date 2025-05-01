@@ -4,9 +4,9 @@ namespace MenuManager\Wpcli\Commands;
 
 use MenuManager\Model\Backup;
 use MenuManager\Service\Database;
-use MenuManager\Task\Backup\CreateBackupTask;
-use MenuManager\Task\Backup\DeleteBackupTask;
-use MenuManager\Task\Backup\RestoreBackupTask;
+use MenuManager\Tasks\Backup\CreateBackupTask;
+use MenuManager\Tasks\Backup\DeleteBackupTask;
+use MenuManager\Tasks\Backup\RestoreBackupTask;
 use MenuManager\Wpcli\CliOutput;
 use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;

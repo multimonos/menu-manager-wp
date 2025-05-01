@@ -1,18 +1,18 @@
 <?php
 
-namespace MenuManager\Admin\Actions;
+namespace MenuManager\Admin\Menu\Actions;
 
-use MenuManager\Admin\Service\UserInterface\NoticeService;
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Model\Menu;
 use MenuManager\Model\Post;
-use MenuManager\Task\CloneMenuTask;
+use MenuManager\Tasks\Menu\ExportMenuAsCsvTask;
+use MenuManager\Types\ExportMethod;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
-class CloneMenuAction implements AdminPostLinkAction {
+class ExportCsvMenuAction implements AdminPostLinkAction {
 
     public function id(): string {
-        return 'mm_clone_menu';
+        return 'mm_export_csv';
     }
 
     public function register(): void {
@@ -26,61 +26,48 @@ class CloneMenuAction implements AdminPostLinkAction {
     }
 
     public function link( Model|Post|\WP_Post $post ): string {
-
         $url = admin_url( add_query_arg( [
             'action'   => $this->id(),
-            'post_id'  => $post->ID,
+            'menu_id'  => $post->ID,
             '_wpnonce' => wp_create_nonce( $this->id() . '_' . $post->ID ),
         ], 'admin-post.php' ) );
 
         return sprintf(
             '<a href="%s" aria-label="%s">%s</a>',
             $url,
-            esc_attr( sprintf( __( 'Clone "%s"', 'menu-manager' ), $post->post_title ) ),
-            __( 'Clone', 'menu-manager' )
+            esc_attr( sprintf( __( 'Export "%s" to CSV', 'menu-manager' ), $post->post_title ) ),
+            __( 'Export CSV', 'menu-manager' )
         );
     }
 
     public function handle(): void {
-//        GetActionHelper::validateOrFail( $this, true );
         // Check if user is allowed
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_die( __( 'You do not have sufficient permissions to access this page.', 'menu-manager' ) );
         }
 
         // Verify parameters
-        if ( ! isset( $_GET['post_id'] ) || ! isset( $_GET['_wpnonce'] ) ) {
+        if ( ! isset( $_GET['menu_id'] ) || ! isset( $_GET['_wpnonce'] ) ) {
             wp_die( __( 'Missing required parameters.', 'menu-manager' ) );
         }
 
-        $post_id = intval( $_GET['post_id'] );
+        $menu_id = intval( $_GET['menu_id'] );
 
         // Verify nonce
-        if ( ! wp_verify_nonce( $_GET['_wpnonce'], $this->id() . '_' . $post_id ) ) {
+        if ( ! wp_verify_nonce( $_GET['_wpnonce'], $this->id() . '_' . $menu_id ) ) {
             wp_die( __( 'Security check failed.', 'menu-manager' ) );
         }
 
         // Get the menu
-        $post_id = intval( $_GET['post_id'] );
-        $menu = Menu::find( $post_id );
+        $menu = Menu::find( $menu_id );
         if ( $menu === null ) {
             wp_die( __( 'Menu not found.', 'menu-manager' ) );
         }
 
         // export
-        $src = $menu->post->post_name;
-        $dst = $menu->post->post_name . '-' . uniqid();
-
-        $task = new CloneMenuTask();
-        $rs = $task->run( $src, $dst );
-
-        if ( $rs->ok() ) {
-            NoticeService::success( $rs->getMessage() );
-        } else {
-            NoticeService::error( $rs->getMessage() );
-        }
-
-        wp_redirect( admin_url( 'edit.php?post_type=' . Menu::type() ) );
-
+        $path = "menu-export_{$menu->post->post_name}_{$menu->post->ID}__" . date( 'Ymd\THis' ) . '.csv';
+        $task = new ExportMenuAsCsvTask();
+        $rs = $task->run( ExportMethod::Download, $menu, $path );
+        exit;
     }
 }

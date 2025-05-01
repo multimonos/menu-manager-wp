@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Admin\Service\UserInterface;
+namespace MenuManager\Admin\Service;
 
 class NoticeService {
 

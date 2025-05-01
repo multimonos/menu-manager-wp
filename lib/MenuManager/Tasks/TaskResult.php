@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Task;
+namespace MenuManager\Tasks;
 
 class TaskResult {
 

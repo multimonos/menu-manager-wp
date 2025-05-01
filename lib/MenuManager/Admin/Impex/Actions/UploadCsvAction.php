@@ -1,11 +1,11 @@
 <?php
 
-namespace MenuManager\Admin\Actions;
+namespace MenuManager\Admin\Impex\Actions;
 
-use MenuManager\Admin\Service\UserInterface\NoticeService;
+use MenuManager\Admin\Service\NoticeService;
 use MenuManager\Admin\Types\AdminPostFormAction;
 use MenuManager\Model\Job;
-use MenuManager\Task\LoadTask;
+use MenuManager\Tasks\Impex\LoadTask;
 
 class UploadCsvAction implements AdminPostFormAction {
 

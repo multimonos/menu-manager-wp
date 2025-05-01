@@ -1,11 +1,13 @@
 <?php
 
-namespace MenuManager\Task;
+namespace MenuManager\Tasks\Impex;
 
 use MenuManager\Model\Impex;
 use MenuManager\Model\Job;
 use MenuManager\Service\Database;
 use MenuManager\Service\Logger;
+use MenuManager\Tasks\Exception;
+use MenuManager\Tasks\TaskResult;
 use MenuManager\Vendor\League\Csv\Reader;
 
 class LoadTask {

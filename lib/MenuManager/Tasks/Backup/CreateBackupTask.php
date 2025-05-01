@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Task\Backup;
+namespace MenuManager\Tasks\Backup;
 
 use MenuManager\Model\Backup;
 use MenuManager\Model\Node;
@@ -8,7 +8,7 @@ use MenuManager\Model\NodeMeta;
 use MenuManager\Service\Database;
 use MenuManager\Service\Filesystem;
 use MenuManager\Service\Logger;
-use MenuManager\Task\TaskResult;
+use MenuManager\Tasks\TaskResult;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Builder;
 
 

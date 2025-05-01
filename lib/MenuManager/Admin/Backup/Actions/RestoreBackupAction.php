@@ -6,7 +6,7 @@ use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Admin\Util\AjaxActionHelper;
 use MenuManager\Model\Backup;
 use MenuManager\Model\Post;
-use MenuManager\Task\Backup\RestoreBackupTask;
+use MenuManager\Tasks\Backup\RestoreBackupTask;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
 class RestoreBackupAction implements AdminPostLinkAction {

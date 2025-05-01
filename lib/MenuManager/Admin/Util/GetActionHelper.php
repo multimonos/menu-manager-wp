@@ -2,11 +2,11 @@
 
 namespace MenuManager\Admin\Util;
 
-use MenuManager\Admin\Service\UserInterface\NoticeService;
+use MenuManager\Admin\Service\NoticeService;
 use MenuManager\Admin\Types\AdminPostAction;
 use MenuManager\Model\Post;
 use MenuManager\Service\Database;
-use MenuManager\Task\TaskResult;
+use MenuManager\Tasks\TaskResult;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
 class GetActionHelper {

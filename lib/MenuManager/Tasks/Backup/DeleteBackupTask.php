@@ -1,10 +1,10 @@
 <?php
 
-namespace MenuManager\Task\Backup;
+namespace MenuManager\Tasks\Backup;
 
 use MenuManager\Model\Backup;
 use MenuManager\Service\Database;
-use MenuManager\Task\TaskResult;
+use MenuManager\Tasks\TaskResult;
 
 class DeleteBackupTask {
     public function run( int $id ): TaskResult {

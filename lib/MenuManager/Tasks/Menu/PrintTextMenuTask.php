@@ -1,13 +1,14 @@
 <?php
 
-namespace MenuManager\Task;
+namespace MenuManager\Tasks\Menu;
 
 use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
 use MenuManager\Service\Database;
+use MenuManager\Tasks\TaskResult;
 use MenuManager\Vendor\Kalnoy\Nestedset\Collection;
 
-class ViewMenuAsTextTask {
+class PrintTextMenuTask {
     public function run( int|string $menu_id, string $pagename = null ): TaskResult {
 
         $menu = Menu::find( $menu_id );

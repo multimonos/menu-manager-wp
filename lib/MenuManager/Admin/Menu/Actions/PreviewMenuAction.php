@@ -1,11 +1,11 @@
 <?php
 
-namespace MenuManager\Admin\Actions;
+namespace MenuManager\Admin\Menu\Actions;
 
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Model\Menu;
 use MenuManager\Model\Post;
-use MenuManager\Task\ViewMenuAsTextTask;
+use MenuManager\Tasks\Menu\PrintTextMenuTask;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
 class PreviewMenuAction implements AdminPostLinkAction {
@@ -71,7 +71,7 @@ class PreviewMenuAction implements AdminPostLinkAction {
         }
 
         // preview
-        $task = new ViewMenuAsTextTask();
+        $task = new PrintTextMenuTask();
         echo '<pre>';
         $task->run( intval( $_GET['menu_id'] ) );
         echo '</pre>';

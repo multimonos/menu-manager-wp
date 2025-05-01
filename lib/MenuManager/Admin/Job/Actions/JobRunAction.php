@@ -1,11 +1,11 @@
 <?php
 
-namespace MenuManager\Admin\Actions;
+namespace MenuManager\Admin\Job\Actions;
 
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Model\Job;
 use MenuManager\Model\Post;
-use MenuManager\Task\JobRunTask;
+use MenuManager\Tasks\Job\JobRunTask;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
 class JobRunAction implements AdminPostLinkAction {
