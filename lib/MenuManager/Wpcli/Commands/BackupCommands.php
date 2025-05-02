@@ -7,6 +7,8 @@ use MenuManager\Service\Database;
 use MenuManager\Tasks\Backup\CreateBackupTask;
 use MenuManager\Tasks\Backup\DeleteBackupTask;
 use MenuManager\Tasks\Backup\RestoreBackupTask;
+use MenuManager\Tasks\Generic\GetLatestModelTask;
+use MenuManager\Tasks\Generic\GetModelTask;
 use MenuManager\Wpcli\CliOutput;
 use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
@@ -29,10 +31,7 @@ class BackupCommands {
         $task = new CreateBackupTask();
         $rs = $task->run();
 
-        if ( ! $rs->ok() ) {
-            WP_CLI::error( $rs->getMessage() );
-        }
-        WP_CLI::success( $rs->getMessage() );
+        CommandHelper::sendTaskResult( $rs );
     }
 
     /**
@@ -138,17 +137,29 @@ class BackupCommands {
      * @when after_wp_load
      */
     public function get( $args, $assoc_args ) {
-        Database::load();
 
-        $id = intval( $args[0] ?? -1 );
+        $id = intval( $args[0] ?? 0 );
 
-        $backup = Backup::find( $id );
+        $task = new GetModelTask();
+        $rs = $task->run( Backup::class, $id );
 
-        // failed
-        if ( $backup === null ) {
-            WP_CLI::error( "Backup not found id=" . $id );
-        }
-        WP_CLI::line( $backup->toJson() );
+        CommandHelper::sendTaskResultAsJson( $rs );
+    }
+
+
+    /**
+     * Get most recently created backup.
+     *
+     * ## OPTIONS
+     *
+     * @when after_wp_load
+     */
+    public function latest( $args, $assoc_args ) {
+
+        $task = new GetLatestModelTask();
+        $rs = $task->run( Backup::class );
+
+        CommandHelper::sendTaskResultAsJson( $rs );
     }
 
 

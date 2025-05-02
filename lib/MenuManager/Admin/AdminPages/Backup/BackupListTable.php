@@ -66,7 +66,7 @@ class BackupListTable extends \WP_List_Table {
             'delete'  => $this->deleteAction->link( $item ),
         ];
 
-        return esc_html( $item->filename ) . ' BackupListTable.php' . $this->row_actions( $actions );
+        return esc_html( $item->filename ) . $this->row_actions( $actions );
     }
 
     function column_id( $item ) {

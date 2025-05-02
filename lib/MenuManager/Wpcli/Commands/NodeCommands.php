@@ -5,7 +5,9 @@ namespace MenuManager\Wpcli\Commands;
 
 use MenuManager\Model\Node;
 use MenuManager\Service\Database;
+use MenuManager\Tasks\Generic\GetModelTask;
 use MenuManager\Wpcli\CliOutput;
+use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
 class NodeCommands {
@@ -73,20 +75,11 @@ class NodeCommands {
      * @when after_wp_load
      */
     public function get( $args, $assoc_args ) {
-        Database::load();
+        $id = intval( $args[0] ?? 0 );
 
-        $id = $args[0];
-
-        $node = Node::find( $id );
-
-        // failed
-        if ( $node === null ) {
-            WP_CLI::error( "Node not found id=" . $id );
-        }
-
-        // jsohn
-        $node->load( 'meta' );
-        echo $node->toJson();
+        $task = new GetModelTask();
+        $rs = $task->run( Node::class, $id );
+        CommandHelper::sendTaskResultAsJson( $rs );
     }
 
 

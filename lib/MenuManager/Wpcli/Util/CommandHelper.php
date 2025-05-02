@@ -12,4 +12,12 @@ class CommandHelper {
         }
         WP_CLI::success( $rs->getMessage() );
     }
+
+    public static function sendTaskResultAsJson( TaskResult $rs ): void {
+        if ( ! $rs->ok() ) {
+            WP_CLI::line( $rs->toJson() );
+        } else {
+            WP_CLI::line( $rs->getData() );
+        }
+    }
 }

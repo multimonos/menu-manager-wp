@@ -30,6 +30,19 @@ class TaskResult {
         return $this->data;
     }
 
+    public function toJson( $with_data = false ): string {
+        $obj = [
+            'success' => $this->success,
+            'message' => $this->message,
+        ];
+
+        if ( $with_data ) {
+            $obj['data'] = $this->data;
+        }
+
+        return json_encode( $obj );
+    }
+
     public static function success( string $message = "Ok", mixed $data = null ) {
         return new self( true, $message, $data );
     }

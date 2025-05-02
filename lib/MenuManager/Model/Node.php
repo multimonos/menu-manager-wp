@@ -39,6 +39,8 @@ class Node extends Model {
         'type' => NodeType::class,
     ];
 
+    protected $with = ['meta'];
+
     protected $fillable = [
         'menu_id',
         'parent_id',
