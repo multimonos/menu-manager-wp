@@ -4,8 +4,12 @@ namespace MenuManager\Wpcli\Commands;
 
 
 use MenuManager\Model\Job;
+use MenuManager\Service\Database;
+use MenuManager\Tasks\Generic\GetLatestModelTask;
+use MenuManager\Tasks\Generic\ListModelTask;
 use MenuManager\Tasks\Impex\ValidateTask;
 use MenuManager\Tasks\Job\JobRunTask;
+use MenuManager\Wpcli\CliOutput;
 use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
@@ -26,9 +30,48 @@ class JobCommands {
      * @when after_wp_load
      */
     public function ls( $args, $assoc_args ) {
-        $format = $assoc_args['format'] ?? 'json';
-        $cmd = sprintf( "post list --post_type=%s --format=%s", Job::type(), $format );
-        WP_CLI::runcommand( $cmd );
+        $format = $assoc_args['format'] ?? 'table';
+
+        Database::load();
+
+        switch ( $format ) {
+            case 'count':
+                WP_CLI::line( Job::all()->pluck( 'id' )->count() );
+                break;
+
+            case 'ids':
+                $ids = Job::all()->pluck( 'id' )->join( ' ' );
+                WP_CLI::line( $ids );
+                break;
+
+            case 'json':
+                WP_CLI::line( Job::all()->toJson() );
+                break;
+
+
+            default:
+            case 'table':
+                if ( Job::query()->count() === 0 ) {
+                    WP_CLI::success( "No records found." );
+                    return;
+                }
+                $data = Job::all()->transform( function ( $x ) {
+                    return [
+                        'id'     => $x->id,
+                        'status' => $x->status,
+                        'source' => $x->source,
+                    ];
+                } )->toArray();
+
+                $widths = CliOutput::maxLengths( $data );
+
+                CliOutput::table(
+                    $widths,
+                    ['id', 'status', 'source'],
+                    $data,
+                );
+                break;
+        }
     }
 
     /**
@@ -75,7 +118,7 @@ class JobCommands {
             if ( $job === null ) {
                 WP_CLI::error( "Job not found '$id'." );
             }
-            WP_CLI::runcommand( "post get {$job->post->ID} --format=json" );
+            WP_CLI::runcommand( "post get {$job->id} --format=json" );
         }
     }
 
@@ -87,7 +130,9 @@ class JobCommands {
      * @when after_wp_load
      */
     public function latest( $args, $assoc_args ) {
-        WP_CLI::runcommand( sprintf( "post list --post_type=%s --orderby=date --order=desc --posts_per_page=1 --format=ids", Job::type() ) );
+        $task = new GetLatestModelTask();
+        $rs = $task->run( Job::class );
+        CommandHelper::sendTaskResultAsJson( $rs );
     }
 
     /**
@@ -105,11 +150,10 @@ class JobCommands {
      * @when after_wp_load
      */
     public function run( $args, $assoc_args ) {
-        $id = $args[0];
+        $id = intval( $args[0] ?? 0 );
 
         $task = new JobRunTask();
         $rs = $task->run( $id );
-
         CommandHelper::sendTaskResult( $rs );
     }
 

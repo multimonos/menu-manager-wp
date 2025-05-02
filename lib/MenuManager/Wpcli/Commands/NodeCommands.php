@@ -33,7 +33,7 @@ class NodeCommands {
 
         switch ( $format ) {
             case 'count':
-                WP_CLI::line( Node::all()->pluck( 'id' )->count() );
+                WP_CLI::line( Node::query()->count() );
                 break;
 
             case 'ids':
@@ -41,8 +41,16 @@ class NodeCommands {
                 WP_CLI::line( $ids );
                 break;
 
+            case 'json':
+                WP_CLI::line( Node::all()->toJson() );
+                break;
+
             default:
             case 'table':
+                if ( Node::query()->count() === 0 ) {
+                    WP_CLI::success( "No records found." );
+                    return;
+                }
 
                 $data = Node::all()->transform( function ( $x ) {
                     return [
@@ -51,6 +59,7 @@ class NodeCommands {
                         'title' => $x->title,
                     ];
                 } )->toArray();
+
 
                 $widths = CliOutput::maxLengths( $data );
 

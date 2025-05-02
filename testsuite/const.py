@@ -6,8 +6,8 @@ MENU_TYPE = "mm_menu"
 JOB_TYPE = "mm_job"
 
 # tables
-TBL_MENUS= "wp_posts"
-TBL_JOBS = "wp_posts"
+TBL_MENUS = "wp_posts"
+TBL_JOBS = "wp_mm_job"
 TBL_IMPEX = "wp_mm_impex"
 TBL_NODES = "wp_mm_node"
 TBL_NODEMETA = "wp_mm_node_meta"

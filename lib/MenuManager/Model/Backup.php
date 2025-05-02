@@ -42,6 +42,7 @@ class Backup extends Model {
         Database::load()::schema()->create( self::table(), function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
             $table->string( 'filename' )->nullable();
+            $table->dateTime( 'lastrun_at' )->nullable();
             $table->dateTime( 'created_at' )->useCurrent();
             $table->dateTime( 'updated_at' )->useCurrent();
         } );

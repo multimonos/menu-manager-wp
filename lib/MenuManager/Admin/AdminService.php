@@ -3,15 +3,15 @@
 namespace MenuManager\Admin;
 
 use MenuManager\Admin\AdminPages\Backup\BackupPageService;
-use MenuManager\Admin\AdminPages\Impex\ImpexPageService;
 use MenuManager\Admin\AdminPages\Job\JobPageService;
 use MenuManager\Admin\AdminPages\Menu\MenuPageService;
 use MenuManager\Admin\Service\NoticeService;
 use MenuManager\Admin\Service\SpinnerService;
 
 class AdminService {
-    public static function init(): void {
+    const DATE_FORMAT = 'Y/m/d \a\t g:i a';
 
+    public static function init(): void {
 
         //User interface
         SpinnerService::init();
@@ -19,7 +19,6 @@ class AdminService {
 
         // Types services
         MenuPageService::init();
-        ImpexPageService::init();
         JobPageService::init();
         BackupPageService::init();
 

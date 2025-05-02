@@ -87,7 +87,7 @@ class Impex extends Model {
         Database::load()::schema()->create( self::table(), function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
             $table->bigInteger( 'job_id' )->unsigned();
-            $table->foreign( 'job_id' )->references( 'id' )->on( 'posts' )->onDelete( 'cascade' );
+            $table->foreign( 'job_id' )->references( 'id' )->on( Job::table() )->onDelete( 'cascade' );
             $table->string( 'action', 32 ); // @todo should this be enum? ... no let user make mistake,catch in validation
             $table->string( 'menu', 32 );
             $table->string( 'page', 32 );
@@ -110,6 +110,10 @@ class Impex extends Model {
         } );
 
         Logger::info( self::table() . ' table created' );
+    }
+
+    public function job() {
+        return $this->belongsTo( Job::class, 'job_id' );
     }
 
     public static function isType( string $type, array $allowed ): bool {

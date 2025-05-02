@@ -44,8 +44,8 @@ def test_create_tiny_menu(cursor: MySQLCursorDict):
     # import data
     assert job_count(cursor) == 1
     job = job_latest()
-    assert job_exists(cursor, job["ID"])
-    assert cli_success(job_run(job["ID"]))
+    assert job_exists(cursor, job["id"])
+    assert cli_success(job_run(job["id"]))
 
     # menus should not exist
     assert menu_exists(cursor, "tiny")

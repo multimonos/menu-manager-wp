@@ -2,50 +2,49 @@
 
 namespace MenuManager\Admin\AdminPages\Job;
 
-use MenuManager\Admin\AdminPages\Job\Actions\JobRunAction;
+use MenuManager\Admin\AdminPages\Job\Actions\RunJobAction;
+use MenuManager\Admin\AdminPages\Job\Actions\UploadCsvAction;
 use MenuManager\Admin\Types\AdminPage;
 use MenuManager\Admin\Util\EditScreenHelper;
-use MenuManager\Model\Job;
+use MenuManager\Model\Menu;
 
 class JobPageService implements AdminPage {
+
+    protected UploadCsvAction $uploadCsvAction;
+
     public static function id(): string {
         return 'mm_jobs';
     }
 
     public static function init(): void {
-        EditScreenHelper::disablePostRowActions( Job::type() );
 
-        EditScreenHelper::columnTitles( Job::type(), function ( $columns ) {
-            unset( $columns['date'] ); // remove date
-            $columns['lastrun_at'] = 'Last Run';
-            $columns['created_at'] = 'Created At';
-            return $columns;
-        } );
+        $svc = new self;
+        $svc->uploadCsvAction = new UploadCsvAction();
 
-        EditScreenHelper::sortableColumns( Job::type(), function ( $columns ) {
-            $columns['lastrun_at'] = 'Last Run';
-            $columns['created_at'] = 'Created At';
-            return $columns;
-        } );
+        add_action( 'admin_menu', fn() => add_submenu_page(
+            'edit.php?post_type=' . Menu::type(),
+            'Jobs',
+            'Jobs',
+            'manage_options',
+            self::id(),
+            [$svc, 'handle']
+        ) );
 
-        EditScreenHelper::columnData( Job::type(), function ( $column_name, $post_id ) {
-            switch ( $column_name ) {
-                case 'created_at':
-                    echo EditScreenHelper::postCreatedAt( $post_id );
-                    break;
-
-                case 'lastrun_at':
-                    echo 'Never';
-                    break;
-            }
-        } );
 
         EditScreenHelper::registerAdminPostActions( [
-            new JobRunAction(),
+            new RunJobAction(),
+            $svc->uploadCsvAction,
         ] );
+    }
 
-        EditScreenHelper::style( Job::type(), '
-            .fixed .column-date {width:20%; }
-        ' );
+    public function handle(): void {
+        $list_table = new JobListTable();
+        $list_table->prepare_items();
+
+        echo '<div class="wrap"><h1 class="wp-heading-inline">Jobs</h1>';
+        echo $this->uploadCsvAction->form();
+        echo '<form method="post">';
+        $list_table->display();
+        echo '</form></div>';
     }
 }

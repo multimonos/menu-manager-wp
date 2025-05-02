@@ -43,8 +43,8 @@ def test_delete_item(cursor: MySQLCursorDict):
     # run
     assert job_count(cursor) == 1
     job = job_latest()
-    assert job_exists(cursor, job["ID"])
-    assert cli_success(job_run(job["ID"]))
+    assert job_exists(cursor, job["id"])
+    assert cli_success(job_run(job["id"]))
 
     # check
     for id in ids:
@@ -60,8 +60,8 @@ def test_delete_item(cursor: MySQLCursorDict):
     # run update
     assert job_count(cursor) == 2
     job2 = job_latest()
-    assert job_exists(cursor, job2["ID"])
-    assert cli_success(job_run(job2["ID"]))
+    assert job_exists(cursor, job2["id"])
+    assert cli_success(job_run(job2["id"]))
 
     # check
     assert node_count(cursor) == A_NODECOUNT - len(ids)

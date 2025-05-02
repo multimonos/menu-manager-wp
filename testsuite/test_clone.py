@@ -45,8 +45,8 @@ def test_clone(cursor: MySQLCursorDict):
     # job
     assert job_count(cursor) == 1
     job = job_latest()
-    assert job_exists(cursor, job["ID"])
-    assert cli_success(job_run(job["ID"]))
+    assert job_exists(cursor, job["id"])
+    assert cli_success(job_run(job["id"]))
 
     # menus should exist
     assert menu_count(cursor) == 1

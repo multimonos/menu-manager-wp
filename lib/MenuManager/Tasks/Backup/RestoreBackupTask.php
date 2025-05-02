@@ -2,6 +2,7 @@
 
 namespace MenuManager\Tasks\Backup;
 
+use MenuManager\Admin\Util\DateHelper;
 use MenuManager\Model\Backup;
 use MenuManager\Service\Database;
 use MenuManager\Service\Filesystem;
@@ -36,6 +37,10 @@ class RestoreBackupTask {
         try {
             $conn = Database::load()->getConnection();
             $conn->unprepared( $sql );
+
+            $backup->lastrun_at = DateHelper::now();
+            $backup->save();
+
         } catch (\Exception $e) {
             return TaskResult::failure( $e->getMessage(), ['exception' => $e] );
         }

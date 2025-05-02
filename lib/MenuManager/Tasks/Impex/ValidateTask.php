@@ -72,7 +72,7 @@ class ValidateTask {
 //        }
 
         // review the impex
-        $rows = $job->impexes();
+        $rows = $job->impexes->get();
 
         // guard : row count
         if ( empty( $rows ) ) {

@@ -40,7 +40,6 @@ class BackupPageService implements AdminPage {
         echo '<form method="post">';
         $list_table->display();
         echo '</form></div>';
-
     }
 
 }

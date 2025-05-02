@@ -15,16 +15,15 @@ from plugin import (
 
 
 @pytest.mark.serial
-def test_plugin_deactivate(cursor: MySQLCursorDict):
+def test_deactivate(cursor: MySQLCursorDict):
     """test plugin deactivation"""
     assert cli_success(plugin_deactivate())
-    assert job_count(cursor) == 0
     assert menu_count(cursor) == 0
     assert table_count(cursor) == 0
 
 
 @pytest.mark.serial
-def test_plugin_activate(cursor: MySQLCursorDict):
+def test_activate(cursor: MySQLCursorDict):
     """test plugin activation"""
     assert cli_success(plugin_activate())
     assert job_count(cursor) == 0

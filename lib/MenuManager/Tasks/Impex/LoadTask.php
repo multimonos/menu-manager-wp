@@ -36,7 +36,7 @@ class LoadTask {
 
             // job
             $job = Job::create( [
-                'post_title' => 'import ' . $path,
+                'source' => $path,
 //                'type'   => 'import', // @todo create these meta props
 //                'status' => 'created', // @todo create these meta props
 //                'source' => $path, // @todo create these meta props
@@ -57,7 +57,7 @@ class LoadTask {
 
                 // impex insert
                 Impex::create( [
-                    'job_id'         => $job->post->ID,
+                    'job_id'         => $job->id,
                     'action'         => $record['action'],
                     'uuid'           => empty( $record['uuid'] ) ? null : $record['uuid'],
                     'parent_id'      => empty( $record['parent_id'] ) ? null : $record['parent_id'],

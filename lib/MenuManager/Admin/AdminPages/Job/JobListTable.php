@@ -1,23 +1,19 @@
 <?php
 
-namespace MenuManager\Admin\AdminPages\Backup;
+namespace MenuManager\Admin\AdminPages\Job;
 
-use MenuManager\Admin\AdminPages\Backup\Actions\DeleteBackupAction;
-use MenuManager\Admin\AdminPages\Backup\Actions\RestoreBackupAction;
+use MenuManager\Admin\AdminPages\Job\Actions\RunJobAction;
 use MenuManager\Admin\Util\DateHelper;
-use MenuManager\Model\Backup;
+use MenuManager\Model\Job;
 use MenuManager\Service\Database;
 
-class BackupListTable extends \WP_List_Table {
+class JobListTable extends \WP_List_Table {
 
-    protected RestoreBackupAction $restoreAction;
-    protected DeleteBackupAction $deleteAction;
+    protected RunJobAction $runAction;
 
     public function __construct( $args = array() ) {
         parent::__construct( $args );
-
-        $this->restoreAction = new RestoreBackupAction();
-        $this->deleteAction = new DeleteBackupAction();
+        $this->runAction = new RunJobAction();
     }
 
     function prepare_items() {
@@ -26,7 +22,7 @@ class BackupListTable extends \WP_List_Table {
 
         // Initialize items.
         Database::load();
-        $items = Backup::query();
+        $items = Job::query();
 
         if ( isset( $_GET['created_at'] ) ) {
             $items->orderBy( 'created_at', $_GET['order'] ?? 'desc' );
@@ -36,13 +32,15 @@ class BackupListTable extends \WP_List_Table {
             $items->orderBy( 'id', $_GET['order'] ?? 'desc' );
 
         }
+
+        // Set array.
         $this->items = $items->get()->all();
     }
 
     function get_columns() {
         return [
             'cb'         => '<input type="checkbox" />',
-            'filename'   => 'File',
+            'source'     => 'File',
             'id'         => 'ID',
             'lastrun_at' => 'Last Run',
             'created_at' => 'Created',
@@ -65,13 +63,12 @@ class BackupListTable extends \WP_List_Table {
         return sprintf( '<input type="checkbox" name="id[]" value="%s" />', $item->id );
     }
 
-    function column_filename( $item ) {
+    function column_source( $item ) {
         $actions = [
-            'restore' => $this->restoreAction->link( $item ),
-            'delete'  => $this->deleteAction->link( $item ),
+            'run' => $this->runAction->link( $item ),
         ];
 
-        return '<strong><a class="row-title" style="white-space: nowrap;"> ' . esc_html( $item->filename ) . '</a></strong>' . $this->row_actions( $actions );
+        return '<strong><a class="row-title"> ' . esc_html( $item->source ) . '</a></strong>' . $this->row_actions( $actions );
     }
 
     function column_id( $item ) {

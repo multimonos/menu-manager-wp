@@ -14,8 +14,6 @@ use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
 class BackupCommands {
-
-
     /**
      * Create a sql backup of all menu data.
      *
@@ -137,12 +135,10 @@ class BackupCommands {
      * @when after_wp_load
      */
     public function get( $args, $assoc_args ) {
-
         $id = intval( $args[0] ?? 0 );
 
         $task = new GetModelTask();
         $rs = $task->run( Backup::class, $id );
-
         CommandHelper::sendTaskResultAsJson( $rs );
     }
 
@@ -155,10 +151,8 @@ class BackupCommands {
      * @when after_wp_load
      */
     public function latest( $args, $assoc_args ) {
-
         $task = new GetLatestModelTask();
         $rs = $task->run( Backup::class );
-
         CommandHelper::sendTaskResultAsJson( $rs );
     }
 

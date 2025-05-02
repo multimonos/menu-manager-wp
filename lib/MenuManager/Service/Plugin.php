@@ -16,10 +16,10 @@ class Plugin {
         NodeMeta::class,
         Node::class,
         Backup::class,
+        Job::class,
     ];
 
     const POST_MODELS = [
-        Job::class,
         Menu::class,
     ];
 

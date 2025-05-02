@@ -1,26 +1,28 @@
 <?php
 
-namespace MenuManager\Admin\AdminPages\Backup\Actions;
+namespace MenuManager\Admin\AdminPages\Job\Actions;
 
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Admin\Util\GetActionHelper;
-use MenuManager\Model\Backup;
+use MenuManager\Model\Job;
 use MenuManager\Model\Post;
-use MenuManager\Tasks\Backup\RestoreBackupTask;
+use MenuManager\Tasks\Job\JobRunTask;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
-class RestoreBackupAction implements AdminPostLinkAction {
+class RunJobAction implements AdminPostLinkAction {
+
     public function id(): string {
-        return 'mm_backup_restore';
+        return 'mm_job_run';
     }
 
     public function name(): string {
-        return __( 'Restore', 'menu-manager' );
+        return __( 'Run', 'menu-manager' );
     }
 
     public function register(): void {
         GetActionHelper::registerHandler( $this );
     }
+
 
     public function link( Model|Post|\WP_Post $model ): string {
         return GetActionHelper::createLink( $this, $model, true );
@@ -31,13 +33,13 @@ class RestoreBackupAction implements AdminPostLinkAction {
         GetActionHelper::validateOrFail( $this );
 
         // Get model.
-        $backup = GetActionHelper::findOrRedirect( Backup::class );
+        $model = GetActionHelper::findOrRedirect( Job::class );
 
-        // Run
-        $task = new RestoreBackupTask();
-        $rs = $task->run( $backup->id );
+        // Run.
+        $task = new JobRunTask();
+        $rs = $task->run( $model->id );
 
         // Send result.
-        GetActionHelper::sendResult( $rs, "Backup #{$backup->id} restored." );
+        GetActionHelper::sendResult( $rs );
     }
 }

@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from subprocess import run, CompletedProcess
 import json
@@ -53,6 +54,8 @@ def sql_print(sql: str) -> None:
 
 
 def wpcli(*args: str) -> CompletedProcess[str]:
+    env = os.environ.copy()
+    env["XDEBUG_SESSION"] = "1"
     rs = run(["wp", *args], check=False, capture_output=True, text=True)
     print(
         f"CLI  call='{' '.join(rs.args)}', returncode={rs.returncode}, stderr={rs.stderr}, stdout={rs.stdout[:30]}..."
@@ -222,7 +225,7 @@ def impex_export(menu: str, target: str) -> CompletedProcess[str]:
 
 
 def job_count(cursor: MySQLCursorDict) -> int:
-    sql = f"select count(*) as cnt from {TBL_JOBS} where post_type = '{JOB_TYPE}';"
+    sql = f"select count(*) as cnt from {TBL_JOBS};"
     return sql_count(cursor, sql)
 
 
@@ -248,7 +251,17 @@ def job_get(id: int) -> Job:
 
 def job_latest() -> Job:
     rs = mmcli("job", "latest")
-    return job_get(cast(int, rs.stdout.strip()))
+
+    if rs.returncode != 0:
+        return cast(Job, {})
+
+    try:
+        raw: dict[str, str] = json.loads(rs.stdout.strip())
+        o = cast(Job, raw)
+        return o
+
+    except:
+        return cast(Job, {})
 
 
 def job_run(id: int) -> CompletedProcess[str]:

@@ -44,8 +44,8 @@ def test_update_item(cursor: MySQLCursorDict):
     # run
     assert job_count(cursor) == 1
     job = job_latest()
-    assert job_exists(cursor, job["ID"])
-    assert cli_success(job_run(job["ID"]))
+    assert job_exists(cursor, job["id"])
+    assert cli_success(job_run(job["id"]))
 
     # check
     assert node_exists(cursor, PATCH_ID)
@@ -64,8 +64,8 @@ def test_update_item(cursor: MySQLCursorDict):
     # run update
     assert job_count(cursor) == 2
     job2 = job_latest()
-    assert job_exists(cursor, job2["ID"])
-    assert cli_success(job_run(job2["ID"]))
+    assert job_exists(cursor, job2["id"])
+    assert cli_success(job_run(job2["id"]))
 
     # check
     assert node_exists(cursor, PATCH_ID)

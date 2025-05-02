@@ -7,7 +7,7 @@
 #
 #
 debug:
-	pytest -xvs ./test_clone.py
+	pytest -xvs ./test_load.py::test_load_a
 	#pytest -xvs ./test_create.py::test_create_a
 
 serial:
