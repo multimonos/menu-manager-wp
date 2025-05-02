@@ -1,17 +1,17 @@
 <?php
 
-namespace MenuManager\Admin\AdminPages\Backup\Actions;
+namespace MenuManager\Admin\AdminPages\Job\Actions;
 
 use MenuManager\Admin\Types\AdminPostLinkAction;
 use MenuManager\Admin\Util\GetActionHelper;
-use MenuManager\Model\Backup;
+use MenuManager\Model\Job;
 use MenuManager\Model\Post;
 use MenuManager\Tasks\Generic\DeleteModelTask;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
-class DeleteBackupAction implements AdminPostLinkAction {
+class DeleteJobAction implements AdminPostLinkAction {
     public function id(): string {
-        return 'mm_backup_delete';
+        return 'mm_job_delete';
     }
 
     public function name(): string {
@@ -31,11 +31,11 @@ class DeleteBackupAction implements AdminPostLinkAction {
         GetActionHelper::validateOrFail( $this );
 
         // Get model.
-        $model = GetActionHelper::findOrRedirect( Backup::class );
+        $model = GetActionHelper::findOrRedirect( Job::class );
 
         // Run
         $task = new DeleteModelTask();
-        $rs = $task->run( Backup::class, $model->id );
+        $rs = $task->run( Job::class, $model->id );
 
         // Send result.
         GetActionHelper::sendResult( $rs );

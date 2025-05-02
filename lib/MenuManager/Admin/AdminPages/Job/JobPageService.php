@@ -2,6 +2,7 @@
 
 namespace MenuManager\Admin\AdminPages\Job;
 
+use MenuManager\Admin\AdminPages\Job\Actions\DeleteJobAction;
 use MenuManager\Admin\AdminPages\Job\Actions\RunJobAction;
 use MenuManager\Admin\AdminPages\Job\Actions\UploadCsvAction;
 use MenuManager\Admin\Types\AdminPage;
@@ -33,6 +34,7 @@ class JobPageService implements AdminPage {
 
         EditScreenHelper::registerAdminPostActions( [
             new RunJobAction(),
+            new DeleteJobAction(),
             $svc->uploadCsvAction,
         ] );
     }
@@ -40,11 +42,37 @@ class JobPageService implements AdminPage {
     public function handle(): void {
         $list_table = new JobListTable();
         $list_table->prepare_items();
+        ?>
+        <div class="wrap" id="mm-job-list">
+            <h1 class="wp-heading-inline">Jobs</h1>
+            <?php echo $this->uploadCsvAction->form(); ?>
+            <form method="post">
+                <?php echo $list_table->display(); ?>
+            </form>
+        </div>
+        <style>
+            #mm-job-list .tablenav {
+                display: none;
+            }
 
-        echo '<div class="wrap"><h1 class="wp-heading-inline">Jobs</h1>';
-        echo $this->uploadCsvAction->form();
-        echo '<form method="post">';
-        $list_table->display();
-        echo '</form></div>';
+            #mm-job-list .wp-list-table {
+                margin-top: 1rem;
+            }
+
+            #mm-job-list .create-wrap {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            #mm-job-list .column-id {
+                width: 4rem;
+            }
+
+            #mm-job-list .column-created_at,
+            #mm-job-list .column-lastrun_at {
+                width: 12rem;
+            }
+        </style>
+        <?php
     }
 }

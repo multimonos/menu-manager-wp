@@ -5,7 +5,9 @@ namespace MenuManager\Wpcli\Commands;
 
 use MenuManager\Model\Job;
 use MenuManager\Service\Database;
+use MenuManager\Tasks\Generic\DeleteModelTask;
 use MenuManager\Tasks\Generic\GetLatestModelTask;
+use MenuManager\Tasks\Generic\GetModelTask;
 use MenuManager\Tasks\Generic\ListModelTask;
 use MenuManager\Tasks\Impex\ValidateTask;
 use MenuManager\Tasks\Job\JobRunTask;
@@ -97,43 +99,6 @@ class JobCommands {
         CommandHelper::sendTaskResult( $rs );
     }
 
-    /**
-     * Get details about a job.
-     *
-     * ## OPTIONS
-     *
-     * <job_id>
-     * : The id of the job ot get.
-     *
-     * @when after_wp_load
-     */
-    public function get( $args, $assoc_args ) {
-        $id = $args[0];
-
-        if ( is_numeric( $id ) ) {
-            WP_CLI::runcommand( "post get {$id} --format=json" );
-        } else {
-            $job = Job::find( $id );
-
-            if ( $job === null ) {
-                WP_CLI::error( "Job not found '$id'." );
-            }
-            WP_CLI::runcommand( "post get {$job->id} --format=json" );
-        }
-    }
-
-    /**
-     * Get most recently created job.
-     *
-     * ## OPTIONS
-     *
-     * @when after_wp_load
-     */
-    public function latest( $args, $assoc_args ) {
-        $task = new GetLatestModelTask();
-        $rs = $task->run( Job::class );
-        CommandHelper::sendTaskResultAsJson( $rs );
-    }
 
     /**
      * Run an import job.
@@ -157,6 +122,37 @@ class JobCommands {
         CommandHelper::sendTaskResult( $rs );
     }
 
+    /**
+     * Get details about a job.
+     *
+     * ## OPTIONS
+     *
+     * <job_id>
+     * : The id of the job ot get.
+     *
+     * @when after_wp_load
+     */
+    public function get( $args, $assoc_args ) {
+        $id = intval( $args[0] ?? 0 );
+
+        $task = new GetModelTask();
+        $rs = $task->run( Job::class, $id );
+        CommandHelper::sendTaskResultAsJson( $rs );
+    }
+
+    /**
+     * Get most recently created job.
+     *
+     * ## OPTIONS
+     *
+     * @when after_wp_load
+     */
+    public function latest( $args, $assoc_args ) {
+        $task = new GetLatestModelTask();
+        $rs = $task->run( Job::class );
+        CommandHelper::sendTaskResultAsJson( $rs );
+    }
+
 
     /**
      * Delete a job.
@@ -169,12 +165,9 @@ class JobCommands {
      * @when after_wp_load
      */
     public function rm( $args, $assoc_args ) {
-        $id = $args[0];
-
-        if ( ! is_numeric( $id ) ) {
-            WP_CLI::error( "Delete requires a numeric id." );
-        }
-
-        WP_CLI::runcommand( "post delete {$id} --force" );
+        $id = intval( $args[0] ?? -1 );
+        $task = new DeleteModelTask();
+        $rs = $task->run( Job::class, $id );
+        CommandHelper::sendTaskResult( $rs );
     }
 }

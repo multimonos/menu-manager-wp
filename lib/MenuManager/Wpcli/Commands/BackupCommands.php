@@ -5,8 +5,8 @@ namespace MenuManager\Wpcli\Commands;
 use MenuManager\Model\Backup;
 use MenuManager\Service\Database;
 use MenuManager\Tasks\Backup\CreateBackupTask;
-use MenuManager\Tasks\Backup\DeleteBackupTask;
 use MenuManager\Tasks\Backup\RestoreBackupTask;
+use MenuManager\Tasks\Generic\DeleteModelTask;
 use MenuManager\Tasks\Generic\GetLatestModelTask;
 use MenuManager\Tasks\Generic\GetModelTask;
 use MenuManager\Wpcli\CliOutput;
@@ -104,27 +104,6 @@ class BackupCommands {
     }
 
     /**
-     * Delete a backup.
-     *
-     * ## OPTIONS
-     *
-     * <backup_id>
-     * : The id of the backup.
-     *
-     * @when after_wp_load
-     */
-    public function rm( $args, $assoc_args ) {
-        Database::load();
-
-        $id = intval( $args[0] ?? -1 );
-
-        $task = new DeleteBackupTask();
-        $rs = $task->run( $id );
-
-        CommandHelper::sendTaskResult( $rs );
-    }
-
-    /**
      * Get a backup.
      *
      * ## OPTIONS
@@ -136,12 +115,10 @@ class BackupCommands {
      */
     public function get( $args, $assoc_args ) {
         $id = intval( $args[0] ?? 0 );
-
         $task = new GetModelTask();
         $rs = $task->run( Backup::class, $id );
         CommandHelper::sendTaskResultAsJson( $rs );
     }
-
 
     /**
      * Get most recently created backup.
@@ -154,6 +131,23 @@ class BackupCommands {
         $task = new GetLatestModelTask();
         $rs = $task->run( Backup::class );
         CommandHelper::sendTaskResultAsJson( $rs );
+    }
+
+    /**
+     * Delete a backup.
+     *
+     * ## OPTIONS
+     *
+     * <backup_id>
+     * : The id of the backup.
+     *
+     * @when after_wp_load
+     */
+    public function rm( $args, $assoc_args ) {
+        $id = intval( $args[0] ?? -1 );
+        $task = new DeleteModelTask();
+        $rs = $task->run( Backup::class, $id );
+        CommandHelper::sendTaskResult( $rs );
     }
 
 

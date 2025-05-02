@@ -2,6 +2,7 @@
 
 namespace MenuManager\Admin\AdminPages\Job;
 
+use MenuManager\Admin\AdminPages\Job\Actions\DeleteJobAction;
 use MenuManager\Admin\AdminPages\Job\Actions\RunJobAction;
 use MenuManager\Admin\Util\DateHelper;
 use MenuManager\Model\Job;
@@ -10,10 +11,12 @@ use MenuManager\Service\Database;
 class JobListTable extends \WP_List_Table {
 
     protected RunJobAction $runAction;
+    protected DeleteJobAction $deleteAction;
 
     public function __construct( $args = array() ) {
         parent::__construct( $args );
         $this->runAction = new RunJobAction();
+        $this->deleteAction = new DeleteJobAction();
     }
 
     function prepare_items() {
@@ -40,8 +43,8 @@ class JobListTable extends \WP_List_Table {
     function get_columns() {
         return [
             'cb'         => '<input type="checkbox" />',
-            'source'     => 'File',
             'id'         => 'ID',
+            'source'     => 'File',
             'lastrun_at' => 'Last Run',
             'created_at' => 'Created',
         ];
@@ -65,7 +68,8 @@ class JobListTable extends \WP_List_Table {
 
     function column_source( $item ) {
         $actions = [
-            'run' => $this->runAction->link( $item ),
+            'run'    => $this->runAction->link( $item ),
+            'delete' => $this->deleteAction->link( $item ),
         ];
 
         return '<strong><a class="row-title"> ' . esc_html( $item->source ) . '</a></strong>' . $this->row_actions( $actions );

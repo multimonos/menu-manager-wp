@@ -42,9 +42,9 @@ class BackupListTable extends \WP_List_Table {
     function get_columns() {
         return [
             'cb'         => '<input type="checkbox" />',
-            'filename'   => 'File',
             'id'         => 'ID',
-            'lastrun_at' => 'Last Run',
+            'filename'   => 'File',
+            'lastrun_at' => 'Restored',
             'created_at' => 'Created',
         ];
     }

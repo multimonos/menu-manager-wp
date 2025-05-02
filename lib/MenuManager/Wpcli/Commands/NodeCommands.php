@@ -5,6 +5,7 @@ namespace MenuManager\Wpcli\Commands;
 
 use MenuManager\Model\Node;
 use MenuManager\Service\Database;
+use MenuManager\Tasks\Generic\DeleteModelTask;
 use MenuManager\Tasks\Generic\GetModelTask;
 use MenuManager\Wpcli\CliOutput;
 use MenuManager\Wpcli\Util\CommandHelper;
@@ -103,21 +104,10 @@ class NodeCommands {
      * @when after_wp_load
      */
     public function rm( $args, $assoc_args ) {
-        Database::load();
+        $id = intval( $args[0] ?? -1 );
 
-        $id = $args[0];
-
-        $node = Node::find( $id );
-
-        // failed
-        if ( $node === null ) {
-            WP_CLI::error( "Node not found id=" . $id );
-        }
-
-        if ( ! $node->delete() ) {
-            WP_CLI::error( "Failed to delete Node id=" . $id );
-        }
-
-        WP_CLI::success( 'Node deleted id=' . $id );
+        $task = new DeleteModelTask();
+        $rs = $task->run( Node::class, $id );
+        CommandHelper::sendTaskResult( $rs );
     }
 }

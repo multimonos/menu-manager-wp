@@ -31,7 +31,7 @@ class UploadCsvAction implements AdminPostFormAction {
             <form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post" enctype="multipart/form-data" class="wp-upload-form">
                 <label for="mm_impex_file" class="screen-reader-text">Select CSV File</label>
                 <input type="file" id="mm_impex_file" name="mm_impex_file" class="file-upload" accept=".csv"/>
-                <?php echo FormActionHelper::hiddenFields( $this ); ?>
+                <?php echo FormActionHelper::requiredFields( $this ); ?>
             </form>
         </div>
         <?php

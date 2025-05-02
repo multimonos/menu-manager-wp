@@ -92,9 +92,12 @@ class CreateBackupTask {
         fclose( $f );
 
         if ( file_exists( $target ) ) {
-            Backup::create( ['filename' => $filename] );
+            $backup = Backup::create( ['filename' => $filename] );
+            return TaskResult::success( "Backup created {$target}.", $backup );
         }
-        return TaskResult::success( "Backup created {$target}.", ['target' => $target] );
+
+        return TaskResult::failure( "Failed to create backup." );
+
     }
 
     protected function writeln( $f, $str ): void {

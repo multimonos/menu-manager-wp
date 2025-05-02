@@ -14,12 +14,12 @@ class FormActionHelper {
         add_action( 'admin_post_' . $action->id(), [$action, 'handle'] );
     }
 
-    public static function hiddenFields( AdminPostFormAction $action ): string {
+    public static function requiredFields( AdminPostFormAction $action, $button_style = 'primary' ): string {
         ob_start();
         ?>
         <input type="hidden" name="action" value="<?php echo $action->id(); ?>"/>
         <?php wp_nonce_field( $action->id(), '_wpnonce' ); ?>
-        <?php submit_button( $action->name(), 'primary', 'submit', false ); ?>
+        <?php submit_button( $action->name(), $button_style, 'submit', false ); ?>
         <?php
         return ob_get_clean();
     }
