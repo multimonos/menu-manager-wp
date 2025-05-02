@@ -18,7 +18,7 @@ class ExportExcelMenuAction implements AdminPostLinkAction {
 
 
     public function name(): string {
-        return __( 'Expor Excel', 'menu-manager' );
+        return __( 'Export Excel', 'menu-manager' );
     }
 
     public function register(): void {
