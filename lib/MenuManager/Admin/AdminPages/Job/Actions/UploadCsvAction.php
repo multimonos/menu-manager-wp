@@ -69,8 +69,10 @@ class UploadCsvAction implements AdminFormAction {
             $job = $rs->getData()['job'] ?? null;
 
             if ( $job instanceof Job ) {
+
+                // for uploads we need to rewrite the "title"
                 $job->title = basename( $_FILES['mm_impex_file']['name'] );
-//                $job->filename = $_FILES['mm_impex_file']['name'];
+
                 if ( $job->save() ) {
                     NoticeService::successRedirect( sprintf( "Created job '%d' from '%s'.", $job->id, $job->filename ), wp_get_referer() );
                 }

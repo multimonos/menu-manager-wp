@@ -9,6 +9,7 @@ use MenuManager\Service\Database;
 use MenuManager\Service\Factory\ExportNodeFactory;
 use MenuManager\Tasks\TaskResult;
 use MenuManager\Types\ExportMethod;
+use MenuManager\Utils\DownloadHelper;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
 use MenuManager\Vendor\PhpOffice\PhpSpreadsheet\Spreadsheet;
 use MenuManager\Vendor\PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -53,18 +54,10 @@ class ExportMenuAsExcelTask {
 
         // DOWNLOAD
         if ( ExportMethod::Download === $method ) {
-            header( 'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' );
-            header( 'Content-Disposition: attachment; filename="' . $path . '"' );
-            header( 'Cache-Control: max-age=0' );
-
-            // If you're serving to IE over HTTPS, remove the Cache-Control header
-            header( 'Cache-Control: max-age=1' );
-
-            // If you're serving to IE
-            header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' ); // Date in the past
-            header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
-            header( 'Cache-Control: cache, must-revalidate' );
-            header( 'Pragma: public' );
+            DownloadHelper::sendHeaders(
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                $path
+            );
 
             // Write to php://output
             $writer->save( 'php://output' );

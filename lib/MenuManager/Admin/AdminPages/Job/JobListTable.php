@@ -3,6 +3,7 @@
 namespace MenuManager\Admin\AdminPages\Job;
 
 use MenuManager\Admin\AdminPages\Job\Actions\DeleteJobAction;
+use MenuManager\Admin\AdminPages\Job\Actions\DownloadJobAction;
 use MenuManager\Admin\AdminPages\Job\Actions\RunJobAction;
 use MenuManager\Admin\Util\DateHelper;
 use MenuManager\Model\Job;
@@ -13,11 +14,13 @@ class JobListTable extends \WP_List_Table {
 
     protected RunJobAction $runAction;
     protected DeleteJobAction $deleteAction;
+    protected DownloadJobAction $downloadAction;
 
     public function __construct( $args = array() ) {
         parent::__construct( $args );
         $this->runAction = new RunJobAction();
         $this->deleteAction = new DeleteJobAction();
+        $this->downloadAction = new DownloadJobAction();
     }
 
     function prepare_items() {
@@ -49,11 +52,9 @@ class JobListTable extends \WP_List_Table {
         return [
             'cb'         => '<input type="checkbox" />',
             'id'         => 'ID',
-            'source'     => 'File',
+            'title'      => 'File',
             'lastrun_at' => 'Last Run',
-            'lastrun_by' => 'Last Run By',
             'created_at' => 'Created',
-            'created_by' => 'Created By',
         ];
     }
 
@@ -66,8 +67,6 @@ class JobListTable extends \WP_List_Table {
             'id'         => ['id', false],
             'lastrun_at' => ['lastrun_at', false],
             'created_at' => ['created_at', false],
-            'lastrun_by' => ['lastrun_by', false],
-            'created_by' => ['created_by', false],
         ];
     }
 
@@ -75,13 +74,14 @@ class JobListTable extends \WP_List_Table {
         return sprintf( '<input type="checkbox" name="id[]" value="%s" />', $item->id );
     }
 
-    function column_source( $item ) {
+    function column_title( $item ) {
         $actions = [
-            'run'    => $this->runAction->link( $item ),
-            'delete' => $this->deleteAction->link( $item ),
+            'run'      => $this->runAction->link( $item ),
+            'delete'   => $this->deleteAction->link( $item ),
+            'download' => $this->downloadAction->link( $item ),
         ];
 
-        return '<strong><a class="row-title"> ' . esc_html( $item->source ) . '</a></strong>' . $this->row_actions( $actions );
+        return '<strong><a class="row-title"> ' . esc_html( $item->title ) . '</a></strong><div style="white-space: nowrap;">' . $this->row_actions( $actions ) . '</div>';
     }
 
     function column_id( $item ) {
@@ -89,18 +89,11 @@ class JobListTable extends \WP_List_Table {
     }
 
     function column_created_at( $item ) {
-        return DateHelper::format( $item->created_at );
+        return DateHelper::format( $item->created_at ) . '<br/><em class="lighter">by ' . UserHelper::emailOrUnknown( $item->created_by ) . '</em>';
     }
 
     function column_lastrun_at( $item ) {
-        return DateHelper::delta( $item->lastrun_at );
+        return DateHelper::format( $item->lastrun_at ) . '<br/><em class="lighter">by ' . UserHelper::emailOrUnknown( $item->lastrun_by ) . '</em>';
     }
 
-    function column_created_by( $item ) {
-        return UserHelper::emailOrUnknown( $item->created_by );
-    }
-
-    function column_lastrun_by( $item ) {
-        return UserHelper::emailOrUnknown( $item->lastrun_by );
-    }
 }

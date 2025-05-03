@@ -50,7 +50,7 @@ class JobRunTask {
         $job->lastrun_by = UserHelper::currentUserEmail();
         $job->save();
 
-        return TaskResult::success( "Ran job '{$job->id}'." );
+        return TaskResult::success( "Job {$job->id} ran successfully." );
     }
 
 

@@ -3,6 +3,7 @@
 namespace MenuManager\Admin\AdminPages\Job;
 
 use MenuManager\Admin\AdminPages\Job\Actions\DeleteJobAction;
+use MenuManager\Admin\AdminPages\Job\Actions\DownloadJobAction;
 use MenuManager\Admin\AdminPages\Job\Actions\RunJobAction;
 use MenuManager\Admin\AdminPages\Job\Actions\UploadCsvAction;
 use MenuManager\Admin\Types\AdminPage;
@@ -35,6 +36,7 @@ class JobPageService implements AdminPage {
         EditScreenHelper::registerAdminPostActions( [
             new RunJobAction(),
             new DeleteJobAction(),
+            new DownloadJobAction(),
             $svc->uploadCsvAction,
         ] );
     }
@@ -71,6 +73,10 @@ class JobPageService implements AdminPage {
             #mm-job-list .column-created_at,
             #mm-job-list .column-lastrun_at {
                 white-space: nowrap;
+            }
+
+            .lighter {
+                color: #8a939b;
             }
         </style>
         <?php
