@@ -56,11 +56,12 @@ class JobCommands {
 
                 $fields = [
                     'id',
-                    'source',
+                    'title',
                     'created_at',
                     'created_by',
                     'lastrun_at',
                     'lastrun_by',
+                    'filename',
                 ];
 
                 if ( Job::query()->count() === 0 ) {

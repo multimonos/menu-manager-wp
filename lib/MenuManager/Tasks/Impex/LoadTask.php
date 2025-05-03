@@ -5,6 +5,7 @@ namespace MenuManager\Tasks\Impex;
 use MenuManager\Model\Impex;
 use MenuManager\Model\Job;
 use MenuManager\Service\Database;
+use MenuManager\Service\Filesystem;
 use MenuManager\Service\Logger;
 use MenuManager\Tasks\Exception;
 use MenuManager\Tasks\TaskResult;
@@ -13,19 +14,30 @@ use MenuManager\Vendor\League\Csv\Reader;
 
 class LoadTask {
 
-    public function run( string $path ): TaskResult {
+    public function run( string $src ): TaskResult {
 
         $conn = Database::load()->getConnection();
 
         $conn->beginTransaction();
 
         try {
-            // database
-            global $wpdb;
+            // Guard file exists
+            $fs = Filesystem::get();
+            if ( ! $fs->exists( $src ) ) {
+                return TaskResult::failure( "File not found {$src}" );
+            }
+
+            // Copy to the uploads folder...so can be downloaded later if needed.
+            $filename = Filesystem::secureFilename( '.csv', 'job-' );
+            $dst = Filesystem::pathFor( $filename );
+
+            $rs = $fs->copy( $src, $dst );
+            if ( is_wp_error( $rs ) ) {
+                return TaskResult::failure( "Failed to copy {$src} to {$dst}." );
+            }
 
             // csv : reader
-            $reader = Reader::createFromPath( $path, 'r' );
-            $import_id = uniqid();
+            $reader = Reader::createFromPath( $src, 'r' );
 
             // csv : header rows
             $reader->setHeaderOffset( 0 );
@@ -37,14 +49,12 @@ class LoadTask {
 
             // job
             $job = Job::create( [
-                'source'     => $path,
+                'title'      => basename( $src ),
+                'filename'   => $filename,
                 'created_by' => UserHelper::currentUserEmail(),
-//                'type'   => 'import', // @todo create these meta props
-//                'status' => 'created', // @todo create these meta props
-//                'source' => $path, // @todo create these meta props
             ] );
 
-            Logger::taskInfo( 'load', 'src=' . $path );
+            Logger::taskInfo( 'load', 'src=' . $src );
 
 
             // impex : load rows
@@ -84,7 +94,7 @@ class LoadTask {
 
             $conn->commit();
 
-            return TaskResult::success( "Loaded: {$path}", ['job' => $job] );
+            return TaskResult::success( "Loaded: {$src}", ['job' => $job] );
 
         } catch (Exception $e) {
             $conn->rollBack();
@@ -92,4 +102,15 @@ class LoadTask {
         }
     }
 
+    protected function saveFile( string $src ): ?string {
+        /* return null on failure */
+        $dst = Filesystem::secureFilename( '.csv', 'job-' );
+
+        $fs = Filesystem::get();
+        if ( $fs->exists( $src ) && $fs->copy( $src, $dst ) ) {
+
+        }
+//        $fs = Filesystem::get();
+        return $path;
+    }
 }

@@ -4,7 +4,7 @@ from typing import TypedDict
 class Job(TypedDict):
     id: int
     status: str
-    source: str
+    filename: str
 
 
 class Menu(TypedDict):

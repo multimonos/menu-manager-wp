@@ -38,6 +38,6 @@ class RestoreBackupAction implements AdminLinkAction {
         $rs = $task->run( $backup->id );
 
         // Send result.
-        GetActionHelper::sendResult( $rs, "Backup #{$backup->id} restored." );
+        GetActionHelper::sendResult( $rs, "Backup {$backup->id} restored." );
     }
 }

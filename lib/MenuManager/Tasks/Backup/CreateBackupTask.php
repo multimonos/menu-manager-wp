@@ -23,14 +23,14 @@ class CreateBackupTask {
         Database::load();
 
         // Target
-        $dirpath = Backup::pathFor( '' );
-        $this->createBackupDirectoryIfNotExists( $dirpath );
-        $filename = wp_generate_uuid4() . '.sql';
-        $target = trailingslashit( $dirpath ) . $filename;
-
+//        $dirpath = Backup::pathFor( '' );
+//        $this->createBackupDirectoryIfNotExists( $dirpath );
+        $filename = Filesystem::secureFilename( '.sql', 'backup-' );
+        $target = Filesystem::pathFor( $filename );
+        echo "\n$target";
         // Open file.
-        if ( ! $f = fopen( $target, 'w' ) ) {
-            return TaskResult::failure( 'Failed to write backup to ' . $target );
+        if ( ! $f = Filesystem::open( $target, 'w' ) ) {
+            return TaskResult::failure( 'Failed to open backup ' . $target );
         };
 
         // Open sql.

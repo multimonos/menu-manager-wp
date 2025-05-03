@@ -21,14 +21,6 @@ class Backup extends Model {
         'filename',
     ];
 
-    public static function pathFor( string $filename ): string {
-        return trailingslashit( wp_upload_dir()['basedir'] . '/mm-backup/' ) . $filename;
-    }
-
-    public function filepath(): string {
-        return self::pathFor( $this->filename );
-    }
-
     public static function createTable() {
         Logger::info( self::table() );
 
@@ -51,14 +43,14 @@ class Backup extends Model {
     }
 
     public function delete() {
-        $filepath = self::pathFor( $this->filename );
-
         $fs = Filesystem::get();
+
+        $path = Filesystem::pathFor( $this->filename );
 
         $rs = parent::delete();
 
-        if ( $rs && $fs->exists( $this->filepath() ) ) {
-            $fs->delete( $this->filepath() );
+        if ( $rs && $fs->exists( $path ) ) {
+            $fs->delete( $path );
         }
 
         return $rs;

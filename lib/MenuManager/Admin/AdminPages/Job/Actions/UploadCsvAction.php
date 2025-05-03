@@ -26,12 +26,17 @@ class UploadCsvAction implements AdminFormAction {
         ob_start();
         ?>
         <div class="card">
-            <h2>Upload</h2>
             <p>Upload a CSV file to create a new job.</p>
             <form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post" enctype="multipart/form-data" class="wp-upload-form">
                 <label for="mm_impex_file" class="screen-reader-text">Select CSV File</label>
-                <input type="file" id="mm_impex_file" name="mm_impex_file" class="file-upload" accept=".csv"/>
-                <?php echo FormActionHelper::requiredFields( $this ); ?>
+                <div style="width:100%;display:flex;justify-content: space-between">
+                    <div>
+                        <input type="file" id="mm_impex_file" name="mm_impex_file" class="file-upload" accept=".csv"/>
+                    </div>
+                    <div style="margin-left: auto ;">
+                        <?php echo FormActionHelper::requiredFields( $this ); ?>
+                    </div>
+                </div>
             </form>
         </div>
         <?php
@@ -64,10 +69,10 @@ class UploadCsvAction implements AdminFormAction {
             $job = $rs->getData()['job'] ?? null;
 
             if ( $job instanceof Job ) {
-                // adjust the file ... maybe
-                $job->source = $_FILES['mm_impex_file']['name'];
+                $job->title = basename( $_FILES['mm_impex_file']['name'] );
+//                $job->filename = $_FILES['mm_impex_file']['name'];
                 if ( $job->save() ) {
-                    NoticeService::successRedirect( sprintf( "Created job '%d' from '%s'.", $job->id, $job->source ), wp_get_referer() );
+                    NoticeService::successRedirect( sprintf( "Created job '%d' from '%s'.", $job->id, $job->filename ), wp_get_referer() );
                 }
             } else {
                 NoticeService::successRedirect( $rs->getMessage(), wp_get_referer() );

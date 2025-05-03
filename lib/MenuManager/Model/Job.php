@@ -5,6 +5,7 @@ namespace MenuManager\Model;
 
 use MenuManager\Model\Traits\ModelExtras;
 use MenuManager\Service\Database;
+use MenuManager\Service\Filesystem;
 use MenuManager\Service\Logger;
 use MenuManager\Utils\EnumTools;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
@@ -32,7 +33,8 @@ class Job extends Model {
 
     protected $fillable = [
         'status',
-        'source',
+        'title',
+        'filename',
         'lastrun_at',
         'lastrun_by',
         'created_by',
@@ -52,7 +54,8 @@ class Job extends Model {
             $table->bigIncrements( 'id' );
 //            $table->enum( 'type', EnumTools::values( JobType::class ) );
             $table->enum( 'status', EnumTools::values( JobStatus::class ) )->default( JobStatus::Created );
-            $table->string( 'source' )->nullable();
+            $table->string( 'title' )->nullable();
+            $table->string( 'filename' )->nullable();
             $table->string( 'lastrun_by' )->nullable();
             $table->dateTime( 'lastrun_at' )->nullable();
             $table->string( 'created_by' )->nullable();
@@ -66,5 +69,19 @@ class Job extends Model {
 
     public function impexes() {
         return $this->hasMany( Impex::class, 'job_id' );
+    }
+
+    public function delete() {
+        $fs = Filesystem::get();
+
+        $path = Filesystem::pathFor( $this->filename );
+
+        $rs = parent::delete();
+
+        if ( $rs && $fs->exists( $path ) ) {
+            $fs->delete( $path );
+        }
+
+        return $rs;
     }
 }

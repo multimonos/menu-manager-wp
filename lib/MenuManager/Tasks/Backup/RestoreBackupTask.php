@@ -22,12 +22,13 @@ class RestoreBackupTask {
         }
 
         // Guard sql file
-        if ( ! $fs->exists( $backup->filepath() ) ) {
+        $src = Filesystem::pathFor( $backup->filename );
+        if ( ! $fs->exists( $src ) ) {
             return TaskResult::failure( 'Backup restore file missing ' . $backup->filename );
         }
 
         // Guard sql content
-        $sql = $fs->get_contents( $backup->filepath() );
+        $sql = $fs->get_contents( $src );
 
         if ( empty( trim( $sql ) ) ) {
             return TaskResult::failure( 'Backup restore file empty ' . $backup->filename );
@@ -45,6 +46,6 @@ class RestoreBackupTask {
             return TaskResult::failure( $e->getMessage(), ['exception' => $e] );
         }
 
-        return TaskResult::success( "Restored backup {$backup->id} from {$backup->filepath()}" );
+        return TaskResult::success( "Restored backup {$backup->id} from {$backup->filename}" );
     }
 }
