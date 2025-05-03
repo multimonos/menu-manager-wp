@@ -34,6 +34,8 @@ class Job extends Model {
         'status',
         'source',
         'lastrun_at',
+        'lastrun_by',
+        'created_by',
     ];
 
     public static function createTable() {
@@ -51,7 +53,9 @@ class Job extends Model {
 //            $table->enum( 'type', EnumTools::values( JobType::class ) );
             $table->enum( 'status', EnumTools::values( JobStatus::class ) )->default( JobStatus::Created );
             $table->string( 'source' )->nullable();
+            $table->string( 'lastrun_by' )->nullable();
             $table->dateTime( 'lastrun_at' )->nullable();
+            $table->string( 'created_by' )->nullable();
             $table->dateTime( 'created_at' )->useCurrent();
             $table->dateTime( 'updated_at' )->useCurrent();
 //            $table->index( ['type', 'status'] );

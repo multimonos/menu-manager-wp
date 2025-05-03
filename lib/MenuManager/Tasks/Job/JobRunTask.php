@@ -10,6 +10,7 @@ use MenuManager\Service\Logger;
 use MenuManager\Tasks\Menu\CreateMenuTask;
 use MenuManager\Tasks\Menu\ModifyMenuTask;
 use MenuManager\Tasks\TaskResult;
+use MenuManager\Utils\UserHelper;
 
 class JobRunTask {
 
@@ -46,6 +47,7 @@ class JobRunTask {
         } );
 
         $job->lastrun_at = DateHelper::now();
+        $job->lastrun_by = UserHelper::currentUserEmail();
         $job->save();
 
         return TaskResult::success( "Ran job '{$job->id}'." );

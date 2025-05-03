@@ -7,6 +7,7 @@ use MenuManager\Admin\AdminPages\Job\Actions\RunJobAction;
 use MenuManager\Admin\Util\DateHelper;
 use MenuManager\Model\Job;
 use MenuManager\Service\Database;
+use MenuManager\Utils\UserHelper;
 
 class JobListTable extends \WP_List_Table {
 
@@ -31,6 +32,10 @@ class JobListTable extends \WP_List_Table {
             $items->orderBy( 'created_at', $_GET['order'] ?? 'desc' );
         } else if ( isset( $_GET['lastrun_at'] ) ) {
             $items->orderBy( 'lastrun_at', $_GET['order'] ?? 'desc' );
+        } else if ( isset( $_GET['created_by'] ) ) {
+            $items->orderBy( 'created_by', $_GET['order'] ?? 'desc' );
+        } else if ( isset( $_GET['lastrun_by'] ) ) {
+            $items->orderBy( 'lastrun_by', $_GET['order'] ?? 'desc' );
         } else {
             $items->orderBy( 'id', $_GET['order'] ?? 'desc' );
 
@@ -46,7 +51,9 @@ class JobListTable extends \WP_List_Table {
             'id'         => 'ID',
             'source'     => 'File',
             'lastrun_at' => 'Last Run',
+            'lastrun_by' => 'Last Run By',
             'created_at' => 'Created',
+            'created_by' => 'Created By',
         ];
     }
 
@@ -59,6 +66,8 @@ class JobListTable extends \WP_List_Table {
             'id'         => ['id', false],
             'lastrun_at' => ['lastrun_at', false],
             'created_at' => ['created_at', false],
+            'lastrun_by' => ['lastrun_by', false],
+            'created_by' => ['created_by', false],
         ];
     }
 
@@ -85,5 +94,13 @@ class JobListTable extends \WP_List_Table {
 
     function column_lastrun_at( $item ) {
         return DateHelper::delta( $item->lastrun_at );
+    }
+
+    function column_created_by( $item ) {
+        return UserHelper::emailOrUnknown( $item->created_by );
+    }
+
+    function column_lastrun_by( $item ) {
+        return UserHelper::emailOrUnknown( $item->lastrun_by );
     }
 }

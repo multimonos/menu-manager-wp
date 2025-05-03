@@ -53,23 +53,28 @@ class JobCommands {
 
             default:
             case 'table':
+
+                $fields = [
+                    'id',
+                    'source',
+                    'created_at',
+                    'created_by',
+                    'lastrun_at',
+                    'lastrun_by',
+                ];
+
                 if ( Job::query()->count() === 0 ) {
                     WP_CLI::success( "No records found." );
                     return;
                 }
-                $data = Job::all()->transform( function ( $x ) {
-                    return [
-                        'id'     => $x->id,
-                        'status' => $x->status,
-                        'source' => $x->source,
-                    ];
-                } )->toArray();
 
-                $widths = CliOutput::maxLengths( $data );
+                $data = Job::all()->map( fn( $model ) => $model->only( $fields ) )->toArray();
+
+                $widths = CliOutput::columnPads( $fields, $data );
 
                 CliOutput::table(
                     $widths,
-                    ['id', 'status', 'source'],
+                    $fields,
                     $data,
                 );
                 break;

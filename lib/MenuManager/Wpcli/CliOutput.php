@@ -26,7 +26,7 @@ class CliOutput {
         }
     }
 
-    public static function maxLengths( array $data ): ?array {
+    public static function columnPads( array $fieldnames, array $data ): ?array {
         if ( empty( $data ) ) {
             return null;
         }
@@ -38,9 +38,19 @@ class CliOutput {
         }
 
         $max = [];
-        foreach ( $keys as $k ) {
-            $max[$k] = max( array_map( 'strlen', array_column( $data, $k ) ) ) + 3;
+        $extra = 2;
+
+        // min widths
+        foreach ( $fieldnames as $field ) {
+            $max[$field] = strlen( $field ) + $extra;
         }
+
+        // field widths
+        foreach ( $keys as $k ) {
+            $fieldmax = max( array_map( 'strlen', array_column( $data, $k ) ) ) + $extra;
+            $max[$k] = $fieldmax > $max[$k] ? $fieldmax : $max[$k];
+        }
+
 
         return $max;
     }

@@ -70,7 +70,7 @@ class JobPageService implements AdminPage {
 
             #mm-job-list .column-created_at,
             #mm-job-list .column-lastrun_at {
-                width: 12rem;
+                white-space: nowrap;
             }
         </style>
         <?php

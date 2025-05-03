@@ -8,6 +8,7 @@ use MenuManager\Service\Database;
 use MenuManager\Service\Logger;
 use MenuManager\Tasks\Exception;
 use MenuManager\Tasks\TaskResult;
+use MenuManager\Utils\UserHelper;
 use MenuManager\Vendor\League\Csv\Reader;
 
 class LoadTask {
@@ -36,7 +37,8 @@ class LoadTask {
 
             // job
             $job = Job::create( [
-                'source' => $path,
+                'source'     => $path,
+                'created_by' => UserHelper::currentUserEmail(),
 //                'type'   => 'import', // @todo create these meta props
 //                'status' => 'created', // @todo create these meta props
 //                'source' => $path, // @todo create these meta props

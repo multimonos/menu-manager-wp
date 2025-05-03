@@ -64,19 +64,19 @@ class BackupCommands {
             default:
             case 'table':
 
-                $data = Backup::all()->transform( function ( $x ) {
-                    return [
-                        'id'         => $x->id,
-                        'filename'   => $x->filename,
-                        'created_at' => $x->created_at,
-                    ];
-                } )->toArray();
+                $fields = [
+                    'id',
+                    'filename',
+                    'created_at',
+                ];
 
-                $widths = CliOutput::maxLengths( $data );
+                $data = Backup::all()->map( fn( $model ) => $model->only( $fields ) )->toArray();
+
+                $widths = CliOutput::columnPads( $fields, $data );
 
                 CliOutput::table(
                     $widths,
-                    ['id', 'filenmae', 'created_at'],
+                    $fields,
                     $data,
                 );
                 break;

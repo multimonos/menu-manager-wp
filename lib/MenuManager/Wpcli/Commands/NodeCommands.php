@@ -53,20 +53,18 @@ class NodeCommands {
                     return;
                 }
 
-                $data = Node::all()->transform( function ( $x ) {
-                    return [
-                        'id'    => $x->id,
-                        'type'  => $x->type->value,
-                        'title' => $x->title,
-                    ];
-                } )->toArray();
+                $fields = [
+                    'id',
+                    'type',
+                    'title',
+                ];
+                $data = Node::all()->map( fn( $model ) => $model->only( $fields ) )->toArray();
 
-
-                $widths = CliOutput::maxLengths( $data );
+                $widths = CliOutput::columnPads( $fields, $data );
 
                 CliOutput::table(
                     $widths,
-                    ['id', 'type', 'title'],
+                    $fields,
                     $data,
                 );
                 break;
