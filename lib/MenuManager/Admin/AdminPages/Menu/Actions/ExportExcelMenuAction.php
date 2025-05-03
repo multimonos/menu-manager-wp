@@ -2,7 +2,7 @@
 
 namespace MenuManager\Admin\AdminPages\Menu\Actions;
 
-use MenuManager\Admin\Types\AdminPostLinkAction;
+use MenuManager\Admin\Types\AdminLinkAction;
 use MenuManager\Admin\Util\GetActionHelper;
 use MenuManager\Model\Menu;
 use MenuManager\Model\Post;
@@ -10,7 +10,7 @@ use MenuManager\Tasks\Menu\ExportMenuAsExcelTask;
 use MenuManager\Types\ExportMethod;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
-class ExportExcelMenuAction implements AdminPostLinkAction {
+class ExportExcelMenuAction implements AdminLinkAction {
 
     public function id(): string {
         return 'mm_export_excel';

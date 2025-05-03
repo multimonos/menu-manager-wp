@@ -2,7 +2,7 @@
 
 namespace MenuManager\Admin\Types;
 
-interface AdminPostAction {
+interface AdminAction {
 
     /* unique id for the action */
     public function id(): string;

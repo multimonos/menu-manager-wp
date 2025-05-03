@@ -2,20 +2,20 @@
 
 namespace MenuManager\Admin\AdminPages\Job\Actions;
 
-use MenuManager\Admin\Types\AdminPostLinkAction;
+use MenuManager\Admin\Types\AdminLinkAction;
 use MenuManager\Admin\Util\GetActionHelper;
 use MenuManager\Model\Job;
 use MenuManager\Model\Post;
 use MenuManager\Tasks\Generic\DeleteModelTask;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
-class DeleteJobAction implements AdminPostLinkAction {
+class DeleteJobAction implements AdminLinkAction {
     public function id(): string {
         return 'mm_job_delete';
     }
 
     public function name(): string {
-        return __( 'Delete Permanently', 'menu-manager' );
+        return __( 'Delete', 'menu-manager' );
     }
 
     public function register(): void {

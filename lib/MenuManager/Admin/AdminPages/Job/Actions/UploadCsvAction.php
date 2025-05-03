@@ -3,12 +3,12 @@
 namespace MenuManager\Admin\AdminPages\Job\Actions;
 
 use MenuManager\Admin\Service\NoticeService;
-use MenuManager\Admin\Types\AdminPostFormAction;
+use MenuManager\Admin\Types\AdminFormAction;
 use MenuManager\Admin\Util\FormActionHelper;
 use MenuManager\Model\Job;
 use MenuManager\Tasks\Impex\LoadTask;
 
-class UploadCsvAction implements AdminPostFormAction {
+class UploadCsvAction implements AdminFormAction {
 
     public function id(): string {
         return 'mm_jobs_upload_csv';

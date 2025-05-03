@@ -1,6 +1,6 @@
 <?php
 
 namespace MenuManager\Admin\Types;
-interface AdminPostFormAction extends AdminPostAction {
+interface AdminFormAction extends AdminAction {
     public function form(): string;
 }

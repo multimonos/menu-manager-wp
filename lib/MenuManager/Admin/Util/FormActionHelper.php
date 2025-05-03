@@ -3,18 +3,18 @@
 namespace MenuManager\Admin\Util;
 
 use MenuManager\Admin\Service\NoticeService;
-use MenuManager\Admin\Types\AdminPostAction;
-use MenuManager\Admin\Types\AdminPostFormAction;
+use MenuManager\Admin\Types\AdminAction;
+use MenuManager\Admin\Types\AdminFormAction;
 use MenuManager\Model\Post;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
 class FormActionHelper {
 
-    public static function registerHandler( AdminPostAction $action ) {
+    public static function registerHandler( AdminAction $action ) {
         add_action( 'admin_post_' . $action->id(), [$action, 'handle'] );
     }
 
-    public static function requiredFields( AdminPostFormAction $action, $button_style = 'primary' ): string {
+    public static function requiredFields( AdminFormAction $action, $button_style = 'primary' ): string {
         ob_start();
         ?>
         <input type="hidden" name="action" value="<?php echo $action->id(); ?>"/>
@@ -24,7 +24,7 @@ class FormActionHelper {
         return ob_get_clean();
     }
 
-    public static function createLink( AdminPostAction $action, Model|Post|\WP_Post $model, bool $confirm = false ): string {
+    public static function createLink( AdminAction $action, Model|Post|\WP_Post $model, bool $confirm = false ): string {
         $args = [
             'action'   => $action->id(),
             'post_id'  => ActionHelper::modelId( $model ),
@@ -48,7 +48,7 @@ class FormActionHelper {
         return $link;
     }
 
-    public static function validateOrRedirect( AdminPostAction $action, string $url ): void {
+    public static function validateOrRedirect( AdminAction $action, string $url ): void {
         // Permissions check.
         if ( ! current_user_can( 'manage_options' ) ) {
             NoticeService::errorRedirect( __( 'You do not have sufficient permissions to access this page.', 'menu-manager' ), $url );

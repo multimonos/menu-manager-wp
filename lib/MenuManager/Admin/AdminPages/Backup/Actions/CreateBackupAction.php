@@ -2,13 +2,13 @@
 
 namespace MenuManager\Admin\AdminPages\Backup\Actions;
 
-use MenuManager\Admin\Types\AdminPostFormAction;
+use MenuManager\Admin\Types\AdminFormAction;
 use MenuManager\Admin\Util\FormActionHelper;
 use MenuManager\Admin\Util\GetActionHelper;
 use MenuManager\Tasks\Backup\CreateBackupTask;
 use MenuManager\Tasks\TaskResult;
 
-class CreateBackupAction implements AdminPostFormAction {
+class CreateBackupAction implements AdminFormAction {
 
     public function id(): string {
         return 'mm_backup_create';

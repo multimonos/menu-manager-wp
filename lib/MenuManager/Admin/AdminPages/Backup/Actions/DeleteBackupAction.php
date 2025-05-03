@@ -2,14 +2,14 @@
 
 namespace MenuManager\Admin\AdminPages\Backup\Actions;
 
-use MenuManager\Admin\Types\AdminPostLinkAction;
+use MenuManager\Admin\Types\AdminLinkAction;
 use MenuManager\Admin\Util\GetActionHelper;
 use MenuManager\Model\Backup;
 use MenuManager\Model\Post;
 use MenuManager\Tasks\Generic\DeleteModelTask;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
-class DeleteBackupAction implements AdminPostLinkAction {
+class DeleteBackupAction implements AdminLinkAction {
     public function id(): string {
         return 'mm_backup_delete';
     }

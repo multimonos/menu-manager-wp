@@ -2,14 +2,14 @@
 
 namespace MenuManager\Admin\AdminPages\Job\Actions;
 
-use MenuManager\Admin\Types\AdminPostLinkAction;
+use MenuManager\Admin\Types\AdminLinkAction;
 use MenuManager\Admin\Util\GetActionHelper;
 use MenuManager\Model\Job;
 use MenuManager\Model\Post;
 use MenuManager\Tasks\Job\JobRunTask;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
-class RunJobAction implements AdminPostLinkAction {
+class RunJobAction implements AdminLinkAction {
 
     public function id(): string {
         return 'mm_job_run';

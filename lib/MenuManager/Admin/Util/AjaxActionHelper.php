@@ -2,26 +2,26 @@
 
 namespace MenuManager\Admin\Util;
 
-use MenuManager\Admin\Types\AdminPostAction;
+use MenuManager\Admin\Types\AdminAction;
 use MenuManager\Model\Post;
 use MenuManager\Service\Database;
 use MenuManager\Tasks\TaskResult;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
 class AjaxActionHelper {
-    public static function registerHandler( AdminPostAction $action ) {
+    public static function registerHandler( AdminAction $action ) {
         add_action( 'wp_ajax_' . $action->id(), [$action, 'handle'] );
     }
 
-    public static function registerFooterScript( AdminPostAction $action ) {
+    public static function registerFooterScript( AdminAction $action ) {
         add_action( 'admin_footer', [$action, 'script'] );
     }
 
-    public static function linkClass( AdminPostAction $action ): string {
+    public static function linkClass( AdminAction $action ): string {
         return $action->id() . '-link';
     }
 
-    public static function createLink( AdminPostAction $action, Model|Post|\WP_Post $model ): string {
+    public static function createLink( AdminAction $action, Model|Post|\WP_Post $model ): string {
         return sprintf(
             '<a href="#" class="%s" data-post-id="%d" data-nonce="%s">%s</a>',
             self::linkClass( $action ),
@@ -31,7 +31,7 @@ class AjaxActionHelper {
         );
     }
 
-    public static function validateOrFail( AdminPostAction $action, bool $debug = false ): void {
+    public static function validateOrFail( AdminAction $action, bool $debug = false ): void {
         if ( $debug ) {
             error_log( print_r( [
                 'action_id' => $action->id(),
@@ -104,7 +104,7 @@ class AjaxActionHelper {
     }
 
 
-    public static function script( AdminPostAction $action, bool $confirm = false ): void {
+    public static function script( AdminAction $action, bool $confirm = false ): void {
         /* default workflow that blocks ui while ajax happens and optionally requires user to confirm request */
         ?>
         <script id="js-<?php echo $action->id(); ?>">

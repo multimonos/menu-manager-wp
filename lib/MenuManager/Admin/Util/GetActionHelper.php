@@ -3,7 +3,7 @@
 namespace MenuManager\Admin\Util;
 
 use MenuManager\Admin\Service\NoticeService;
-use MenuManager\Admin\Types\AdminPostAction;
+use MenuManager\Admin\Types\AdminAction;
 use MenuManager\Model\Post;
 use MenuManager\Service\Database;
 use MenuManager\Tasks\TaskResult;
@@ -11,11 +11,11 @@ use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
 class GetActionHelper {
 
-    public static function registerHandler( AdminPostAction $action ) {
+    public static function registerHandler( AdminAction $action ) {
         add_action( 'admin_post_' . $action->id(), [$action, 'handle'] );
     }
 
-    public static function createLink( AdminPostAction $action, Model|Post|\WP_Post $model, bool $confirm = false ): string {
+    public static function createLink( AdminAction $action, Model|Post|\WP_Post $model, bool $confirm = false ): string {
         $args = [
             'action'   => $action->id(),
             'post_id'  => ActionHelper::modelId( $model ),
@@ -39,7 +39,7 @@ class GetActionHelper {
         return $link;
     }
 
-    public static function validateOrFail( AdminPostAction $action ): void {
+    public static function validateOrFail( AdminAction $action ): void {
         // Permissions check.
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_die( __( 'You do not have sufficient permissions to access this page.', 'menu-manager' ) );

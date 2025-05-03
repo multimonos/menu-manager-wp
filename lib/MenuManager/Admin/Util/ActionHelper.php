@@ -2,7 +2,7 @@
 
 namespace MenuManager\Admin\Util;
 
-use MenuManager\Admin\Types\AdminPostAction;
+use MenuManager\Admin\Types\AdminAction;
 use MenuManager\Model\Post;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
@@ -20,7 +20,7 @@ class ActionHelper {
         return wp_create_nonce( self::nonceSalt( ...$strs ) );
     }
 
-    public static function modelNonce( AdminPostAction $action, Model|Post|\WP_Post $model ): string {
+    public static function modelNonce( AdminAction $action, Model|Post|\WP_Post $model ): string {
         return wp_create_nonce( self::nonceSalt( $action->id(), self::modelId( $model ) ) );
     }
 

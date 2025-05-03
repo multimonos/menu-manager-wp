@@ -2,14 +2,14 @@
 
 namespace MenuManager\Admin\AdminPages\Backup\Actions;
 
-use MenuManager\Admin\Types\AdminPostLinkAction;
+use MenuManager\Admin\Types\AdminLinkAction;
 use MenuManager\Admin\Util\GetActionHelper;
 use MenuManager\Model\Backup;
 use MenuManager\Model\Post;
 use MenuManager\Tasks\Backup\RestoreBackupTask;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
-class RestoreBackupAction implements AdminPostLinkAction {
+class RestoreBackupAction implements AdminLinkAction {
     public function id(): string {
         return 'mm_backup_restore';
     }
