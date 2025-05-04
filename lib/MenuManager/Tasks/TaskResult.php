@@ -8,10 +8,7 @@ class TaskResult {
     private string $message = "";
     private mixed $data = null;
 
-    public function __construct( bool $success, string $message, mixed $data = null ) {
-        $this->success = $success;
-        $this->message = $message;
-        $this->data = $data;
+    public function __construct() {
     }
 
     public function ok(): bool {
@@ -44,10 +41,18 @@ class TaskResult {
     }
 
     public static function success( string $message = "Ok", mixed $data = null ) {
-        return new self( true, $message, $data );
+        $ts = new self;
+        $ts->success = true;
+        $ts->message = $message;
+        $ts->data = $data;
+        return $ts;
     }
 
     public static function failure( string $message, mixed $data = null ) {
-        return new self( false, $message, $data );
+        $ts = new self;
+        $ts->success = false;
+        $ts->message = $message;
+        $ts->data = $data;
+        return $ts;
     }
 }
