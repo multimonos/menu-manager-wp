@@ -6,8 +6,10 @@ use MenuManager\Admin\Types\AdminLinkAction;
 use MenuManager\Admin\Util\GetActionHelper;
 use MenuManager\Model\Menu;
 use MenuManager\Model\Post;
-use MenuManager\Tasks\Menu\ExportMenuAsExcelTask;
-use MenuManager\Types\ExportMethod;
+use MenuManager\Tasks\Menu\ExportTask;
+use MenuManager\Types\Export\ExportConfig;
+use MenuManager\Types\Export\ExportContext;
+use MenuManager\Types\Export\ExportFormat;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 
 class ExportExcelMenuAction implements AdminLinkAction {
@@ -43,10 +45,16 @@ class ExportExcelMenuAction implements AdminLinkAction {
         // Get model.
         $menu = GetActionHelper::findPostOrRedirect( Menu::class );
 
-        // export
-        $path = "menu-export_{$menu->post->post_name}_{$menu->post->ID}__" . date( 'Ymd\THis' ) . '.xlsx';
-        $task = new ExportMenuAsExcelTask();
-        $rs = $task->run( ExportMethod::Download, $menu, $path );
+        // Config
+        $config = new ExportConfig();
+        $config->menuFilter = [$menu->id];
+        $config->context = ExportContext::Download;
+        $config->format = ExportFormat::Excel;
+
+        // Task
+        $task = new ExportTask();
+        $rs = $task->run( $config );
+
         exit;
     }
 }
