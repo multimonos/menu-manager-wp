@@ -55,7 +55,11 @@ class Post {
 
         $posts = get_posts( $args );
 
-        return is_array( $posts ) ? $posts : [];
+        $posts = is_array( $posts ) ? $posts : [];
+
+        $models = array_map( fn( $post ) => new static( $post ), $posts );
+
+        return $models;
     }
 
     public static function create( array $data, array $meta = [] ): ?static {
