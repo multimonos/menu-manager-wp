@@ -7,7 +7,7 @@ use MenuManager\Model\Node;
 use MenuManager\Service\Database;
 use MenuManager\Tasks\Generic\DeleteModelTask;
 use MenuManager\Tasks\Generic\GetModelTask;
-use MenuManager\Wpcli\CliOutput;
+use MenuManager\Wpcli\CliHelper;
 use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
@@ -60,9 +60,9 @@ class NodeCommands {
                 ];
                 $data = Node::all()->map( fn( $model ) => $model->only( $fields ) )->toArray();
 
-                $widths = CliOutput::columnPads( $fields, $data );
+                $widths = CliHelper::columnPads( $fields, $data );
 
-                CliOutput::table(
+                CliHelper::table(
                     $widths,
                     $fields,
                     $data,

@@ -9,7 +9,7 @@ use MenuManager\Tasks\Backup\RestoreBackupTask;
 use MenuManager\Tasks\Generic\DeleteModelTask;
 use MenuManager\Tasks\Generic\GetLatestModelTask;
 use MenuManager\Tasks\Generic\GetModelTask;
-use MenuManager\Wpcli\CliOutput;
+use MenuManager\Wpcli\CliHelper;
 use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
@@ -72,9 +72,9 @@ class BackupCommands {
 
                 $data = Backup::all()->map( fn( $model ) => $model->only( $fields ) )->toArray();
 
-                $widths = CliOutput::columnPads( $fields, $data );
+                $widths = CliHelper::columnPads( $fields, $data );
 
-                CliOutput::table(
+                CliHelper::table(
                     $widths,
                     $fields,
                     $data,

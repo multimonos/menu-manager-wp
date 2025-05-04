@@ -11,7 +11,7 @@ use MenuManager\Tasks\Generic\GetModelTask;
 use MenuManager\Tasks\Generic\ListModelTask;
 use MenuManager\Tasks\Impex\ValidateTask;
 use MenuManager\Tasks\Job\JobRunTask;
-use MenuManager\Wpcli\CliOutput;
+use MenuManager\Wpcli\CliHelper;
 use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
@@ -71,9 +71,9 @@ class JobCommands {
 
                 $data = Job::all()->map( fn( $model ) => $model->only( $fields ) )->toArray();
 
-                $widths = CliOutput::columnPads( $fields, $data );
+                $widths = CliHelper::columnPads( $fields, $data );
 
-                CliOutput::table(
+                CliHelper::table(
                     $widths,
                     $fields,
                     $data,

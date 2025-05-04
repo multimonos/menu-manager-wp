@@ -4,7 +4,7 @@ namespace MenuManager\Wpcli;
 
 use WP_CLI;
 
-class CliOutput {
+class CliHelper {
     public static function table( array $widths, array $headings, array $rows ) {
 
         //formats
@@ -53,5 +53,9 @@ class CliOutput {
 
 
         return $max;
+    }
+
+    public static function split( ?string $str ): array {
+        return empty( $str ) ? [] : array_unique( array_filter( preg_split( '/\s*,\s*/', $str ) ) );
     }
 }
