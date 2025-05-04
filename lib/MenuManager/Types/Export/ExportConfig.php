@@ -12,25 +12,25 @@ class ExportConfig {
 
     // FILTERS
     /* @var int|string[] Filter by list of menu ids ( or slugs ) */
-    public array $menuFilter = [];
+    public array $menuFilter = []; // @done
 
-    /* @var int|string[] Filter items by item_id */
-    public array $itemFilter = [];
+    /* @var int|string[] Filter by item_id */
+    public array $itemFilter = []; // @todo filter by item id
 
-    /* @var int|string[] Filter items by item uuid */
-    public array $uuidFilter = [];
+    /* @var int|string[] Filter by item uuid */
+    public array $uuidFilter = []; // @todo filter by uuid
 
-    /* @var int|string[] Filter items by image_id */
-    public array $imageIdFilter = [];
+    /* @var int|string[] Filter by image_id */
+    public array $imageIdFilter = []; // @todo filter by image id
 
-    /* @var string[] Filter items by partial item type match */
-    public array $tagFilter = [];
+    /* @var string[] Filter by item tag */
+    public array $tagFilter = []; // @todo filter by tag
 
-    /* @var string[] Filter items by partial item type match */
-    public array $typeFilter = [];
+    /* @var string[] Filter by partial match on item type */
+    public array $typeFilter = []; // @todo filter by partial match on item types
 
-    /* @var string[] Partial match on item title */
-    public array $titleFilter = [];
+    /* @var string[] Filter items by partial match on item title */
+    public array $titleFilter = []; // @todo filter by partial match on item title
 
     public function hasFilters(): bool {
         return ! empty( $this->menuFilter )
