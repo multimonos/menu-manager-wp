@@ -82,6 +82,10 @@ class Node extends Model {
         return ['menu_id'];
     }
 
+    public function isPage(): bool {
+        return $this->type === NodeType::Page;
+    }
+
     public function meta() {
         // Always return an empty object if join does not exist
         // Node -> NodeMeta ( 1 to zero or one )

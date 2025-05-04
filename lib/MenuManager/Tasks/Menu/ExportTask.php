@@ -7,6 +7,7 @@ use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
 use MenuManager\Service\Database;
 use MenuManager\Service\Factory\ExportNodeFactory;
+use MenuManager\Service\Logger;
 use MenuManager\Tasks\TaskResult;
 use MenuManager\Types\Export\ExportConfig;
 use MenuManager\Types\Export\Exporter\ExporterFactory;
@@ -15,7 +16,6 @@ use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
 class ExportTask {
 
     public function run( ExportConfig $config ): TaskResult {
-//        print_r( $config );
 
         // Database
         Database::load()::connection()->enableQueryLog();
@@ -60,42 +60,33 @@ class ExportTask {
         return TaskResult::success( "Export written to {$config->target}" );
     }
 
+
     protected function collectRows( Menu $menu ): array {
 
         // @todo Review this decision to make the hierarchy implicit in
         // the output as user cannot update the "pages" if they are
         // not rows in the export.
 
-        // I have done this so that "page" can be a column ...
-        $page_names = Node::findPageNames( $menu );
-
-        if ( empty( $page_names ) ) {
+        // Get menu root
+        $root = Node::findRootNode( $menu );
+        if ( $root === null ) {
             return [];
         }
 
+        // Tree
+        $tree = Node::getSortedMenu( $menu, $root );
 
-        // Collect.
-        $rows = [];
+        // Collect Rows
+        $rows = $this->visit(
+            $tree,
+            fn( Node $node, ?Node $page = null ) => ExportNodeFactory::createRow( $menu, $page, $node )
+        );
 
-        foreach ( $page_names as $page_name ) {
-            $parent = Node::findPageNode( $menu, $page_name );
-            $tree = Node::getSortedMenu( $menu, $parent );
-
-            // Sparse data collection.
-            $sparse_rows = $this->visit(
-                $tree,
-                fn( Node $node ) => ExportNodeFactory::createRow( $menu, $page_name, $node )
-            );
-
-            // Evolve sparse data.
-            foreach ( $sparse_rows as $sparse_row ) {
-                $dense_row = ExportTaskPeer::fillArray( Impex::CSV_FIELDS, $sparse_row );
-                $rows[] = $dense_row;
-            }
-        }
+        $rows = array_filter( $rows );
 
         return $rows;
     }
+
 
     /**
      * Visit each node in the tree and apply a callback function to transform data.
@@ -104,21 +95,30 @@ class ExportTask {
      * @param callable $transformer
      * @return array
      */
-    protected function visit( Collection $nodes, callable $transformer ): array {
+    protected function visit( Collection $nodes, callable $transformer, ?Node $page = null ): array {
 
         $rows = [];
 
         foreach ( $nodes as $node ) {
-            $nrow = $transformer( $node );
-
-            if ( ! is_null( $nrow ) ) {
-                $rows[] = $nrow;
+            // Update the page.
+            if ( $node->isPage() ) {
+                Logger::info( 'set page:' . $node->title );
+                $page = $node;
             }
 
+            // Transform the row.
+            $row = $transformer( $node, $page );
+
+            // Only add if there is data.
+            if ( ! is_null( $row ) ) {
+                $rows[] = $row;
+            }
+
+            // Visit children.
             if ( $node->children->isNotEmpty() ) {
                 $rows = array_merge(
                     $rows,
-                    $this->visit( $node->children, $transformer )
+                    $this->visit( $node->children, $transformer, $page )
                 );
             }
         }
