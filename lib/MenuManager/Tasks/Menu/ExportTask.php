@@ -7,7 +7,6 @@ use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
 use MenuManager\Service\Database;
 use MenuManager\Service\Factory\ExportNodeFactory;
-use MenuManager\Service\Logger;
 use MenuManager\Tasks\TaskResult;
 use MenuManager\Types\Export\ExportConfig;
 use MenuManager\Types\Export\Exporter\ExporterFactory;
@@ -61,11 +60,13 @@ class ExportTask {
     }
 
 
+    /**
+     * Collect data impex rows for a menu.
+     *
+     * @param Menu $menu
+     * @return array
+     */
     protected function collectRows( Menu $menu ): array {
-
-        // @todo Review this decision to make the hierarchy implicit in
-        // the output as user cannot update the "pages" if they are
-        // not rows in the export.
 
         // Get menu root
         $root = Node::findRootNode( $menu );
@@ -87,9 +88,8 @@ class ExportTask {
         return $rows;
     }
 
-
     /**
-     * Visit each node in the tree and apply a callback function to transform data.
+     * Visit each node in the tree and apply a callback function to transform Node -> ImpexRow.
      *
      * @param Collection $nodes
      * @param callable $transformer
@@ -102,7 +102,6 @@ class ExportTask {
         foreach ( $nodes as $node ) {
             // Update the page.
             if ( $node->isPage() ) {
-                Logger::info( 'set page:' . $node->title );
                 $page = $node;
             }
 

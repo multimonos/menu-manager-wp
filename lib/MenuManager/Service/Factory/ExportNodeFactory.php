@@ -9,6 +9,7 @@ use MenuManager\Model\Node;
 use MenuManager\Model\NodeType;
 use MenuManager\Tasks\Menu\ExportTaskPeer;
 
+// @todo Perhaps this class should create models of Impex and then the caller can transform to array?
 class ExportNodeFactory {
 
     public static function toBoolean( bool $val ): ImpexBoolean {
