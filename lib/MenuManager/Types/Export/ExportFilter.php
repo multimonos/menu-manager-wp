@@ -23,7 +23,7 @@ class ExportFilter {
 
             case 'csv_in_array':
                 /* source field is a csv */
-                $needles = preg_split( '/\s*,\s*/', $field_value );
+                $needles = preg_split( '/\s*,\s*/', (string)$field_value );
                 foreach ( $needles as $needle ) {
                     if ( in_array( $needle, $this->values ) ) {
                         return true;
