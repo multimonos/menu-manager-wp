@@ -152,7 +152,7 @@ class ExportCustomAction implements AdminFormAction {
         // Export config.
         $config = new ExportConfig();
         $config->context = ExportContext::Download;
-        $config->format = ExportFormat::from( $assoc_args['format'] ?? ExportFormat::Csv->value );
+        $config->format = ExportFormat::from( $_POST['format'] ?? ExportFormat::Csv->value );
         $config->menus = $_POST['menu_filter'] === 'ids'
             ? array_filter( $_POST['menus'] )
             : [ExportConfig::ALL_MENUS];
