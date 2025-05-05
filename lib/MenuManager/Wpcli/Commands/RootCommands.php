@@ -105,13 +105,6 @@ class RootCommands {
                 $config->filterBy( $field, $value );
             }
         }
-        print_r( $config );
-
-//        $config->itemFilter = CliHelper::split( $assoc_args['item-id'] ?? null );
-//        $config->imageIdFilter = CliHelper::split( $assoc_args['item-image'] ?? null );
-//        $config->tagFilter = CliHelper::split( $assoc_args['item-tag'] ?? null );
-//        $config->typeFilter = CliHelper::split( $assoc_args['item-type'] ?? null );
-//        $config->titleFilter = CliHelper::split( $assoc_args['item-title'] ?? null );
 
         // Task
         $task = new ExportTask();

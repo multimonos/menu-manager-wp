@@ -2,15 +2,29 @@
 
 namespace MenuManager\Admin\AdminPages\Export\Actions;
 
+use MenuManager\Admin\Service\NoticeService;
 use MenuManager\Admin\Types\AdminFormAction;
 use MenuManager\Admin\Util\FormActionHelper;
-use MenuManager\Admin\Util\GetActionHelper;
 use MenuManager\Model\Menu;
+use MenuManager\Tasks\Menu\ExportTask;
+use MenuManager\Types\Export\ExportConfig;
+use MenuManager\Types\Export\ExportContext;
+use MenuManager\Types\Export\ExportFormat;
 
 class ExportCustomAction implements AdminFormAction {
 
+    protected $filters = [
+        ['name' => 'Page', 'field' => 'page'],
+        ['name' => 'UUID', 'field' => 'uuid'],
+        ['name' => 'Parent', 'field' => 'parent_id'],
+        ['name' => 'Type', 'field' => 'type'],
+        ['name' => 'ID', 'field' => 'item_id'],
+        ['name' => 'Image', 'field' => 'image_ids'],
+        ['name' => 'Title', 'field' => 'title'],
+    ];
+
     public function id(): string {
-        return 'mm_export_customd_csv';
+        return 'mm_export_customd';
     }
 
     public function name(): string {
@@ -18,13 +32,7 @@ class ExportCustomAction implements AdminFormAction {
     }
 
     public function register(): void {
-        GetActionHelper::registerHandler( $this );
-
-        add_filter( 'post_row_actions', function ( $actions, $post ) {
-            return Menu::isType( $post )
-                ? $actions + [$this->id() => $this->link( $post )]
-                : $actions;
-        }, 10, 2 );
+        FormActionHelper::registerHandler( $this );
     }
 
     public function form(): string {
@@ -33,7 +41,7 @@ class ExportCustomAction implements AdminFormAction {
         ?>
         <style type="text/css">
             #export-custom input::placeholder {
-                color: #ababab;
+                color: #ccc;
             }
 
             #menu-filter {
@@ -54,15 +62,13 @@ class ExportCustomAction implements AdminFormAction {
                 <p>Define criteria for a more custom export.</p>
 
                 <fieldset>
-                    <p><strong>Item Filters</strong></p>
-                    <ul id="item-filters" class="export-filters">
+                    <p><strong>Format</strong></p>
+                    <ul class="export-filters">
                         <li>
-                            <label><span class="label-responsive">UUID</span></label>
-                            <input type="text" name="filters[uuid]" value="" placeholder="CSV of values"/>
+                            <label><input type="radio" name="format" value="<?php echo ExportFormat::Csv->value; ?>" checked="checked"> CSV</label>
                         </li>
                         <li>
-                            <label><span class="label-responsive">Type</span></label>
-                            <input type="text" name="filters[type]" value="" placeholder="Match any string"/>
+                            <label><input type="radio" name="format" value="<?php echo ExportFormat::Excel->value; ?>"> Excel</label>
                         </li>
                     </ul>
                 </fieldset>
@@ -71,7 +77,7 @@ class ExportCustomAction implements AdminFormAction {
                     <p><strong>Menus</strong></p>
                     <ul class="export-filters">
                         <li>
-                            <p><label><input type="radio" name="menu_filter" value="all" checked="checked"> All</label></p>
+                            <p><label><input type="radio" name="menu_filter" value="<?php echo ExportConfig::ALL_MENUS; ?>" checked="checked"> All</label></p>
                         </li>
                         <li>
                             <p><label><input type="radio" name="menu_filter" value="ids"> Specific menus only:</label></p>
@@ -81,7 +87,7 @@ class ExportCustomAction implements AdminFormAction {
                             <li>
                                 <label>
                                     <?php foreach ( $menus as $menu ): ?>
-                                        <p><label><input type="checkbox" name="menu_ids[]" value="<?php echo $menu->id; ?>"> <?php echo $menu->post->post_title; ?></label></p>
+                                        <p><label><input type="checkbox" name="menus[]" value="<?php echo $menu->id; ?>"> <?php echo $menu->post->post_title; ?></label></p>
                                     <?php endforeach; ?>
                                 </label>
                             </li>
@@ -89,15 +95,16 @@ class ExportCustomAction implements AdminFormAction {
                     </ul>
                 </fieldset>
 
+
                 <fieldset>
-                    <p><strong>Format</strong></p>
-                    <ul class="export-filters">
-                        <li>
-                            <label><input type="radio" name="format" value="csv" checked="checked"> CSV</label>
-                        </li>
-                        <li>
-                            <label><input type="radio" name="format" value="excel"> Excel</label>
-                        </li>
+                    <p><strong>Item Filters</strong></p>
+                    <ul id="item-filters" class="export-filters">
+                        <?php foreach ( $this->filters as $filter ) : ?>
+                            <li>
+                                <label><span class="label-responsive"><?php echo $filter['name']; ?></span></label>
+                                <input type="text" name="filters[<?php echo $filter['field']; ?>]" value="" placeholder="Comma separated list of values"/>
+                            </li>
+                        <?php endforeach; ?>
                     </ul>
                 </fieldset>
 
@@ -111,17 +118,16 @@ class ExportCustomAction implements AdminFormAction {
             function resetMenusFilter( e ) {
                 $el = $( this )
                 if ( $el.is( ':checked' ) && $el.val() === 'all' ) {
-                    $( 'input[name="menu_ids[]"]' ).each( function ( idx, el ) {
+                    $( 'input[name="menus[]"]' ).each( function ( idx, el ) {
                         $( this ).prop( 'checked', false )
                     } )
                 }
             }
 
-
             $( 'input[name=menu_filter]' ).on( 'click', resetMenusFilter )
 
             // ensure if child clicked then parent selected for menus filter
-            $( 'input[name="menu_ids[]"' ).on( 'click', function ( e ) {
+            $( 'input[name="menus[]"' ).on( 'click', function ( e ) {
                 console.log( 'clicked' )
                 $( 'input[name=menu_filter][value=ids]' ).prop( 'checked', true );
             } )
@@ -131,20 +137,38 @@ class ExportCustomAction implements AdminFormAction {
         return ob_get_clean();
     }
 
+    public function split( string $val ): array {
+        return preg_split( '/\s*,\s*/', $val );
+    }
+
     public function handle(): void {
         FormActionHelper::validateOrRedirect( $this, wp_get_referer() );
 
-        die( 'export custom' );
-        // Validate
-//        GetActionHelper::validateOrFail( $this );
+        if ( isset( $_POST['menu_filter'] ) && $_POST['menu_filter'] === 'ids' && empty( $_POST['menus'] ?? [] ) ) {
+            NoticeService::errorRedirect( 'Menu is required.', wp_get_referer() );
 
-        // Get model.
-//        $menu = GetActionHelper::findPostOrRedirect( Menu::class );
+        }
 
-        // export
-//        $path = "menu-export_{$menu->post->post_name}_{$menu->post->ID}__" . date( 'Ymd\THis' ) . '.csv';
-//        $task = new ExportMenuAsCsvTask();
-//        $rs = $task->run( ExportMethod::Download, $menu, $path );
-//        exit;
+        // Export config.
+        $config = new ExportConfig();
+        $config->context = ExportContext::Download;
+        $config->format = ExportFormat::from( $assoc_args['format'] ?? ExportFormat::Csv->value );
+        $config->menus = $_POST['menu_filter'] === 'ids'
+            ? array_filter( $_POST['menus'] )
+            : [ExportConfig::ALL_MENUS];
+
+        // Filters
+        $filters = array_filter( $_POST['filters'] ?? [] );
+        foreach ( $filters as $field => $value ) {
+            $arr = $this->split( trim( $value ) ?? '' );
+            if ( ! empty( $arr ) ) {
+                $config->filterBy( $field, $arr );
+            }
+        }
+        $a = 1;
+
+        // Task
+        $task = new ExportTask();
+        $task->run( $config );
     }
 }

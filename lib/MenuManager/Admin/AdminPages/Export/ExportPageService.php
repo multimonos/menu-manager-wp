@@ -32,13 +32,13 @@ class ExportPageService implements AdminPage {
 
 
         EditScreenHelper::registerAdminPostActions( [
-//            $svc->exportAction,
+            $svc->exportAction,
         ] );
     }
 
     public function handle(): void {
         ?>
-        <div class="wrap" id="mm-job-list">
+        <div class="wrap" id="<?php echo $this->id(); ?>">
             <h1 class="wp-heading-inline">Export</h1>
             <?php echo $this->exportAction->form(); ?>
         </div>
