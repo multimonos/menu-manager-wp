@@ -10,10 +10,11 @@ class ExportConfig {
     /* @var string|null Output path */
     public ?string $target = null;
 
-    // FILTERS
-    /* @var int|string[] Filter by list of menu ids ( or slugs ) */
-    public array $menuFilter = []; // @done
+    // MENUS is not considered a filter.
+    /* @var int|string[] Menus to include in the export. */
+    public array $menus = [];
 
+    // FILTERS
     /* @var int|string[] Filter by item_id */
     public array $itemFilter = []; // @todo filter by item id
 
@@ -33,8 +34,7 @@ class ExportConfig {
     public array $titleFilter = []; // @todo filter by partial match on item title
 
     public function hasFilters(): bool {
-        return ! empty( $this->menuFilter )
-            || ! empty( $this->itemFilter )
+        return ! empty( $this->itemFilter )
             || ! empty( $this->uuidFilter )
             || ! empty( $this->imageIdFilter )
             || ! empty( $this->tagFilter )

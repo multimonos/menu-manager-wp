@@ -21,7 +21,7 @@ class ExportTask {
 
         // Menu exists.
         $rs = new TaskResult();
-        $menus = ExportTaskPeer::getMenus( $config->menuFilter, $rs );
+        $menus = ExportTaskPeer::getMenus( $config->menus, $rs );
         if ( ! $rs->ok() ) {
             return $rs;
         }

@@ -85,7 +85,7 @@ class RootCommands {
         $config->target = $args[1] ?? null;
 
         // Result Filters
-        $config->menuFilter = CliHelper::split( $args[0] ?? '' );
+        $config->menus = CliHelper::split( $args[0] ?? '' );
         $config->itemFilter = CliHelper::split( $assoc_args['item-id'] ?? null );
         $config->uuidFilter = CliHelper::split( $assoc_args['item-uuid'] ?? null );
         $config->imageIdFilter = CliHelper::split( $assoc_args['item-image'] ?? null );

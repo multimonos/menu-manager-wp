@@ -47,7 +47,7 @@ class ExportExcelMenuAction implements AdminLinkAction {
 
         // Config
         $config = new ExportConfig();
-        $config->menuFilter = [$menu->id];
+        $config->menus = [$menu->id];
         $config->context = ExportContext::Download;
         $config->format = ExportFormat::Excel;
 
