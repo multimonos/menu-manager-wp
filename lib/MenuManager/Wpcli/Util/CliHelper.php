@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Wpcli;
+namespace MenuManager\Wpcli\Util;
 
 use WP_CLI;
 

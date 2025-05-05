@@ -4,7 +4,7 @@ namespace MenuManager\Tasks\Generic;
 
 use MenuManager\Service\Database;
 use MenuManager\Tasks\TaskResult;
-use MenuManager\Wpcli\CliHelper;
+use MenuManager\Wpcli\Util\CliHelper;
 use WP_CLI;
 
 class ListModelTask {

@@ -3,6 +3,8 @@
 namespace MenuManager\Types\Export;
 
 class ExportConfig {
+    const ALL_MENUS = 'all';
+
     // CONFIG
     public ExportContext $context = ExportContext::Cli;
     public ExportFormat $format = ExportFormat::Csv;

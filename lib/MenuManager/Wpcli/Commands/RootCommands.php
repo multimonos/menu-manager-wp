@@ -7,7 +7,7 @@ use MenuManager\Tasks\Menu\ExportTask;
 use MenuManager\Types\Export\ExportConfig;
 use MenuManager\Types\Export\ExportContext;
 use MenuManager\Types\Export\ExportFormat;
-use MenuManager\Wpcli\CliHelper;
+use MenuManager\Wpcli\Util\CliHelper;
 use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 

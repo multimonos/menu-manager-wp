@@ -10,16 +10,23 @@ use MenuManager\Types\Export\ExportConfig;
 class ExportTaskPeer {
     public static function getMenus( array $ids, TaskResult &$rs ): array {
         $err = [];
-        $menus = [];
-        foreach ( $ids as $id ) {
-            $menu = Menu::find( $id );
-            if ( $menu === null ) {
-                $err[] = $id;
-            } else {
-                $menus[] = $menu;
+
+        // Collect menus.
+        if ( count( $ids ) === 1 && $ids[0] === ExportConfig::ALL_MENUS ) {
+            $menus = Menu::all();
+        } else {
+            $menus = [];
+            foreach ( $ids as $id ) {
+                $menu = Menu::find( $id );
+                if ( $menu === null ) {
+                    $err[] = $id;
+                } else {
+                    $menus[] = $menu;
+                }
             }
         }
 
+        // Result
         $rs = empty( $err )
             ? TaskResult::success()
             : TaskResult::failure( "Menu(s) not found: " . join( ', ', $err ) );

@@ -44,7 +44,9 @@ class ExportTask {
         $rows = [Impex::CSV_FIELDS];
 
         foreach ( $menus as $menu ) {
-            $rows = array_merge( $rows, $this->collectRows( $menu ) );
+            $all = $this->collectRows( $menu );
+            $filtered = $this->filterRows( $config, $all );
+            $rows = array_merge( $rows, $filtered );
         }
 
 
@@ -128,5 +130,14 @@ class ExportTask {
         return $rows;
     }
 
+
+    protected function filterRows( ExportConfig $config, array $rows ): array {
+        // Nothing to do.
+        if ( ! $config->hasFilters() ) {
+            return $rows;
+        }
+
+        return $rows;
+    }
 
 }
