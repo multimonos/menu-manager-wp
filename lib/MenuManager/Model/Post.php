@@ -43,17 +43,25 @@ class Post {
             : null;
     }
 
+    public static function count(): int {
+        return intval( wp_count_posts( static::type() ) );
+    }
+
     public static function all( array $query = [] ): array {
 
         $defaults = [
-            'post_type'   => static::type(),
-            'post_status' => 'publish',
-            'numberposts' => -1,
+            'post_type'      => static::type(),
+            'post_status'    => 'publish',
+            'orderby'        => 'post_title',
+            'order'          => 'ASC',
+            'posts_per_page' => -1,
         ];
 
         $args = array_merge( $defaults, $query );
 
-        $posts = get_posts( $args );
+        $query = new \WP_Query( $args );
+
+        $posts = $query->get_posts();
 
         $posts = is_array( $posts ) ? $posts : [];
 
@@ -86,19 +94,6 @@ class Post {
         return static::find( $id );
     }
 
-    public function update( array $data, array $meta = [] ): ?static {
-        // Update.
-        $post_data = array_merge( ['ID' => $this->post->ID], $data );
-
-        $rs = wp_update_post( $post_data );
-
-        if ( is_wp_error( $rs ) ) {
-            return null;
-        }
-
-        return self::find( $rs );
-    }
-
     public static function dropTable(): bool {
         $query = new \WP_Query( [
             'post_type'      => static::type(),
@@ -126,7 +121,31 @@ class Post {
 
     }
 
+    public function update( array $data, array $meta = [] ): ?static {
+        // Update.
+        $post_data = array_merge( ['ID' => $this->post->ID], $data );
+
+        $rs = wp_update_post( $post_data );
+
+        if ( is_wp_error( $rs ) ) {
+            return null;
+        }
+
+        return self::find( $rs );
+    }
+
     public function delete( $force = true ): bool {
         return static::deleteByPostId( $this->post->ID, $force );
+    }
+
+    public function toArray(): array {
+        return [
+            'id'   => $this->id,
+            'post' => $this->post->to_array(),
+        ];
+    }
+
+    public function toJson(): string {
+        return json_encode( $this->toArray() );
     }
 }

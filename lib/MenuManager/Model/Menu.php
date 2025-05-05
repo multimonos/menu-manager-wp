@@ -39,28 +39,28 @@ class Menu extends Post {
             ];
 
             $args = [
-                'labels'             => $labels,
-                'public'             => false,
+                'labels'              => $labels,
+                'public'              => false,
                 'publicly_queryable' => true,
-                'show_ui'            => true,
-                'show_in_menu'       => true,
-                'query_var'          => true,
+                'show_ui'             => true,
+                'show_in_menu'        => true,
+                'query_var'           => true,
                 'rewrite'            => ['slug' => 'menus'],
-                'capability_type'    => 'post',
-                'capabilities'       => [
+                'capability_type'     => 'post',
+                'capabilities'        => [
                     'create_posts'       => 'do_not_allow',
                     'user_can_duplicate' => 'do_not_allow',
                 ],
-                'map_meta_cap'       => true,
-                'has_archive'        => false,
-                'hierarchical'       => false,
-                'menu_position'      => null,
-                'menu_icon'          => 'dashicons-carrot',
-                'supports'           => [
+                'map_meta_cap'        => true,
+                'has_archive'         => false,
+                'hierarchical'        => false,
+                'menu_position'       => null,
+                'menu_icon'           => 'dashicons-carrot',
+                'supports'            => [
                     'title',
                     'editor',
                 ],
-                'show_in_rest'       => false, // disable gutenberg
+                'show_in_rest'        => false, // disable gutenberg
             ];
 
             register_post_type( self::type(), $args );
