@@ -17,30 +17,30 @@ class ExportConfig {
     public array $menus = [];
 
     // FILTERS
-    /* @var int|string[] Filter by item_id */
-    public array $itemFilter = []; // @todo filter by item id
+    /* @var ExportFilter[] Filter by impex csv fields */
+    public array $filters = [];
 
-    /* @var int|string[] Filter by item uuid */
-    public array $uuidFilter = []; // @todo filter by uuid
+    public function filterBy( string $key, array $values ): void {
+        switch ( $key ) {
+            case 'page':
+            case 'uuid':
+            case 'parent_id':
+            case 'item_id':
+            case 'type':
+                $this->filters[] = ExportFilter::make( 'in_array', $key, $values );
+                break;
 
-    /* @var int|string[] Filter by image_id */
-    public array $imageIdFilter = []; // @todo filter by image id
+            case 'image_ids':
+                $this->filters[] = ExportFilter::make( 'csv_in_array', $key, $values );
+                break;
 
-    /* @var string[] Filter by item tag */
-    public array $tagFilter = []; // @todo filter by tag
-
-    /* @var string[] Filter by partial match on item type */
-    public array $typeFilter = []; // @todo filter by partial match on item types
-
-    /* @var string[] Filter items by partial match on item title */
-    public array $titleFilter = []; // @todo filter by partial match on item title
+            case 'title':
+                $this->filters[] = ExportFilter::make( 'contains', $key, $values );
+                break;
+        }
+    }
 
     public function hasFilters(): bool {
-        return ! empty( $this->itemFilter )
-            || ! empty( $this->uuidFilter )
-            || ! empty( $this->imageIdFilter )
-            || ! empty( $this->tagFilter )
-            || ! empty( $this->typeFilter )
-            || ! empty( $this->titleFilter );
+        return ! empty( $this->filters );
     }
 }

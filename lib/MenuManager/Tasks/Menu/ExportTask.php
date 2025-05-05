@@ -137,6 +137,15 @@ class ExportTask {
             return $rows;
         }
 
+        $filters = $config->filters;
+        $rows = array_filter( $rows, function ( $row ) use ( $filters ) {
+            $keep = true;
+            foreach ( $filters as $filter ) {
+                $keep = $keep && $filter->include( $row[$filter->field] );
+            }
+            return $keep;
+        } );
+
         return $rows;
     }
 

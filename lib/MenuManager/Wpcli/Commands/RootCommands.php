@@ -56,23 +56,26 @@ class RootCommands {
      * [--format=<format>]
      * : Output format. Options: csv, excel. Default: csv.
      *
-     * [--item-id=<item_ids>]
-     * : Comma separated of item ids to match.
+     * [--page=<page>]
+     * : Comma separated of pages.
      *
-     * [--item-uuid=<item_uuids>]
+     * [--uuid=<item_uuids>]
      * : Comma separated of item UUIDs to match.
      *
-     * [--item-type=<partial_match_string>]
-     * : Command separated list of partial match on item type.
+     * [--parent=<ids>]
+     * : Comma separated of item parent ids to match.
      *
-     * [--item-title=<partial_match_string>]
+     * [--id=<ids>]
+     * : Comma separated of item ids to match.
+     *
+     * [--type=<type>]
+     * : Command separated match on item type.
+     *
+     * [--title=<partial_match_string>]
      * : Comma separated list of partial match on item title.
      *
-     * [--item-image=<image_ids>]
+     * [--image=<image_ids>]
      * : Command separated list of Image Ids to match.
-     *
-     * [--item-tag=<tag_ids>]
-     * : Command separated list of tags to match.
      *
      * @when after_wp_load
      */
@@ -83,15 +86,32 @@ class RootCommands {
         $config->context = ExportContext::Cli;
         $config->format = ExportFormat::from( $assoc_args['format'] ?? ExportFormat::Csv->value );
         $config->target = $args[1] ?? null;
+        $config->menus = CliHelper::split( $args[0] ?? '' );
 
         // Result Filters
-        $config->menus = CliHelper::split( $args[0] ?? '' );
-        $config->itemFilter = CliHelper::split( $assoc_args['item-id'] ?? null );
-        $config->uuidFilter = CliHelper::split( $assoc_args['item-uuid'] ?? null );
-        $config->imageIdFilter = CliHelper::split( $assoc_args['item-image'] ?? null );
-        $config->tagFilter = CliHelper::split( $assoc_args['item-tag'] ?? null );
-        $config->typeFilter = CliHelper::split( $assoc_args['item-type'] ?? null );
-        $config->titleFilter = CliHelper::split( $assoc_args['item-title'] ?? null );
+        $filters = [
+            'page'   => 'page',
+            'uuid'   => 'uuid',
+            'parent' => 'parent_id',
+            'type'   => 'type',
+            'id'     => 'item_id',
+            'image'  => 'image_ids',
+            'title'  => 'title',
+        ];
+
+        foreach ( $filters as $k => $field ) {
+            $value = CliHelper::split( $assoc_args[$k] ?? null );
+            if ( ! empty( $value ) ) {
+                $config->filterBy( $field, $value );
+            }
+        }
+        print_r( $config );
+
+//        $config->itemFilter = CliHelper::split( $assoc_args['item-id'] ?? null );
+//        $config->imageIdFilter = CliHelper::split( $assoc_args['item-image'] ?? null );
+//        $config->tagFilter = CliHelper::split( $assoc_args['item-tag'] ?? null );
+//        $config->typeFilter = CliHelper::split( $assoc_args['item-type'] ?? null );
+//        $config->titleFilter = CliHelper::split( $assoc_args['item-title'] ?? null );
 
         // Task
         $task = new ExportTask();
