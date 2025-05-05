@@ -32,6 +32,7 @@ class ExportTask {
         if ( ! $rs->ok() ) {
             return $rs;
         }
+        $trees = null; // free
 
         // Set the target filename
         if ( empty( $config->target ) ) {
@@ -82,6 +83,8 @@ class ExportTask {
             $tree,
             fn( Node $node, ?Node $page = null ) => ExportNodeFactory::createRow( $menu, $page, $node )
         );
+
+        $tree = null; // free
 
         $rows = array_filter( $rows );
 
