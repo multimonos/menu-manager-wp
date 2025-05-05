@@ -3,13 +3,12 @@
 namespace MenuManager\Wpcli\Commands;
 
 use MenuManager\Model\Backup;
-use MenuManager\Service\Database;
 use MenuManager\Tasks\Backup\CreateBackupTask;
 use MenuManager\Tasks\Backup\RestoreBackupTask;
 use MenuManager\Tasks\Generic\DeleteModelTask;
 use MenuManager\Tasks\Generic\GetLatestModelTask;
 use MenuManager\Tasks\Generic\GetModelTask;
-use MenuManager\Wpcli\CliHelper;
+use MenuManager\Tasks\Generic\ListModelTask;
 use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
@@ -45,42 +44,16 @@ class BackupCommands {
     public function ls( $args, $assoc_args ) {
         $format = $assoc_args['format'] ?? 'table';
 
-        Database::load();
+        $fields = [
+            'id',
+            'filename',
+            'created_at',
+        ];
 
-        if ( Backup::query()->count() === 0 ) {
-            return WP_CLI::success( "No backups found." );
-        }
+        $task = new ListModelTask();
+        $rs = $task->run( Backup::class, $fields, $format );
 
-        switch ( $format ) {
-            case 'count':
-                WP_CLI::line( Backup::query()->count() );
-                break;
-
-            case 'ids':
-                $ids = Backup::all()->pluck( 'id' )->join( ' ' );
-                WP_CLI::line( $ids );
-                break;
-
-            default:
-            case 'table':
-
-                $fields = [
-                    'id',
-                    'filename',
-                    'created_at',
-                ];
-
-                $data = Backup::all()->map( fn( $model ) => $model->only( $fields ) )->toArray();
-
-                $widths = CliHelper::columnPads( $fields, $data );
-
-                CliHelper::table(
-                    $widths,
-                    $fields,
-                    $data,
-                );
-                break;
-        }
+        CommandHelper::sendDataOnly( $rs );
     }
 
     /**

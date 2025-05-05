@@ -4,10 +4,9 @@ namespace MenuManager\Wpcli\Commands;
 
 
 use MenuManager\Model\Node;
-use MenuManager\Service\Database;
 use MenuManager\Tasks\Generic\DeleteModelTask;
 use MenuManager\Tasks\Generic\GetModelTask;
-use MenuManager\Wpcli\CliHelper;
+use MenuManager\Tasks\Generic\ListModelTask;
 use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
@@ -30,45 +29,16 @@ class NodeCommands {
     public function ls( $args, $assoc_args ) {
         $format = $assoc_args['format'] ?? 'table';
 
-        Database::load();
+        $fields = [
+            'id',
+            'type',
+            'title',
+        ];
 
-        switch ( $format ) {
-            case 'count':
-                WP_CLI::line( Node::query()->count() );
-                break;
+        $task = new ListModelTask();
+        $rs = $task->run( Node::class, $fields, $format );
 
-            case 'ids':
-                $ids = Node::all()->pluck( 'id' )->join( ' ' );
-                WP_CLI::line( $ids );
-                break;
-
-            case 'json':
-                WP_CLI::line( Node::all()->toJson() );
-                break;
-
-            default:
-            case 'table':
-                if ( Node::query()->count() === 0 ) {
-                    WP_CLI::success( "No records found." );
-                    return;
-                }
-
-                $fields = [
-                    'id',
-                    'type',
-                    'title',
-                ];
-                $data = Node::all()->map( fn( $model ) => $model->only( $fields ) )->toArray();
-
-                $widths = CliHelper::columnPads( $fields, $data );
-
-                CliHelper::table(
-                    $widths,
-                    $fields,
-                    $data,
-                );
-                break;
-        }
+        CommandHelper::sendDataOnly( $rs );
     }
 
 

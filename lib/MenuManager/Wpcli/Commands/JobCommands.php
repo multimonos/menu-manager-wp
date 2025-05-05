@@ -4,14 +4,12 @@ namespace MenuManager\Wpcli\Commands;
 
 
 use MenuManager\Model\Job;
-use MenuManager\Service\Database;
 use MenuManager\Tasks\Generic\DeleteModelTask;
 use MenuManager\Tasks\Generic\GetLatestModelTask;
 use MenuManager\Tasks\Generic\GetModelTask;
 use MenuManager\Tasks\Generic\ListModelTask;
 use MenuManager\Tasks\Impex\ValidateTask;
 use MenuManager\Tasks\Job\JobRunTask;
-use MenuManager\Wpcli\CliHelper;
 use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
@@ -33,54 +31,19 @@ class JobCommands {
      */
     public function ls( $args, $assoc_args ) {
         $format = $assoc_args['format'] ?? 'table';
+        $fields = [
+            'id',
+            'title',
+            'created_at',
+            'lastrun_at',
+            'filename',
+        ];
+        $task = new ListModelTask();
+        $rs = $task->run( Job::class, $fields, $format );
 
-        Database::load();
-
-        switch ( $format ) {
-            case 'count':
-                WP_CLI::line( Job::all()->pluck( 'id' )->count() );
-                break;
-
-            case 'ids':
-                $ids = Job::all()->pluck( 'id' )->join( ' ' );
-                WP_CLI::line( $ids );
-                break;
-
-            case 'json':
-                WP_CLI::line( Job::all()->toJson() );
-                break;
-
-
-            default:
-            case 'table':
-
-                $fields = [
-                    'id',
-                    'title',
-                    'created_at',
-                    'created_by',
-                    'lastrun_at',
-                    'lastrun_by',
-                    'filename',
-                ];
-
-                if ( Job::query()->count() === 0 ) {
-                    WP_CLI::success( "No records found." );
-                    return;
-                }
-
-                $data = Job::all()->map( fn( $model ) => $model->only( $fields ) )->toArray();
-
-                $widths = CliHelper::columnPads( $fields, $data );
-
-                CliHelper::table(
-                    $widths,
-                    $fields,
-                    $data,
-                );
-                break;
-        }
+        CommandHelper::sendDataOnly( $rs );
     }
+
 
     /**
      * Validate a job.

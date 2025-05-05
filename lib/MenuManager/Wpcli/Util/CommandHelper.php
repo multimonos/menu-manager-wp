@@ -20,4 +20,8 @@ class CommandHelper {
             WP_CLI::line( $rs->getData() );
         }
     }
+
+    public static function sendDataOnly( TaskResult $rs ): void {
+        WP_CLI::line( $rs->getData() );
+    }
 }

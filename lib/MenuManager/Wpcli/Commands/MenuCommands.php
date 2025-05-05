@@ -4,6 +4,7 @@ namespace MenuManager\Wpcli\Commands;
 
 
 use MenuManager\Model\Menu;
+use MenuManager\Tasks\Generic\ListPostsTask;
 use MenuManager\Tasks\Menu\CloneMenuTask;
 use MenuManager\Tasks\Menu\PrintTextMenuTask;
 use MenuManager\Wpcli\Util\CommandHelper;
@@ -26,8 +27,17 @@ class MenuCommands {
      * @when after_wp_load
      */
     public function ls( $args, $assoc_args ) {
-        $format = $assoc_args['format'] ?? 'json';
-        WP_CLI::runcommand( sprintf( "post list --post_type=%s --format={$format}", Menu::type() ) );
+        $format = $assoc_args['format'] ?? 'table';
+        $fields = [
+            'ID',
+            'post_title',
+            'post_name',
+        ];
+
+        $task = new ListPostsTask();
+        $rs = $task->run( Menu::class, $fields, $format );
+
+        CommandHelper::sendDataOnly( $rs );
     }
 
     /**

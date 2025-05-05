@@ -5,7 +5,7 @@ namespace MenuManager\Wpcli;
 use WP_CLI;
 
 class CliHelper {
-    public static function table( array $widths, array $headings, array $rows ) {
+    public static function table( array $widths, array $headings, array $rows ): string {
 
         //formats
         $row_fmt = '|' . join( '|', array_map( fn( $n ) => " %-{$n}s ", $widths ) ) . '|';
@@ -13,6 +13,7 @@ class CliHelper {
         $sep_values = array_fill( 0, count( $widths ), '' );
 
         // header
+        ob_start();
         echo "\n";
         WP_CLI::line( sprintf( $sep_fmt, ...$sep_values ) );
         WP_CLI::line( sprintf( $row_fmt, ...array_values( $headings ) ) );
@@ -20,10 +21,12 @@ class CliHelper {
 
         // body
         foreach ( $rows as $row ) {
-            $values = array_values( $row );
-            WP_CLI::line( sprintf( $row_fmt, ...array_values( $row ) ) );
+            $values = array_map( fn( $x ) => ($x instanceof \BackedEnum) ? $x->value : $x, array_values( $row ) );
+            WP_CLI::line( sprintf( $row_fmt, ...$values ) );
             WP_CLI::line( sprintf( $sep_fmt, ...$sep_values ) );
         }
+
+        return ob_get_clean();
     }
 
     public static function columnPads( array $fieldnames, array $data ): ?array {
@@ -47,7 +50,11 @@ class CliHelper {
 
         // field widths
         foreach ( $keys as $k ) {
-            $fieldmax = max( array_map( 'strlen', array_column( $data, $k ) ) ) + $extra;
+            $values = array_map(
+                fn( $x ) => ($x instanceof \BackedEnum) ? $x->value : $x,
+                array_column( $data, $k )
+            );
+            $fieldmax = max( array_map( 'strlen', $values ) ) + $extra;
             $max[$k] = $fieldmax > $max[$k] ? $fieldmax : $max[$k];
         }
 

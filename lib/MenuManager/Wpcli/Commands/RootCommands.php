@@ -48,7 +48,7 @@ class RootCommands {
      * ## OPTIONS
      *
      * <menu_id>
-     * : Command separated list of Menu Ids or Slugs to include. NOTE: Quote string if list has spaces.
+     * : Comma separated list of Menu Ids or Slugs to include. NOTE: Quote string if list has spaces. Use "*" for all menus.
      *
      * [<file>]
      * : The CSV file to write.
