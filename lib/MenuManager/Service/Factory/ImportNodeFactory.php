@@ -6,7 +6,7 @@ use MenuManager\Model\Impex;
 use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
 use MenuManager\Model\NodeMeta;
-use MenuManager\Model\NodeType;
+use MenuManager\Types\NodeType;
 
 class ImportNodeFactory {
 

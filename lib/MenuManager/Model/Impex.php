@@ -5,12 +5,14 @@ namespace MenuManager\Model;
 use MenuManager\Model\Traits\ModelExtras;
 use MenuManager\Service\Database;
 use MenuManager\Service\Logger;
+use MenuManager\Types\NodeType;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
 
 enum ImpexAction: string {
+    case Create = 'create';
     case Update = 'update';
-    case Insert = 'insert';
+//    case Insert = 'insert';
     case Delete = 'delete';
     case Price = 'price';
 }

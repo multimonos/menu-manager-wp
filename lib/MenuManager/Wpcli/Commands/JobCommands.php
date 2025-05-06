@@ -34,8 +34,8 @@ class JobCommands {
         $fields = [
             'id',
             'title',
+            'status',
             'created_at',
-            'lastrun_at',
             'filename',
         ];
         $task = new ListModelTask();
@@ -65,7 +65,7 @@ class JobCommands {
         $task = new ValidateTask();
         $rs = $task->run( $id );
 
-        CommandHelper::sendTaskResult( $rs );
+        CommandHelper::sendTaskResultAsJson( $rs );
     }
 
 

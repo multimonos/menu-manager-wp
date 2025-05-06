@@ -5,6 +5,7 @@ namespace MenuManager\Model;
 use MenuManager\Model\Traits\ModelExtras;
 use MenuManager\Service\Database;
 use MenuManager\Service\Logger;
+use MenuManager\Types\NodeType;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
 use MenuManager\Vendor\Illuminate\Support\Collection;
@@ -12,19 +13,6 @@ use MenuManager\Vendor\Kalnoy\Nestedset\Collection as NestedSetCollection;
 use MenuManager\Vendor\Kalnoy\Nestedset\NestedSet;
 use MenuManager\Vendor\Kalnoy\Nestedset\NodeTrait;
 
-enum NodeType: string {
-    case Root = 'root';
-    case Page = 'page';
-    case Category0 = 'category-0';
-    case Category1 = 'category-1';
-    case Category2 = 'category-2';
-    case Item = 'item';
-    case Wine = 'wine';
-    case OptionGroup = 'option-group';
-    case Option = 'option';
-    case AddonGroup = 'addon-group';
-    case Addon = 'addon';
-}
 
 class Node extends Model {
 

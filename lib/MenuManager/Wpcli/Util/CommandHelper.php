@@ -15,7 +15,7 @@ class CommandHelper {
 
     public static function sendTaskResultAsJson( TaskResult $rs ): void {
         if ( ! $rs->ok() ) {
-            WP_CLI::line( $rs->toJson() );
+            WP_CLI::line( $rs->toJson( true ) );
         } else {
             WP_CLI::line( $rs->getData() );
         }

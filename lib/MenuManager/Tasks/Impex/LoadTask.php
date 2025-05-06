@@ -81,7 +81,7 @@ class LoadTask {
                     'is_organic'     => Impex::toBoolean( $record['is_organic'] ),
                     'is_vegan'       => Impex::toBoolean( $record['is_vegan'] ),
                     'is_vegetarian'  => Impex::toBoolean( $record['is_vegetarian'] ),
-                    'item_id'        => (int)$record['item_id'],
+                    'item_id'        => empty( $record['item_id'] ) ? null : $record['item_id'],
                     'menu'           => $record['menu'], // id or slug
                     'page'           => $record['page'],
                     'prices'         => $record['prices'],

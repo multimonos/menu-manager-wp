@@ -6,10 +6,10 @@ use MenuManager\Model\Impex;
 use MenuManager\Model\ImpexAction;
 use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
-use MenuManager\Model\NodeType;
 use MenuManager\Service\Database;
 use MenuManager\Service\Logger;
 use MenuManager\Tasks\TaskResult;
+use MenuManager\Types\NodeType;
 use MenuManager\Vendor\Illuminate\Support\Collection;
 
 class ModifyMenuTask {
@@ -40,9 +40,14 @@ class ModifyMenuTask {
                     continue;
                 }
 
-//                print_r( ['row' => $row->toArray()] );
-
+                // Process action.
                 switch ( $action ) {
+
+                    case ImpexAction::Insert:
+                        // @todo implement impex action "insert"
+                        Logger::taskInfo( 'modify-menu', 'unhandled row action in impex : ' . ImpexAction::Insert->value );
+                        break;
+
                     case ImpexAction::Update:
                         $this->update( $row );
                         break;
