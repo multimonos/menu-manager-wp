@@ -7,7 +7,7 @@ use MenuManager\Tasks\Menu\ExportTask;
 use MenuManager\Types\Export\ExportConfig;
 use MenuManager\Types\Export\ExportContext;
 use MenuManager\Types\Export\ExportFormat;
-use MenuManager\Wpcli\Util\CliHelper;
+use MenuManager\Utils\Splitter;
 use MenuManager\Wpcli\Util\CommandHelper;
 use WP_CLI;
 
@@ -86,7 +86,7 @@ class RootCommands {
         $config->context = ExportContext::Cli;
         $config->format = ExportFormat::from( $assoc_args['format'] ?? ExportFormat::Csv->value );
         $config->target = $args[1] ?? null;
-        $config->menus = CliHelper::split( $args[0] ?? '' );
+        $config->menus = Splitter::unique( $args[0] ?? '' );
 
         // Result Filters
         $filters = [
@@ -100,7 +100,7 @@ class RootCommands {
         ];
 
         foreach ( $filters as $k => $field ) {
-            $value = CliHelper::split( $assoc_args[$k] ?? null );
+            $value = Splitter::unique( $assoc_args[$k] ?? '' );
             if ( ! empty( $value ) ) {
                 $config->filterBy( $field, $value );
             }

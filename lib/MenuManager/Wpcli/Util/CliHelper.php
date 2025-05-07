@@ -62,7 +62,4 @@ class CliHelper {
         return $max;
     }
 
-    public static function split( ?string $str ): array {
-        return empty( $str ) ? [] : array_unique( array_filter( preg_split( '/\s*,\s*/', $str ) ) );
-    }
 }

@@ -54,14 +54,5 @@ class DownloadJobAction implements AdminLinkAction {
         DownloadHelper::sendHeaders( 'text/csv', $model->title );
         readfile( $path );
         exit;
-//        echo '<pre>';
-//        print_r( $model );
-//        die( 'download' );
-
-//        $task = new DeleteModelTask();
-//        $rs = $task->run( Job::class, $model->id );
-
-        // Send result.
-//        GetActionHelper::sendResult( $rs );
     }
 }

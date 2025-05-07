@@ -10,6 +10,7 @@ use MenuManager\Tasks\Menu\ExportTask;
 use MenuManager\Types\Export\ExportConfig;
 use MenuManager\Types\Export\ExportContext;
 use MenuManager\Types\Export\ExportFormat;
+use MenuManager\Utils\Splitter;
 
 class ExportCustomAction implements AdminFormAction {
 
@@ -137,10 +138,6 @@ class ExportCustomAction implements AdminFormAction {
         return ob_get_clean();
     }
 
-    public function split( string $val ): array {
-        return preg_split( '/\s*,\s*/', $val );
-    }
-
     public function handle(): void {
         FormActionHelper::validateOrRedirect( $this, wp_get_referer() );
 
@@ -160,7 +157,7 @@ class ExportCustomAction implements AdminFormAction {
         // Filters
         $filters = array_filter( $_POST['filters'] ?? [] );
         foreach ( $filters as $field => $value ) {
-            $arr = $this->split( trim( $value ) ?? '' );
+            $arr = Splitter::unique( trim( $value ) );
             if ( ! empty( $arr ) ) {
                 $config->filterBy( $field, $arr );
             }
