@@ -18,16 +18,6 @@ use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
 
 class ValidateTask {
 
-    protected $msg = [];
-
-    protected function collect(): array {
-        return array_unique( $this->msg );
-    }
-
-    protected function rowMessage( Impex $row, string $msg ): void {
-        $this->msg[] = $msg . "  Row='" . join( ',', $row->toArray() ) . "'";
-    }
-
     public function rowstr( Impex $row ): string {
         return "Row='" . join( ',', $row->toArray() ) . "'.";
     }
@@ -36,22 +26,11 @@ class ValidateTask {
 
         Database::load();
 
-        // ERRORS + WARNINGS
-
-        // create : err : parent_id cannot be set
-        // create : err : sort_order cannot be set
-        // create : err : item_id cannot be set
-        // create : err : title must be set
-
-        // throw no errors
-        $err = [];
-        $msg = [];
-
         // guard : job
         $job = Job::find( $job_id );
 
         if ( $job === null ) {
-            return TaskResult::failure( "Record not found {$job_id}." );
+            return TaskResult::failure( "Record not found {$job_id}.", ["Record not found {$job_id}."] );
         }
 
         // Impex rows
@@ -59,8 +38,7 @@ class ValidateTask {
 
         // guard : row count
         if ( $rows->isEmpty() ) {
-            $this->msg[] = '0 rows in job.';
-            return TaskResult::failure( 'Invalid', $this->collect() );
+            return TaskResult::failure( '0 rows in job.', ['0 rows in job.'] );
         }
 
         // Menu data.
