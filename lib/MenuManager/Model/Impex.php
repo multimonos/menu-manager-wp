@@ -3,20 +3,11 @@
 namespace MenuManager\Model;
 
 use MenuManager\Model\Traits\ModelExtras;
+use MenuManager\Model\Types\NodeType;
 use MenuManager\Service\Database;
 use MenuManager\Service\Logger;
-use MenuManager\Types\NodeType;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
-
-enum ImpexAction: string {
-    case Create = 'create';
-    case Update = 'update';
-//    case Insert = 'insert';
-    case Delete = 'delete';
-    case Price = 'price';
-}
-
 
 enum ImpexBoolean: string {
     case True = 'yes';
@@ -97,7 +88,7 @@ class Impex extends Model {
             $table->bigInteger( 'parent_id' )->unsigned()->nullable();
             $table->integer( 'sort_order' )->unsigned()->nullable();
             $table->string( 'type', 32 ); // @todo should this be enum? ... no let user make mistake,catch in validation
-            $table->bigInteger( 'item_id' )->nullable();
+            $table->bigInteger( 'item_id' )->unsigned()->nullable();
             $table->string( 'title' )->nullable();
             $table->string( 'prices', 64 )->nullable();
             $table->string( 'image_ids', 64 )->nullable();

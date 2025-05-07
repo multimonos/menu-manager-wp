@@ -3,13 +3,13 @@
 namespace MenuManager\Tasks\Menu;
 
 use MenuManager\Model\Impex;
-use MenuManager\Model\ImpexAction;
 use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
+use MenuManager\Model\Types\ImpexAction;
+use MenuManager\Model\Types\NodeType;
 use MenuManager\Service\Database;
 use MenuManager\Service\Logger;
 use MenuManager\Tasks\TaskResult;
-use MenuManager\Types\NodeType;
 use MenuManager\Vendor\Illuminate\Support\Collection;
 
 class ModifyMenuTask {

@@ -6,8 +6,8 @@ use MenuManager\Model\Impex;
 use MenuManager\Model\ImpexBoolean;
 use MenuManager\Model\Menu;
 use MenuManager\Model\Node;
+use MenuManager\Model\Types\NodeType;
 use MenuManager\Tasks\Menu\ExportTaskPeer;
-use MenuManager\Types\NodeType;
 
 // @todo Perhaps this class should create models of Impex and then the caller can transform to array?
 class ExportNodeFactory {

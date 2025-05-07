@@ -3,14 +3,18 @@
 namespace MenuManager\Tasks\Impex;
 
 use MenuManager\Model\Impex;
-use MenuManager\Model\ImpexAction;
 use MenuManager\Model\Job;
 use MenuManager\Model\JobStatus;
 use MenuManager\Model\Menu;
+use MenuManager\Model\Types\ImpexAction;
+use MenuManager\Model\Types\NodeType;
 use MenuManager\Service\Database;
 use MenuManager\Tasks\TaskResult;
-use MenuManager\Types\NodeType;
 use MenuManager\Utils\EnumTools;
+use MenuManager\Utils\ImpexValidator;
+use MenuManager\Utils\Splitter;
+use MenuManager\Vendor\Illuminate\Database\Eloquent\Collection;
+
 
 class ValidateTask {
 
@@ -24,6 +28,10 @@ class ValidateTask {
         $this->msg[] = $msg . "  Row='" . join( ',', $row->toArray() ) . "'";
     }
 
+    public function rowstr( Impex $row ): string {
+        return "Row='" . join( ',', $row->toArray() ) . "'.";
+    }
+
     public function run( $job_id ): TaskResult {
 
         Database::load();
@@ -34,15 +42,6 @@ class ValidateTask {
         // create : err : sort_order cannot be set
         // create : err : item_id cannot be set
         // create : err : title must be set
-
-        // update : err : parent_id cannot be empty
-        // update : err : sort_order cannot be empty
-        // update : err : item_id cannot be empty
-        // update : err : title cannot be empty
-
-        // delete : err : item_id cannot be empty
-        // delete : warn : if children then delete will remove children as well
-
 
         // throw no errors
         $err = [];
@@ -64,56 +63,42 @@ class ValidateTask {
             return TaskResult::failure( 'Invalid', $this->collect() );
         }
 
-//        // guard : menu count
-//        $menus = $rows->groupBy( 'menu' );
-//        if ( $menus->count() === 0 ) {
-//            $this->msg[] = '0 menus in job.';
-//            return TaskResult::failure( 'Invalid', $this->collect() );
-//        }
-//
-
         // Menu data.
         $menus = array_column( Menu::all(), 'post' );
         $menu_ids = array_merge(
             array_column( $menus, 'ID' ),
             array_column( $menus, 'post_name' )
         );
-//        print_r( $menu_ids );
+
+        // Image Ids : pre-collect the subset of valid image_ids to create a hash lookup.
+        $image_ids = $this->getValidImageIds( $rows );
+        $image_lookup = array_flip( $image_ids ); // isset is fast
+
+        // Loop dependencies.
+        $validator = new ImpexValidator();
+        $node_types = EnumTools::csv( NodeType::class );
+        $impex_actions = EnumTools::csv( ImpexAction::class );
 
 
         // Process impex rows one menu at a time.
-        $rows->each( function ( $row ) {
+        $rows->each( function ( $row ) use ( $validator, $node_types, $impex_actions, $image_lookup ) {
+            // Row as string for user feedback.
+            $rowstr = $this->rowstr( $row );
+
             // Generic data validation.
-            if ( ! $this->emptyOrEnum( ImpexAction::class, $row->action ) ) {
-                $this->rowMessage( $row, "'action' must be empty or one of '" . EnumTools::csv( ImpexAction::class ) . "'." );
-            }
-            if ( $this->emptyString( $row->menu ) ) {
-                $this->rowMessage( $row, "'menu' cannot be empty." );
-            }
-            if ( $this->emptyString( $row->page ) ) {
-                $this->rowMessage( $row, "'page' cannot be empty." );
-            }
-            if ( ! $this->emptyOrNumeric( $row->parent_id ) ) {
-                $this->rowMessage( $row, "'parent_id' must be empty or numeric. Found parent_id='{$row->parent_id}'." );
-            }
-            if ( ! $this->emptyOrNumeric( $row->sort_order ) ) {
-                $this->rowMessage( $row, "'sort_order' must be empty or numeric. Found sort_order='{$row->sort_order}'." );
-            }
-            if ( ! $this->inEnum( NodeType::class, $row->type ) ) {
-                $this->rowMessage( $row, "'type' must be one of '" . EnumTools::csv( NodeType::class ) . "'." );
-            }
-            if ( ! $this->emptyOrNumeric( $row->item_id ) ) {
-                $this->rowMessage( $row, "'item_id' must be empty or numeric. Found item_id='{$row->item_id}'." );
-            }
-            if ( ! $this->emptyOrPipeDelimited( $row->prices ) ) {
-                $this->rowMessage( $row, "'prices' must be empty or a pipe '|' delimited string similar to 'a|b|c'. Found prices='{$row->prices}'." );
-            }
-            if ( ! $this->emptyOrPipeDelimited( $row->image_ids ) ) {
-                $this->rowMessage( $row, "'image_ids' must be empty or a pipe '|' delimited string similar to 'a|b|c'. Found image_ids='{$row->image_ids}'." );
-            }
-            if ( $this->emptyString( $row->title ) ) {
-                $this->rowMessage( $row, "'title' cannot be empty." );
-            }
+            $validator->assertEmptyOrEnum( "'action' must be one of '{$impex_actions}'. Found action='{$row->action}'. {$rowstr}", $row->action, ImpexAction::class );
+            $validator->assertNotEmptyString( "'menu' cannot be empty. {$rowstr}", $row->menu );
+            $validator->assertNotEmptyString( "'page' cannot be empty. {$rowstr}", $row->page );
+            $validator->assertEmptyOrId( "'parent_id' must be empty or a number greater than zero. Found parent_id='{$row->parent_id}'. {$rowstr}", $row->parent_id );
+            $validator->assertEmptyOrPositveInteger( "'sort_order' must be empty or number greater than zero. Found sort_order='{$row->sort_order}'. {$rowstr}", $row->sort_order );
+            $validator->assertEnum( "'type' must be one of '{$node_types}'. Found type='{$row->type}'. {$rowstr}", $row->type, NodeType::class );
+            $validator->assertEmptyOrId( "'item_id' must be empty or a number greater than zero. Found item_id='{$row->item_id}'. {$rowstr}", $row->item_id );
+            $validator->assertEmptyOrPipeDelimited( "'prices' must be empty or a pipe '|' delimited string similar to 'a|b|c'. Found prices='{$row->prices}'. {$rowstr}", $row->prices );
+            $validator->assertEmptyOrPipeDelimited( "'image_ids' must be empty or a pipe '|' delimited string similar to 'a|b|c'. Found image_ids='{$row->image_ids}'. {$rowstr}", $row->image_ids );
+            $validator->assertNotEmptyString( "'title' cannot be empty." . $rowstr, $row->title );
+
+            // More complex.
+            $validator->assertImageIdsValid( "Invalid image ids. Found ids=[%s]. {$rowstr}", $row->image_ids, $image_lookup );
 
 
             // Action specific issues... if action empty it's assumed to be 'create'.
@@ -122,32 +107,33 @@ class ValidateTask {
             switch ( $action ) {
 
                 case ImpexAction::Create:
-//                    // @todo implement impex action "insert"
-//                    Logger::taskInfo( 'modify-menu', 'unhandled row action in impex : ' . ImpexAction::Insert->value );
+                    $validator->assertEmptyString( sprintf( "Action '%s' requires 'item_id' to be empty. ", ImpexAction::Create->value ) . $rowstr, $row->item_id );
+                    $validator->assertEmptyString( sprintf( "Action '%s' requires 'parent_id' to be empty. ", ImpexAction::Create->value ) . $rowstr, $row->parent_id );
+                    $validator->assertEmptyString( sprintf( "Action '%s' requires 'sort_order' to be empty. ", ImpexAction::Create->value ) . $rowstr, $row->sort_order );
                     break;
 
                 case ImpexAction::Update:
-//                    $this->update( $row );
+                    $validator->assertId( sprintf( "Action '%s' requires 'item_id'. ", ImpexAction::Update->value ) . $rowstr, $row->item_id );
+                    $validator->assertId( sprintf( "Action '%s' requires 'parent_id'. ", ImpexAction::Update->value ) . $rowstr, $row->parent_id );
+                    $validator->assertNotEmptyString( sprintf( "Action '%s' requires 'sort_order'. ", ImpexAction::Create->value ) . $rowstr, $row->sort_order );
                     break;
-//
+
                 case ImpexAction::Price:
-//                    $this->updatePriceOnly( $row );
+                    $validator->assertId( sprintf( "Action '%s' requires 'item_id'. ", ImpexAction::Price->value ) . $rowstr, $row->item_id );
                     break;
-//
+
                 case ImpexAction::Delete:
-//                    $this->delete( $root, $row );
+                    $validator->assertId( sprintf( "Action '%s' requires 'item_id'. ", ImpexAction::Delete->value ) . $rowstr, $row->item_id );
                     break;
             }
-
-
         } );
 
 
         // Invalid
-        if ( ! empty( $this->msg ) ) {
+        if ( ! $validator->isValid() ) {
             $job->status = JobStatus::Invalid;
             $job->save();
-            return TaskResult::failure( "Invalid", $this->collect() );
+            return TaskResult::failure( "Invalid", $validator->getErrors( true ) );
         }
 
         // Valid
@@ -158,27 +144,23 @@ class ValidateTask {
 
     }
 
-//    protected function emptyOrInArray( mixed $v, array $values ): bool {
-//        return $v === '' || in_array( $v, $values );
-//    }
+    protected function getValidImageIds( Collection $rows ): array {
+        $ids = $rows->pluck( 'image_ids' )
+            ->transform( fn( $x ) => Splitter::split( $x, '|' ) )
+            ->flatten()
+            ->unique()
+            ->map( 'absint' )
+            ->toArray();
 
-    protected function emptyString( mixed $v ): bool {
-        return is_string( $v ) && (string)$v === '';
+        $valid_ids = get_posts( [
+            'post_type'      => 'attachment',
+            'post_mime_type' => 'image',
+            'post__in'       => $ids,
+            'posts_per_page' => -1,
+            'fields'         => 'ids',
+        ] );
+
+        return $valid_ids;
     }
 
-    protected function inEnum( string $enum_class, mixed $v ): bool {
-        return in_array( $v, EnumTools::values( $enum_class ) );
-    }
-
-    protected function emptyOrEnum( string $enum_class, mixed $v ): bool {
-        return $v === '' || in_array( $v, EnumTools::values( $enum_class ) );
-    }
-
-    protected function emptyOrNumeric( mixed $v ): bool {
-        return $v === '' || is_numeric( $v );
-    }
-
-    protected function emptyOrPipeDelimited( mixed $v ): bool {
-        return preg_match( '/^[^|]+(\|[^|]+)*$/', $v );
-    }
 }

@@ -14,11 +14,11 @@ class CommandHelper {
     }
 
     public static function sendTaskResultAsJson( TaskResult $rs ): void {
-        if ( ! $rs->ok() ) {
-            WP_CLI::line( $rs->toJson( true ) );
-        } else {
-            WP_CLI::line( $rs->getData() );
-        }
+        WP_CLI::line( $rs->toJson( true ) );
+//        if ( ! $rs->ok() ) {
+//        } else {
+//            WP_CLI::line( $rs->getData() );
+//        }
     }
 
     public static function sendDataOnly( TaskResult $rs ): void {

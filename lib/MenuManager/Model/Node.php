@@ -3,9 +3,9 @@
 namespace MenuManager\Model;
 
 use MenuManager\Model\Traits\ModelExtras;
+use MenuManager\Model\Types\NodeType;
 use MenuManager\Service\Database;
 use MenuManager\Service\Logger;
-use MenuManager\Types\NodeType;
 use MenuManager\Vendor\Illuminate\Database\Eloquent\Model;
 use MenuManager\Vendor\Illuminate\Database\Schema\Blueprint;
 use MenuManager\Vendor\Illuminate\Support\Collection;

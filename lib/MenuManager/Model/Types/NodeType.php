@@ -1,6 +1,6 @@
 <?php
 
-namespace MenuManager\Types;
+namespace MenuManager\Model\Types;
 
 enum NodeType: string {
     case Root = 'root';
