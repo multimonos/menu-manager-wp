@@ -94,7 +94,7 @@ return [
     'expose-global-classes'   => true,
     'expose-global-functions' => true,
     'expose-namespaces'       => [
-        'Acme\Foo',                     // The Acme\Foo namespace (and sub-namespaces)
+//        'Acme\Foo',                     // The Acme\Foo namespace (and sub-namespaces)
         // '~^PHPUnit\\\\Framework$~',    // The whole namespace PHPUnit\Framework (but not sub-namespaces)
         // '~^$~',                        // The root namespace only
         // '',                            // Any namespace
