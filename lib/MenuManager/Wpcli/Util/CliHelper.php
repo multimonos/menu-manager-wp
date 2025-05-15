@@ -19,6 +19,12 @@ class CliHelper {
         WP_CLI::line( sprintf( $row_fmt, ...array_values( $headings ) ) );
         WP_CLI::line( sprintf( $sep_fmt, ...$sep_values ) );
 
+        // no rows just end the table
+        if ( count( $rows ) === 0 ) {
+            WP_CLI::line( sprintf( $sep_fmt, ...$sep_values ) );
+            return ob_get_clean();
+        }
+
         // body
         foreach ( $rows as $row ) {
             $values = array_map( fn( $x ) => ($x instanceof \BackedEnum) ? $x->value : $x, array_values( $row ) );
@@ -29,19 +35,22 @@ class CliHelper {
         return ob_get_clean();
     }
 
-    public static function columnPads( array $fieldnames, array $data ): ?array {
+    public static function columnPads( array $fieldnames, array $data ): array {
+        $extra = 2;
+
+        // no data, just return fieldname lengths
         if ( empty( $data ) ) {
-            return null;
+            return array_map( fn( $x ) => strlen( $x ) + $extra, $fieldnames );
         }
 
+        // data must be assoc
         $keys = array_keys( $data[0] );
 
         if ( empty( $keys ) ) {
-            return null;
+            return array_map( fn( $x ) => strlen( $x ) + $extra, $fieldnames );
         }
 
         $max = [];
-        $extra = 2;
 
         // min widths
         foreach ( $fieldnames as $field ) {
