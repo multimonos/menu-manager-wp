@@ -44,7 +44,8 @@ class Post {
     }
 
     public static function count(): int {
-        return intval( wp_count_posts( static::type() ) );
+        $obj = wp_count_posts( static::type() );
+        return array_sum( (array)$obj );
     }
 
     public static function all( array $query = [] ): array {
