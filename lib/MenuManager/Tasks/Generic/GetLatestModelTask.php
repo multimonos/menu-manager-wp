@@ -19,6 +19,6 @@ class GetLatestModelTask {
             return TaskResult::failure( "No records found." );
         }
 
-        return TaskResult::success( "Found record '{$model->id}'.", $model->toJson() );
+        return TaskResult::success( "Found record '{$model->id}'.", $model->toArray() );
     }
 }

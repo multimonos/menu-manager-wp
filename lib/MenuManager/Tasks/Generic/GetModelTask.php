@@ -17,6 +17,6 @@ class GetModelTask {
             return TaskResult::failure( "Record '{$id}' not found." );
         }
 
-        return TaskResult::success( "Found record '{$id}.", $model->toJson() );
+        return TaskResult::success( "Found record '{$id}.", $model->toArray() );
     }
 }
