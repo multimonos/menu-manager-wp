@@ -32,7 +32,10 @@ class ListModelTask {
 
                 $data = $model_class::all()->map( fn( $model ) => $model->only( $fields ) )->toArray();
 
-                $widths = CliHelper::columnPads( $fields, $data );
+                // no results
+                $widths = is_null( $data )
+                    ? CliHelper::columnPads( $fields, [] )
+                    : CliHelper::columnPads( $fields, $data );
 
                 $table = CliHelper::table(
                     $widths,
