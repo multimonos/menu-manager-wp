@@ -58,7 +58,7 @@ def wpcli(*args: str) -> CompletedProcess[str]:
     env["XDEBUG_SESSION"] = "1"
     rs = run(["wp", *args], check=False, capture_output=True, text=True)
     print(
-        f"CLI  call='{' '.join(rs.args)}', returncode={rs.returncode}, stderr={rs.stderr}, stdout={rs.stdout[:30]}..."
+        f"CLI  call='{' '.join(rs.args)}', returncode={rs.returncode}, stderr={rs.stderr}, stdout={rs.stdout[:30].strip()}..."
     )
     return rs
 
@@ -188,7 +188,7 @@ def node_get(id: int) -> Node | None:
 
     try:
         raw: dict[str, str] = json.loads(rs.stdout.strip())
-        o = cast(Node, raw)
+        o = cast(Node, raw["data"])
         return o
     except:
         return None
@@ -242,7 +242,7 @@ def job_get(id: int) -> Job:
 
     try:
         raw: dict[str, str] = json.loads(rs.stdout.strip())
-        o = cast(Job, raw)
+        o = cast(Job, raw["data"])
         return o
 
     except:
@@ -257,7 +257,7 @@ def job_latest() -> Job:
 
     try:
         raw: dict[str, str] = json.loads(rs.stdout.strip())
-        o = cast(Job, raw)
+        o = cast(Job, raw["data"])
         return o
 
     except:

@@ -25,7 +25,7 @@ def test_csv_a_has_valid_slug():
         reader = csv.DictReader(f)
         menus = [row["menu"] for row in reader]
     unique_menus = sorted(list(set(menus)))
-    assert unique_menus == [A_SLUG, "menu"]
+    assert unique_menus == [A_SLUG]
 
 
 def test_csv_b_has_valid_slug():
@@ -34,7 +34,7 @@ def test_csv_b_has_valid_slug():
         reader = csv.DictReader(f)
         menus = [row["menu"] for row in reader]
     unique_menus = sorted(list(set(menus)))
-    assert unique_menus == [B_SLUG, "menu"]
+    assert unique_menus == [B_SLUG]
 
 
 def test_csv_ab_has_valid_slug():
@@ -43,4 +43,4 @@ def test_csv_ab_has_valid_slug():
         reader = csv.DictReader(f)
         menus = [row["menu"] for row in reader]
     unique_menus = sorted(list(set(menus)))
-    assert unique_menus == [A_SLUG, B_SLUG, "menu"]
+    assert unique_menus == [A_SLUG, B_SLUG]

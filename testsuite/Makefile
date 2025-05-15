@@ -7,29 +7,35 @@
 #
 #
 debug:
-	pytest -xvs ./test_create.py::test_create_ab
+	pytest -xvs ./test_delete_item.py
+	#pytest -xvs ./test_cli_model_commands.py
+	# pytest -xvs ./test_create.py::test_create_ab
 	#pytest -xvs ./test_create.py::test_create_a
 
 serial:
-	pytest -xvs -n1 -m 'serial'
+	pytest -vs -n1 -m 'serial'
 
 parallel:
-	pytest -xvs -m 'not serial'
+	pytest -vs -m 'not serial'
 
 test:
 	make parallel && make serial
 
 test-activation:
-	pytest -xvs -n1 ./test_activation.py
+	pytest -vs -n1 ./test_activation.py
 
 test-load:
-	pytest -xvs -n1 ./test_load.py
+	pytest -vs -n1 ./test_load.py
 
 test-create:
-	pytest -xvs -n1 ./test_create.py
+	pytest -vs -n1 ./test_create.py
+
+test-delete:
+	pytest -vs -n1 ./test_delete_item.py \
+	; pytest -vs -n1 ./test_delete_group.py \
 
 test-export:
-	pytest -xvs -n1 ./test_export.py
+	pytest -vs -n1 ./test_export.py
 
 test-sort:
 	clear && pytest -xvs -n1 ./test_sort.py && wp mm view tiny

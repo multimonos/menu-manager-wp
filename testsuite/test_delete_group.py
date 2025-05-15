@@ -26,7 +26,7 @@ from plugin import (
 
 
 @pytest.mark.serial
-def test_delete_item(cursor: MySQLCursorDict):
+def test_delete_group(cursor: MySQLCursorDict):
     """delete an option-group node which should cascade delete it's children"""
 
     ids = [PATCH_GROUP_ID, *PATCH_GROUP_CHILDREN_IDS]
