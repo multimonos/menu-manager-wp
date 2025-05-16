@@ -43,7 +43,7 @@ class ModifyMenuTask {
                 // Process action.
                 switch ( $action ) {
 
-                    case ImpexAction::Insert:
+                    case ImpexAction::Create:
                         // @todo implement impex action "insert"
                         Logger::taskInfo( 'modify-menu', 'unhandled row action in impex : ' . ImpexAction::Insert->value );
                         break;
